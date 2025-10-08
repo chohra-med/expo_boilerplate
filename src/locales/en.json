@@ -1,0 +1,128 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "done": "Done",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "auth": {
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "loginButton": "Sign In",
+    "loginError": "Invalid email or password",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "invalidEmail": "Please enter a valid email address",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "resetPassword": "Reset Password",
+    "resetPasswordDescription": "Enter your email address and we'll send you a link to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "resetLinkSent": "Reset Link Sent",
+    "resetLinkSentDescription": "If an account with this email exists, you will receive a password reset link shortly."
+  },
+  "navigation": {
+    "home": "Home",
+    "todos": "Todos",
+    "settings": "Settings"
+  },
+  "home": {
+    "title": "Welcome Home",
+    "subtitle": "Your dashboard",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions"
+  },
+  "todos": {
+    "title": "My Todos",
+    "subtitle": "Manage your tasks and stay organized",
+    "active": "Active",
+    "completed": "Completed",
+    "activeTodos": "Active Todos",
+    "completedTodos": "Completed Todos",
+    "noTodos": "No todos yet",
+    "loading": "Loading todos..."
+  },
+  "errors": {
+    "app_error_boundary": {
+      "title": "An error occurred",
+      "message": "Please try again later",
+      "retry": "Retry"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "about": "About",
+    "theme": {
+      "title": "Theme",
+      "description": "Choose your preferred theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Choose your preferred language",
+      "english": "English",
+      "french": "Français"
+    },
+    "logout": "Logout"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to MobileLauncher",
+      "subtitle": "Your personal mobile companion",
+      "description": "Discover amazing features and customize your experience"
+    },
+    "features": {
+      "title": "Powerful Features",
+      "subtitle": "Everything you need in one place",
+      "description": "Access all your favorite apps and tools with ease"
+    },
+    "customization": {
+      "title": "Customize Your Experience",
+      "subtitle": "Make it truly yours",
+      "description": "Personalize themes, layouts, and preferences to match your style"
+    },
+    "questionnaire1": {
+      "title": "Tell us about yourself",
+      "question": "What's your primary use case for this app?",
+      "options": {
+        "personal": "Personal use",
+        "work": "Work productivity",
+        "entertainment": "Entertainment",
+        "education": "Education"
+      }
+    },
+    "questionnaire2": {
+      "title": "Help us personalize",
+      "question": "How often do you use mobile apps?",
+      "options": {
+        "daily": "Multiple times daily",
+        "frequent": "Once or twice daily",
+        "moderate": "A few times a week",
+        "occasional": "Occasionally"
+      }
+    },
+    "buttons": {
+      "skip": "Skip",
+      "next": "Next →",
+      "done": "Done",
+      "selectAll": "Select all that apply",
+      "pleaseSpecify": "Please specify..."
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "skip": "Passer",
+    "done": "Terminé",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "auth": {
+    "login": "Connexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "loginButton": "Se connecter",
+    "loginError": "Email ou mot de passe invalide",
+    "emailRequired": "L'email est requis",
+    "passwordRequired": "Le mot de passe est requis",
+    "invalidEmail": "Veuillez entrer une adresse email valide",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "settings": "Paramètres"
+  },
+  "home": {
+    "title": "Bienvenue à la maison",
+    "subtitle": "Votre tableau de bord",
+    "recentActivity": "Activité récente",
+    "quickActions": "Actions rapides"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "appearance": "Apparence",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité",
+    "about": "À propos",
+    "theme": {
+      "title": "Thème",
+      "description": "Choisissez votre thème préféré",
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    },
+    "language": {
+      "title": "Langue",
+      "description": "Choisissez votre langue préférée",
+      "english": "English",
+      "french": "Français"
+    },
+    "logout": "Déconnexion"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Bienvenue sur MobileLauncher",
+      "subtitle": "Votre compagnon mobile personnel",
+      "description": "Découvrez des fonctionnalités incroyables et personnalisez votre expérience"
+    },
+    "features": {
+      "title": "Fonctionnalités Puissantes",
+      "subtitle": "Tout ce dont vous avez besoin en un seul endroit",
+      "description": "Accédez facilement à toutes vos applications et outils favoris"
+    },
+    "customization": {
+      "title": "Personnalisez Votre Expérience",
+      "subtitle": "Rendez-la vraiment vôtre",
+      "description": "Personnalisez les thèmes, les mises en page et les préférences pour correspondre à votre style"
+    },
+    "questionnaire1": {
+      "title": "Parlez-nous de vous",
+      "question": "Quel est votre cas d'usage principal pour cette application ?",
+      "options": {
+        "personal": "Usage personnel",
+        "work": "Productivité au travail",
+        "entertainment": "Divertissement",
+        "education": "Éducation"
+      }
+    },
+    "questionnaire2": {
+      "title": "Aidez-nous à personnaliser",
+      "question": "À quelle fréquence utilisez-vous les applications mobiles ?",
+      "options": {
+        "daily": "Plusieurs fois par jour",
+        "frequent": "Une ou deux fois par jour",
+        "moderate": "Quelques fois par semaine",
+        "occasional": "Occasionnellement"
+      }
+    },
+    "buttons": {
+      "skip": "Passer",
+      "next": "Suivant →",
+      "done": "Terminé",
+      "selectAll": "Sélectionner tout ce qui s'applique",
+      "pleaseSpecify": "Veuillez préciser..."
+    }
+  }
+}

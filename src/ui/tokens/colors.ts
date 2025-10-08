@@ -1,0 +1,90 @@
+export const colors = {
+  // Base colors
+  white: '#FFFFFF',
+  black: '#000000',
+  transparent: 'transparent',
+
+  // Gray scale
+  gray50: '#F9FAFB',
+  gray100: '#F3F4F6',
+  gray200: '#E5E7EB',
+  gray300: '#D1D5DB',
+  gray400: '#9CA3AF',
+  gray500: '#6B7280',
+  gray600: '#4B5563',
+  gray700: '#374151',
+  gray800: '#1F2937',
+  gray900: '#111827',
+
+  // Primary colors
+  primary50: '#EFF6FF',
+  primary100: '#DBEAFE',
+  primary200: '#BFDBFE',
+  primary300: '#93C5FD',
+  primary400: '#60A5FA',
+  primary500: '#3B82F6',
+  primary600: '#2563EB',
+  primary700: '#1D4ED8',
+  primary800: '#1E40AF',
+  primary900: '#1E3A8A',
+
+  // Secondary colors
+  secondary50: '#F8FAFC',
+  secondary100: '#F1F5F9',
+  secondary200: '#E2E8F0',
+  secondary300: '#CBD5E1',
+  secondary400: '#94A3B8',
+  secondary500: '#64748B',
+  secondary600: '#475569',
+  secondary700: '#334155',
+  secondary800: '#1E293B',
+  secondary900: '#0F172A',
+
+  // Success colors
+  success50: '#ECFDF5',
+  success100: '#D1FAE5',
+  success200: '#A7F3D0',
+  success300: '#6EE7B7',
+  success400: '#34D399',
+  success500: '#10B981',
+  success600: '#059669',
+  success700: '#047857',
+  success800: '#065F46',
+  success900: '#064E3B',
+
+  // Warning colors
+  warning50: '#FFFBEB',
+  warning100: '#FEF3C7',
+  warning200: '#FDE68A',
+  warning300: '#FCD34D',
+  warning400: '#FBBF24',
+  warning500: '#F59E0B',
+  warning600: '#D97706',
+  warning700: '#B45309',
+  warning800: '#92400E',
+  warning900: '#78350F',
+
+  // Error colors
+  error50: '#FEF2F2',
+  error100: '#FEE2E2',
+  error200: '#FECACA',
+  error300: '#FCA5A5',
+  error400: '#F87171',
+  error500: '#EF4444',
+  error600: '#DC2626',
+  error700: '#B91C1C',
+  error800: '#991B1B',
+  error900: '#7F1D1D',
+
+  // Info colors
+  info50: '#F0F9FF',
+  info100: '#E0F2FE',
+  info200: '#BAE6FD',
+  info300: '#7DD3FC',
+  info400: '#38BDF8',
+  info500: '#0EA5E9',
+  info600: '#0284C7',
+  info700: '#0369A1',
+  info800: '#075985',
+  info900: '#0C4A6E',
+} as const;

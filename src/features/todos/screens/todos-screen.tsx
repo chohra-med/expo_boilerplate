@@ -130,7 +130,7 @@ export const TodosScreen: React.FC = () => {
 
   if (todosError) {
     return (
-      <SafeArea variant="all" backgroundColor="background">
+      <SafeArea>
         <Box flex={1} padding="lg" alignItems="center" justifyContent="center">
           <Icon name="alert-circle" size={48} color="error" />
           <Text variant="h4" marginTop="md" color="error">
@@ -142,14 +142,14 @@ export const TodosScreen: React.FC = () => {
   }
   if (isLoading) {
     return (
-      <SafeArea variant="all" backgroundColor="background">
+      <SafeArea>
         <LoadingComponent />
       </SafeArea>
     );
   }
 
   return (
-    <SafeArea variant="all" backgroundColor="background">
+    <SafeArea>
       <Box flex={1} paddingHorizontal="lg">
         <Box>
           <Text variant="h1" marginBottom="sm">

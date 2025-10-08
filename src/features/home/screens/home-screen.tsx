@@ -80,7 +80,7 @@ const HomeScreenComponent: React.FC = () => {
   });
 
   return (
-    <SafeArea variant="all" backgroundColor="background">
+    <SafeArea>
       <ScrollView>
         <Box flex={1} padding="lg">
           {/* Animated Header */}

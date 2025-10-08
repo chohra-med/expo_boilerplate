@@ -27,10 +27,12 @@ export type SafeAreaViewProps = SpacingProps<Theme> &
   };
 
 // Create the SafeAreaView component using the pattern from the article
-export const SafeAreaView = createRestyleComponent<SafeAreaViewProps, Theme>(
+export const SafeAreaViewBase = createRestyleComponent<SafeAreaViewProps, Theme>(
   [spacing, backgroundColor, layout, border, safeAreaVariantsFunction],
   RNSafeAreaView
 );
 
-// Export SafeArea as an alias for backward compatibility
-export const SafeArea = SafeAreaView;
+// Create the Card component with default variant
+export const SafeArea = (props: SafeAreaViewProps) => {
+  return <SafeAreaViewBase variant="default" {...props} />;
+};

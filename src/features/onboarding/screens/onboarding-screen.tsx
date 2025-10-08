@@ -94,7 +94,7 @@ export const OnboardingScreen: React.FC = () => {
   };
 
   return (
-    <SafeArea variant="all" backgroundColor="background">
+    <SafeArea>
       <Box flex={1}>
         {/* Language Selector */}
         <Box flexDirection="row" justifyContent="flex-end" padding="md" gap="sm">

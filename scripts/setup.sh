@@ -4,7 +4,7 @@ echo "🚀 Setting up MobileLauncher React Native Boilerplate..."
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+yarn install
 
 # Create necessary directories if they don't exist
 echo "📁 Creating directories..."
@@ -13,11 +13,11 @@ mkdir -p src/{features/{auth/{api,components,hooks,screens,services,store,types}
 echo "✅ Setup complete!"
 echo ""
 echo "To start the development server:"
-echo "  npm start"
+echo "  yarn start"
 echo ""
 echo "To run on specific platforms:"
-echo "  npm run ios"
-echo "  npm run android"
-echo "  npm run web"
+echo "  yarn ios"
+echo "  yarn android"
+echo "  yarn web"
 echo ""
 echo "Happy coding! 🎉"

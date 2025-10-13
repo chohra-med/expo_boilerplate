@@ -41,3 +41,4 @@ yarn-error.*
 /android
 /ai_articles/*
 .cursor/*
+.memory/*

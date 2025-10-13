@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { OnboardingState } from '../types';
+import type { OnboardingState, QuestionnaireAnswer, QuestionnaireResponse } from '../types';
 
 const initialState: OnboardingState = {
   currentStep: 0,
@@ -59,6 +59,76 @@ const onboardingSlice = createSlice({
           state.userPreferences[stepId] = answer;
       }
     },
+    setQuestionnaireAnswerWithQuestion: (
+      state,
+      action: PayloadAction<{ stepId: string; question: string; answer: string | string[] }>
+    ) => {
+      const { stepId, question, answer } = action.payload;
+
+      // Store the complete answer data
+      const _questionnaireAnswer: QuestionnaireAnswer = {
+        question,
+        userAnswer: answer,
+        stepId,
+        timestamp: Date.now(),
+      };
+
+      // Update the simple answers for backward compatibility
+      state.questionnaireAnswers[stepId] = answer;
+
+      // Ensure userPreferences is initialized
+      if (!state.userPreferences) {
+        state.userPreferences = {};
+      }
+
+      // Update user preferences based on stepId
+      switch (stepId) {
+        case 'primary_use_case':
+          state.userPreferences.primaryUseCase = answer as string;
+          break;
+        case 'app_usage_frequency':
+          state.userPreferences.appUsageFrequency = answer as string;
+          break;
+        case 'interests':
+          state.userPreferences.interests = answer as string[];
+          break;
+        case 'notification_preferences':
+          state.userPreferences.notificationPreferences = answer as string;
+          break;
+        default:
+          state.userPreferences[stepId] = answer;
+      }
+    },
+    setQuestionnaireResponse: (state, action: PayloadAction<QuestionnaireResponse>) => {
+      const response = action.payload;
+
+      // Update questionnaire answers from response
+      Object.entries(response).forEach(([stepId, answerData]) => {
+        state.questionnaireAnswers[stepId] = answerData.userAnswer;
+
+        // Update user preferences
+        if (!state.userPreferences) {
+          state.userPreferences = {};
+        }
+
+        switch (stepId) {
+          case 'primary_use_case':
+            state.userPreferences.primaryUseCase = answerData.userAnswer as string;
+            break;
+          case 'app_usage_frequency':
+            state.userPreferences.appUsageFrequency = answerData.userAnswer as string;
+            break;
+          case 'interests':
+            state.userPreferences.interests = answerData.userAnswer as string[];
+            break;
+          case 'notification_preferences':
+            state.userPreferences.notificationPreferences = answerData.userAnswer as string;
+            break;
+          default:
+            state.userPreferences[stepId] = answerData.userAnswer;
+        }
+      });
+    },
     setLanguage: (state, action: PayloadAction<'en' | 'fr'>) => {
       state.currentLanguage = action.payload;
     },
@@ -91,6 +161,8 @@ export const {
   previousStep,
   goToStep,
   setQuestionnaireAnswer,
+  setQuestionnaireAnswerWithQuestion,
+  setQuestionnaireResponse,
   setLanguage,
   completeOnboarding,
   resetOnboarding,

@@ -25,6 +25,8 @@ export interface QuestionnaireStep {
   stepOptions: QuestionnaireOption[];
   multiple: boolean;
   isSkippable: boolean;
+  hasOtherOption?: boolean;
+  otherOptionPlaceholder?: string;
 }
 
 export interface UserPreferences {
@@ -47,4 +49,21 @@ export interface OnboardingState {
 export interface OnboardingData {
   steps: OnboardingStep[];
   questionnaires: Questionnaire[];
+}
+
+/**
+ * Questionnaire answer data structure for Redux storage
+ */
+export interface QuestionnaireAnswer {
+  question: string;
+  userAnswer: string | string[];
+  stepId: string;
+  timestamp?: number;
+}
+
+/**
+ * Complete questionnaire response data
+ */
+export interface QuestionnaireResponse {
+  [stepId: string]: QuestionnaireAnswer;
 }

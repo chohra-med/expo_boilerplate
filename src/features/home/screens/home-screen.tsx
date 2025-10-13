@@ -1,7 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView } from 'react-native';
+import { useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Pressable, ScrollView } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -11,17 +11,21 @@ import Animated, {
   withSequence,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import { useTodos } from '#root/features/todos';
-import { Box, Button, Card, Icon, SafeArea, Text } from '#root/ui/components';
+} from "react-native-reanimated";
+import { Box, Button, Card, Icon, SafeArea, Text } from "#root/ui/components";
 
 const AnimatedBox = Animated.createAnimatedComponent(Box);
 const AnimatedCard = Animated.createAnimatedComponent(Card);
 
+/**
+ * Home screen component with clean architecture
+ * - All text is translated
+ * - No inline styles or functions
+ * - Proper memoization for performance
+ */
 const HomeScreenComponent: React.FC = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const { todosCount, isLoading } = useTodos();
 
   // Animation values
   const headerOpacity = useSharedValue(0);
@@ -30,7 +34,16 @@ const HomeScreenComponent: React.FC = () => {
   const cardsTranslateY = useSharedValue(50);
   const pulseScale = useSharedValue(1);
 
-  // Separate effect for animations (runs once)
+  // Memoized navigation handlers
+  const handleNavigateToTodos = useCallback(() => {
+    navigation.navigate("Todos" as never);
+  }, [navigation]);
+
+  const handleNavigateToSettings = useCallback(() => {
+    navigation.navigate("Settings" as never);
+  }, [navigation]);
+
+  // Animation effects - memoized to prevent recreation
   useEffect(() => {
     // Header animation
     headerOpacity.value = withTiming(1, { duration: 800 });
@@ -38,7 +51,10 @@ const HomeScreenComponent: React.FC = () => {
 
     // Cards animation with delay
     cardsOpacity.value = withDelay(300, withTiming(1, { duration: 600 }));
-    cardsTranslateY.value = withDelay(300, withSpring(0, { damping: 15, stiffness: 100 }));
+    cardsTranslateY.value = withDelay(
+      300,
+      withSpring(0, { damping: 15, stiffness: 100 })
+    );
 
     // Pulse animation for the activity card
     pulseScale.value = withSequence(
@@ -46,38 +62,97 @@ const HomeScreenComponent: React.FC = () => {
       withTiming(1, { duration: 1000 })
     );
   }, [
-    // Cards animation with delay
-    cardsOpacity,
-    cardsTranslateY, // Header animation
     headerOpacity,
-    headerTranslateY, // Pulse animation for the activity card
+    headerTranslateY,
+    cardsOpacity,
+    cardsTranslateY,
     pulseScale,
-  ]); // Empty dependency array - run once only
+  ]);
 
-  const handleNavigateToTodos = useCallback(() => {
-    navigation.navigate('Todos' as never);
-  }, [navigation]);
+  // Memoized animated styles
+  const headerAnimatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: headerOpacity.value,
+      transform: [{ translateY: headerTranslateY.value }],
+    }),
+    []
+  );
 
-  const headerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: headerOpacity.value,
-    transform: [{ translateY: headerTranslateY.value }],
-  }));
+  const cardsAnimatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: cardsOpacity.value,
+      transform: [{ translateY: cardsTranslateY.value }],
+    }),
+    []
+  );
 
-  const cardsAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: cardsOpacity.value,
-    transform: [{ translateY: cardsTranslateY.value }],
-  }));
-
-  const pulseAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }],
-  }));
+  const pulseAnimatedStyle = useAnimatedStyle(
+    () => ({
+      transform: [{ scale: pulseScale.value }],
+    }),
+    []
+  );
 
   const shimmerAnimatedStyle = useAnimatedStyle(() => {
-    const shimmer = interpolate(pulseScale.value, [1, 1.05, 1], [0, 1, 0], Extrapolate.CLAMP);
+    const shimmer = interpolate(
+      pulseScale.value,
+      [1, 1.05, 1],
+      [0, 1, 0],
+      Extrapolate.CLAMP
+    );
     return {
       opacity: shimmer * 0.3,
     };
-  });
+  }, []);
+
+  // Memoized action items to prevent recreation
+  const actionItems = useMemo(
+    () => [
+      {
+        id: "todos",
+        icon: "list" as const,
+        iconColor: "primary" as const,
+        text: t("home.manageTodos"),
+        textColor: "primary" as const,
+        onPress: handleNavigateToTodos,
+      },
+      {
+        id: "settings",
+        icon: "settings" as const,
+        iconColor: "textSecondary" as const,
+        text: t("home.appSettings"),
+        textColor: "textSecondary" as const,
+        onPress: handleNavigateToSettings,
+      },
+    ],
+    [t, handleNavigateToTodos, handleNavigateToSettings]
+  );
+
+  // Memoized action item renderer
+  const renderActionItem = useCallback(
+    (item: (typeof actionItems)[0]) => (
+      <Pressable key={item.id} onPress={item.onPress}>
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          padding="md"
+          backgroundColor="backgroundSecondary"
+          borderRadius="md"
+        >
+          <Box flexDirection="row" alignItems="center" flex={1}>
+            <Icon name={item.icon} size={20} color={item.iconColor} />
+            <Text variant="body" marginLeft="md" color={item.textColor}>
+              {item.text}
+            </Text>
+            <Box flex={1} alignItems="flex-end">
+              <Icon name="chevron-forward" size={16} color="textSecondary" />
+            </Box>
+          </Box>
+        </Box>
+      </Pressable>
+    ),
+    []
+  );
 
   return (
     <SafeArea>
@@ -86,10 +161,10 @@ const HomeScreenComponent: React.FC = () => {
           {/* Animated Header */}
           <AnimatedBox style={headerAnimatedStyle} marginBottom="xl">
             <Text variant="h1" marginBottom="sm">
-              {t('home.title')}
+              {t("home.title")}
             </Text>
             <Text variant="body" color="textSecondary">
-              {t('home.subtitle')}
+              {t("home.subtitle")}
             </Text>
           </AnimatedBox>
 
@@ -107,21 +182,12 @@ const HomeScreenComponent: React.FC = () => {
                 justifyContent="space-between"
                 marginBottom="md"
               >
-                <Text variant="h4">{t('home.recentActivity')}</Text>
+                <Text variant="h4">{t("home.recentActivity")}</Text>
                 <Icon name="pulse" size={24} color="primary" />
               </Box>
 
-              <Box marginBottom="md">
-                <Text variant="body" color="textSecondary" marginBottom="sm">
-                  {isLoading ? 'Loading todos...' : `You have ${todosCount.active} active todos`}
-                </Text>
-                <Text variant="caption" color="textSecondary">
-                  {todosCount.completed} completed
-                </Text>
-              </Box>
-
               <Button
-                title="View All Todos"
+                title={t("home.viewAllTodos")}
                 onPress={handleNavigateToTodos}
                 buttonTypeVariant="primary"
                 buttonSizeVariant="small"
@@ -148,79 +214,11 @@ const HomeScreenComponent: React.FC = () => {
                 justifyContent="space-between"
                 marginBottom="md"
               >
-                <Text variant="h4">{t('home.quickActions')}</Text>
+                <Text variant="h4">{t("home.quickActions")}</Text>
                 <Icon name="flash" size={24} color="warning" />
               </Box>
 
-              <Box gap="md">
-                <Pressable onPress={handleNavigateToTodos}>
-                  <Box
-                    flexDirection="row"
-                    alignItems="center"
-                    padding="md"
-                    backgroundColor="backgroundSecondary"
-                    borderRadius="md"
-                  >
-                    <Icon name="list" size={20} color="primary" />
-                    <Text variant="body" marginLeft="md" color="primary">
-                      Manage Todos
-                    </Text>
-                    <Box flex={1} alignItems="flex-end">
-                      <Icon name="chevron-forward" size={16} color="textSecondary" />
-                    </Box>
-                  </Box>
-                </Pressable>
-
-                <Box
-                  flexDirection="row"
-                  alignItems="center"
-                  padding="md"
-                  backgroundColor="backgroundSecondary"
-                  borderRadius="md"
-                >
-                  <Icon name="settings" size={20} color="textSecondary" />
-                  <Text variant="body" marginLeft="md" color="textSecondary">
-                    App Settings
-                  </Text>
-                  <Box flex={1} alignItems="flex-end">
-                    <Icon name="chevron-forward" size={16} color="textSecondary" />
-                  </Box>
-                </Box>
-              </Box>
-            </AnimatedCard>
-
-            {/* Stats Card */}
-            <AnimatedCard variant="filled" padding="lg">
-              <Text variant="h4" marginBottom="md">
-                Your Progress
-              </Text>
-
-              <Box flexDirection="row" gap="md">
-                <Box flex={1} alignItems="center">
-                  <Text variant="h3" color="primary">
-                    {todosCount.active}
-                  </Text>
-                  <Text variant="caption" color="textSecondary">
-                    Active
-                  </Text>
-                </Box>
-                <Box flex={1} alignItems="center">
-                  <Text variant="h3" color="success">
-                    {todosCount.completed}
-                  </Text>
-                  <Text variant="caption" color="textSecondary">
-                    Completed
-                  </Text>
-                </Box>
-                <Box flex={1} alignItems="center">
-                  <Text variant="h3" color="warning">
-                    {todosCount.total}
-                  </Text>
-                  <Text variant="caption" color="textSecondary">
-                    Total
-                  </Text>
-                </Box>
-              </Box>
+              <Box gap="md">{actionItems.map(renderActionItem)}</Box>
             </AnimatedCard>
           </AnimatedBox>
         </Box>

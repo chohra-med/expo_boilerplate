@@ -6,6 +6,8 @@ export type { CardProps } from './card';
 export { Card } from './card';
 export type { IconProps } from './icon';
 export { Icon } from './icon';
+export type { IconButtonProps } from './icon-button';
+export { IconButton } from './icon-button';
 export type { InputProps } from './input';
 export { Input } from './input';
 export type { LargeListProps } from './large-list';

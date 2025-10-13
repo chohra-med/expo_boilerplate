@@ -1,14 +1,14 @@
-import { useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '#root/store/store';
-import { useGetTodosQuery } from '../api/todos.api';
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "#root/store/store";
+import { useGetTodosQuery } from "../api/todos.api";
 import {
   selectActiveTodos,
   selectCompletedTodos,
   selectTodosCount,
   selectTodosError,
   selectTodosLoading,
-} from '../store/todos-selector';
-import { clearCompletedTodos, resetTodos, toggleTodoComplete } from '../store/todos-slice';
+} from "../store/todos-selector";
+import { clearCompletedTodos, resetTodos, toggleTodoComplete } from "../store/todos-slice";
 
 export const useTodos = () => {
   const dispatch = useAppDispatch();

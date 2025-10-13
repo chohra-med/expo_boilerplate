@@ -1,7 +1,7 @@
 import type React from "react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Icon, IconButton, SafeArea } from "#root/ui/components";
+import { Box, Button, IconButton, SafeArea } from "#root/ui/components";
 import { ConfigurableQuestionnaire } from "../components/configurable-questionnaire";
 import { OnboardingStepComponent } from "../components/onboarding-step";
 import { ProgressBar } from "../components/progress-bar";
@@ -96,24 +96,20 @@ export const OnboardingScreen: React.FC = () => {
 
     // Steps 3-6 are questionnaire steps
     if (currentStep >= 3 && currentStep < 7) {
-      const questionnaireSteps =
-        getQuestionnaireStepsByLanguage(currentLanguage);
+      const questionnaireSteps = getQuestionnaireStepsByLanguage(currentLanguage);
       const questionnaireIndex = currentStep - 3;
       const questionnaire = questionnaireSteps[questionnaireIndex];
 
       if (questionnaire) {
         const selectedAnswers =
-          questionnaireAnswers[questionnaire.stepId] ||
-          (questionnaire.multiple ? [] : "");
+          questionnaireAnswers[questionnaire.stepId] || (questionnaire.multiple ? [] : "");
         const isLastQuestionnaire = currentStep === 6;
 
         return (
           <ConfigurableQuestionnaire
             questionnaire={questionnaire}
             selectedAnswers={selectedAnswers}
-            onAnswer={(answer) =>
-              handleQuestionnaireAnswer(questionnaire.stepId, answer)
-            }
+            onAnswer={(answer) => handleQuestionnaireAnswer(questionnaire.stepId, answer)}
             onNext={isLastQuestionnaire ? complete : handleNext}
             onSkip={() => {}} // Disabled for questionnaire as a whole
             isLastStep={isLastQuestionnaire}
@@ -130,12 +126,7 @@ export const OnboardingScreen: React.FC = () => {
     <SafeArea>
       <Box flex={1}>
         {/* Language Selector */}
-        <Box
-          flexDirection="row"
-          justifyContent="flex-end"
-          padding="md"
-          gap="sm"
-        >
+        <Box flexDirection="row" justifyContent="flex-end" padding="md" gap="sm">
           <Button
             title={t("onboarding.buttons.english")}
             onPress={() => handleLanguageChange("en")}
@@ -151,12 +142,7 @@ export const OnboardingScreen: React.FC = () => {
         </Box>
 
         {/* Progress Bar with Back Button */}
-        <Box
-          flexDirection="row"
-          alignItems="center"
-          paddingHorizontal="md"
-          paddingVertical="sm"
-        >
+        <Box flexDirection="row" alignItems="center" paddingHorizontal="md" paddingVertical="sm">
           {canGoPrevious && (
             <IconButton
               iconName="arrow-back"
@@ -167,11 +153,7 @@ export const OnboardingScreen: React.FC = () => {
             />
           )}
           <Box flex={1} marginHorizontal="md">
-            <ProgressBar
-              progress={progress}
-              totalSteps={totalSteps}
-              currentStep={currentStep}
-            />
+            <ProgressBar progress={progress} totalSteps={totalSteps} currentStep={currentStep} />
           </Box>
         </Box>
 

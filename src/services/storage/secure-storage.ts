@@ -1,4 +1,4 @@
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 class SecureStorageService {
   async setItem(key: string, value: string): Promise<void> {
@@ -32,10 +32,10 @@ class SecureStorageService {
     try {
       // Note: SecureStore doesn't have a clear all method
       // This would need to be implemented by tracking keys
-      console.warn('SecureStore clear not implemented - use removeItem for specific keys');
+      console.warn("SecureStore clear not implemented - use removeItem for specific keys");
     } catch (error) {
-      console.error('Failed to clear secure storage:', error);
-      throw new Error('Failed to clear secure storage');
+      console.error("Failed to clear secure storage:", error);
+      throw new Error("Failed to clear secure storage");
     }
   }
 }

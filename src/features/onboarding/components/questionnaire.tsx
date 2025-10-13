@@ -62,9 +62,7 @@ export const QuestionnaireComponent: React.FC<QuestionnaireProps> = ({
                 key={option.id}
                 title={t(option.label)}
                 onPress={() => handleAnswer(option.value)}
-                buttonTypeVariant={
-                  selectedAnswer === option.value ? "primary" : "outline"
-                }
+                buttonTypeVariant={selectedAnswer === option.value ? "primary" : "outline"}
                 buttonSizeVariant="medium"
               />
             ))}
@@ -73,12 +71,7 @@ export const QuestionnaireComponent: React.FC<QuestionnaireProps> = ({
       </Box>
 
       {/* Fixed bottom buttons */}
-      <Box
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-        paddingTop="md"
-      >
+      <Box flexDirection="row" justifyContent="space-between" alignItems="center" paddingTop="md">
         {/* Skip button on the left */}
         <Box>
           <Button

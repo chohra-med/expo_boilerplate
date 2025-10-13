@@ -1,12 +1,12 @@
-import type React from 'react';
-import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Animated, Image, Pressable, ScrollView } from 'react-native';
-import { useAuth } from '#root/features/auth/hooks/use-auth';
-import { getQuestionnaireStepsByLanguage } from '#root/features/onboarding/config/onboarding-questionnaires';
-import { useOnboarding } from '#root/features/onboarding/hooks/use-onboarding';
-import { Box, Button, Icon, SafeArea, Text } from '#root/ui/components';
-import { animationConfig, layoutConstants, profileStyles } from '../constants/profile-styles';
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Animated, Image, Pressable, ScrollView } from "react-native";
+import { useAuth } from "#root/features/auth/hooks/use-auth";
+import { getQuestionnaireStepsByLanguage } from "#root/features/onboarding/config/onboarding-questionnaires";
+import { useOnboarding } from "#root/features/onboarding/hooks/use-onboarding";
+import { Box, Button, Icon, SafeArea, Text } from "#root/ui/components";
+import { animationConfig, layoutConstants, profileStyles } from "../constants/profile-styles";
 
 interface ProfileSectionProps {
   onEditProfile?: () => void;
@@ -51,7 +51,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
    */
   const formatAnswer = useCallback((answer: string | string[]) => {
     if (Array.isArray(answer)) {
-      return answer.join(', ');
+      return answer.join(", ");
     }
     return answer;
   }, []);
@@ -70,7 +70,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
             const option = step.stepOptions.find((opt) => opt.value === ans);
             return option ? option.label : ans;
           })
-          .join(', ');
+          .join(", ");
       } else {
         const option = step.stepOptions.find((opt) => opt.value === answer);
         return option ? option.label : answer;
@@ -158,14 +158,14 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                 }}
               >
                 <Text variant="h2" textAlign="center" marginBottom="xs">
-                  {user?.name || t('common.loading')}
+                  {user?.name || t("common.loading")}
                 </Text>
                 <Text variant="body" color="textSecondary" textAlign="center" marginBottom="lg">
-                  {user?.email || ''}
+                  {user?.email || ""}
                 </Text>
 
                 <Button
-                  title={t('settings.profile.editProfile')}
+                  title={t("settings.profile.editProfile")}
                   onPress={onEditProfile || (() => {})}
                   buttonTypeVariant="outline"
                   buttonSizeVariant="small"
@@ -184,7 +184,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                 justifyContent="space-between"
                 marginBottom="lg"
               >
-                <Text variant="h3">{t('settings.profile.title')}</Text>
+                <Text variant="h3">{t("settings.profile.title")}</Text>
                 <Pressable onPress={onViewQuestionnaire || (() => {})}>
                   <Box
                     flexDirection="row"
@@ -195,7 +195,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                   >
                     <Icon name="eye" size={layoutConstants.iconSize.small} color="primary" />
                     <Text variant="bodySmall" color="primary" marginLeft="xs">
-                      {t('settings.profile.viewProfile')}
+                      {t("settings.profile.viewProfile")}
                     </Text>
                   </Box>
                 </Pressable>
@@ -228,13 +228,13 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                       color="textSecondary"
                     />
                     <Text variant="h5" textAlign="center" marginTop="md" marginBottom="sm">
-                      {t('settings.profile.noQuestionnaireData')}
+                      {t("settings.profile.noQuestionnaireData")}
                     </Text>
                     <Text variant="body" color="textSecondary" textAlign="center" marginBottom="lg">
-                      {t('settings.profile.noQuestionnaireDescription')}
+                      {t("settings.profile.noQuestionnaireDescription")}
                     </Text>
                     <Button
-                      title={t('settings.profile.completeQuestionnaire')}
+                      title={t("settings.profile.completeQuestionnaire")}
                       onPress={onViewQuestionnaire || (() => {})}
                       buttonTypeVariant="primary"
                       buttonSizeVariant="small"
@@ -248,7 +248,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
             {Object.keys(userPreferences).length > 0 && (
               <Box marginBottom="xl">
                 <Text variant="h4" marginBottom="md">
-                  {t('settings.profile.preferencesSummary')}
+                  {t("settings.profile.preferencesSummary")}
                 </Text>
                 <Animated.View
                   style={{
@@ -270,7 +270,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                           color="primary"
                         />
                         <Text variant="body" marginLeft="sm">
-                          {t('settings.profile.primaryUse')}: {userPreferences.primaryUseCase}
+                          {t("settings.profile.primaryUse")}: {userPreferences.primaryUseCase}
                         </Text>
                       </Box>
                     )}
@@ -278,7 +278,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                       <Box flexDirection="row" alignItems="center" marginBottom="sm">
                         <Icon name="time" size={layoutConstants.iconSize.small} color="primary" />
                         <Text variant="body" marginLeft="sm">
-                          {t('settings.profile.usage')}: {userPreferences.appUsageFrequency}
+                          {t("settings.profile.usage")}: {userPreferences.appUsageFrequency}
                         </Text>
                       </Box>
                     )}
@@ -293,10 +293,10 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                         </Box>
                         <Box flex={1} marginLeft="sm">
                           <Text variant="body" marginBottom="xs">
-                            {t('settings.profile.interests')}:
+                            {t("settings.profile.interests")}:
                           </Text>
                           <Text variant="bodySmall" color="textSecondary">
-                            {userPreferences.interests.join(', ')}
+                            {userPreferences.interests.join(", ")}
                           </Text>
                         </Box>
                       </Box>

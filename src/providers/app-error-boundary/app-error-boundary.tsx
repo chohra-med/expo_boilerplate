@@ -1,7 +1,7 @@
-import type { ReactElement } from 'react';
-import ErrorBoundary from 'react-native-error-boundary';
+import type { ReactElement } from "react";
+import ErrorBoundary from "react-native-error-boundary";
 
-import { ErrorFallback } from './components/error-fallback';
+import { ErrorFallback } from "./components/error-fallback";
 
 type AppErrorBoundaryProps = {
   children: ReactElement;

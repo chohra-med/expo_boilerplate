@@ -4,28 +4,18 @@ import { useTranslation } from "react-i18next";
 import { Animated, ScrollView } from "react-native";
 import { getQuestionnaireStepsByLanguage } from "#root/features/onboarding/config/onboarding-questionnaires";
 import { useOnboarding } from "#root/features/onboarding/hooks/use-onboarding";
-import {
-  Box,
-  Button,
-  Icon,
-  IconButton,
-  SafeArea,
-  Text,
-} from "#root/ui/components";
-import {
-  animationConfig,
-  layoutConstants,
-  profileStyles,
-} from "../constants/profile-styles";
+import { Box, Button, Icon, IconButton, SafeArea, Text } from "#root/ui/components";
+import { animationConfig, layoutConstants, profileStyles } from "../constants/profile-styles";
 
 interface QuestionnaireDetailViewProps {
   onBack: () => void;
   onEdit?: () => void;
 }
 
-export const QuestionnaireDetailView: React.FC<
-  QuestionnaireDetailViewProps
-> = ({ onBack, onEdit }) => {
+export const QuestionnaireDetailView: React.FC<QuestionnaireDetailViewProps> = ({
+  onBack,
+  onEdit,
+}) => {
   const { t } = useTranslation();
   const { questionnaireAnswers, currentLanguage } = useOnboarding();
 
@@ -172,18 +162,12 @@ export const QuestionnaireDetailView: React.FC<
             {/* Answer Details */}
             {isMultiple && answer.length > 1 && (
               <Box marginTop="md">
-                <Text
-                  variant="bodySmall"
-                  color="textSecondary"
-                  marginBottom="sm"
-                >
+                <Text variant="bodySmall" color="textSecondary" marginBottom="sm">
                   {t("settings.profile.selectedOptions")}:
                 </Text>
                 <Box flexDirection="row" flexWrap="wrap" gap="xs">
                   {answer.map((ans, idx) => {
-                    const option = step.stepOptions.find(
-                      (opt) => opt.value === ans
-                    );
+                    const option = step.stepOptions.find((opt) => opt.value === ans);
                     return (
                       <Box
                         key={idx}
@@ -259,11 +243,7 @@ export const QuestionnaireDetailView: React.FC<
                   marginBottom="lg"
                   style={profileStyles.shadowSummary}
                 >
-                  <Box
-                    flexDirection="row"
-                    alignItems="center"
-                    marginBottom="sm"
-                  >
+                  <Box flexDirection="row" alignItems="center" marginBottom="sm">
                     <Icon
                       name="checkmark-circle"
                       size={layoutConstants.iconSize.medium}
@@ -305,20 +285,10 @@ export const QuestionnaireDetailView: React.FC<
                   size={layoutConstants.iconSize.xlarge}
                   color="textSecondary"
                 />
-                <Text
-                  variant="h4"
-                  textAlign="center"
-                  marginTop="lg"
-                  marginBottom="md"
-                >
+                <Text variant="h4" textAlign="center" marginTop="lg" marginBottom="md">
                   {t("settings.profile.noQuestionnaireDetails")}
                 </Text>
-                <Text
-                  variant="body"
-                  color="textSecondary"
-                  textAlign="center"
-                  marginBottom="lg"
-                >
+                <Text variant="body" color="textSecondary" textAlign="center" marginBottom="lg">
                   {t("settings.profile.noQuestionnaireDetailsDescription")}
                 </Text>
                 <Button

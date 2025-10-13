@@ -16,9 +16,7 @@ interface ConfigurableQuestionnaireProps {
   showSkip?: boolean;
 }
 
-export const ConfigurableQuestionnaire: React.FC<
-  ConfigurableQuestionnaireProps
-> = ({
+export const ConfigurableQuestionnaire: React.FC<ConfigurableQuestionnaireProps> = ({
   questionnaire,
   selectedAnswers,
   onAnswer,
@@ -30,11 +28,7 @@ export const ConfigurableQuestionnaire: React.FC<
   const { t } = useTranslation();
   const [otherText, setOtherText] = useState("");
   const [localAnswers, setLocalAnswers] = useState<string[]>(
-    Array.isArray(selectedAnswers)
-      ? selectedAnswers
-      : selectedAnswers
-      ? [selectedAnswers]
-      : []
+    Array.isArray(selectedAnswers) ? selectedAnswers : selectedAnswers ? [selectedAnswers] : []
   );
 
   /**
@@ -116,9 +110,7 @@ export const ConfigurableQuestionnaire: React.FC<
 
       if (questionnaire.multiple) {
         // Update the "other" answer with the text
-        const otherAnswers = localAnswers.filter(
-          (answer) => answer !== "other"
-        );
+        const otherAnswers = localAnswers.filter((answer) => answer !== "other");
         const newAnswers = text.trim() ? [...otherAnswers, text] : otherAnswers;
         setLocalAnswers(newAnswers);
         onAnswer(newAnswers);
@@ -146,12 +138,7 @@ export const ConfigurableQuestionnaire: React.FC<
           {questionnaire.stepTitle}
         </Text>
         {questionnaire.multiple && (
-          <Text
-            variant="h4"
-            textAlign="center"
-            color="textSecondary"
-            marginBottom="md"
-          >
+          <Text variant="h4" textAlign="center" color="textSecondary" marginBottom="md">
             {t("onboarding.buttons.selectAll")}
           </Text>
         )}
@@ -160,9 +147,7 @@ export const ConfigurableQuestionnaire: React.FC<
       <Box flex={1} marginBottom="lg">
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={
-            configurableQuestionnaireStyles.scrollViewContent
-          }
+          contentContainerStyle={configurableQuestionnaireStyles.scrollViewContent}
         >
           <Box gap="sm">
             {questionnaire.stepOptions.map((option) => (
@@ -170,9 +155,7 @@ export const ConfigurableQuestionnaire: React.FC<
                 key={option.id}
                 title={option.label}
                 onPress={() => handleAnswer(option.value)}
-                buttonTypeVariant={
-                  localAnswers.includes(option.value) ? "primary" : "outline"
-                }
+                buttonTypeVariant={localAnswers.includes(option.value) ? "primary" : "outline"}
                 buttonSizeVariant="medium"
               />
             ))}
@@ -182,15 +165,13 @@ export const ConfigurableQuestionnaire: React.FC<
           {questionnaire.hasOtherOption && hasOtherSelected && (
             <Box marginTop="md">
               <Text variant="body" marginBottom="sm" color="textSecondary">
-                {questionnaire.otherOptionPlaceholder ||
-                  t("onboarding.buttons.pleaseSpecify")}
+                {questionnaire.otherOptionPlaceholder || t("onboarding.buttons.pleaseSpecify")}
               </Text>
               <TextInput
                 value={otherText}
                 onChangeText={handleOtherTextChange}
                 placeholder={
-                  questionnaire.otherOptionPlaceholder ||
-                  t("onboarding.buttons.pleaseSpecify")
+                  questionnaire.otherOptionPlaceholder || t("onboarding.buttons.pleaseSpecify")
                 }
                 style={configurableQuestionnaireStyles.textInput}
                 multiline
@@ -202,12 +183,7 @@ export const ConfigurableQuestionnaire: React.FC<
       </Box>
 
       {/* Fixed bottom buttons */}
-      <Box
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-        paddingTop="md"
-      >
+      <Box flexDirection="row" justifyContent="space-between" alignItems="center" paddingTop="md">
         {/* Skip button on the left */}
         <Box>
           {questionnaire.isSkippable && showSkip && (
@@ -223,11 +199,7 @@ export const ConfigurableQuestionnaire: React.FC<
         {/* Next/Done button on the right */}
         <Box>
           <Button
-            title={
-              isLastStep
-                ? t("onboarding.buttons.done")
-                : t("onboarding.buttons.next")
-            }
+            title={isLastStep ? t("onboarding.buttons.done") : t("onboarding.buttons.next")}
             onPress={handleNext}
             disabled={!canProceed}
             buttonTypeVariant="primary"

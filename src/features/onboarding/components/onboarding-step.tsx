@@ -1,7 +1,7 @@
-import type React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Box, Button, Text } from '#root/ui/components';
-import type { OnboardingStep } from '../types';
+import type React from "react";
+import { useTranslation } from "react-i18next";
+import { Box, Button, Text } from "#root/ui/components";
+import type { OnboardingStep } from "../types";
 
 interface OnboardingStepProps {
   step: OnboardingStep;
@@ -44,7 +44,7 @@ export const OnboardingStepComponent: React.FC<OnboardingStepProps> = ({
         <Box>
           {!isLastStep && showSkip && (
             <Button
-              title={t('onboarding.buttons.skip')}
+              title={t("onboarding.buttons.skip")}
               onPress={onSkip}
               buttonTypeVariant="ghost"
               buttonSizeVariant="small"
@@ -56,7 +56,7 @@ export const OnboardingStepComponent: React.FC<OnboardingStepProps> = ({
         <Box>
           {canGoNext && (
             <Button
-              title={t('onboarding.buttons.next')}
+              title={t("onboarding.buttons.next")}
               onPress={onNext}
               buttonTypeVariant="primary"
               buttonSizeVariant="small"
@@ -65,7 +65,7 @@ export const OnboardingStepComponent: React.FC<OnboardingStepProps> = ({
 
           {isLastStep && (
             <Button
-              title={t('onboarding.buttons.done')}
+              title={t("onboarding.buttons.done")}
               onPress={onNext}
               buttonTypeVariant="primary"
               buttonSizeVariant="small"

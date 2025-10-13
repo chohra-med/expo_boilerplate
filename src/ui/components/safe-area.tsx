@@ -9,11 +9,11 @@ import {
   type PositionProps,
   type SpacingProps,
   spacing,
-} from '@shopify/restyle';
-import type React from 'react';
-import { SafeAreaView as RNSafeAreaView } from 'react-native-safe-area-context';
-import type { Theme } from '../style/theme';
-import { safeAreaVariantsFunction } from '../style/variants/safe-area-variants';
+} from "@shopify/restyle";
+import type React from "react";
+import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import type { Theme } from "../style/theme";
+import { safeAreaVariantsFunction } from "../style/variants/safe-area-variants";
 
 // Define the props type by combining all Restyle prop types
 export type SafeAreaViewProps = SpacingProps<Theme> &
@@ -23,7 +23,7 @@ export type SafeAreaViewProps = SpacingProps<Theme> &
   BorderProps<Theme> &
   React.ComponentProps<typeof RNSafeAreaView> & {
     // Add support for variant prop
-    variant?: keyof Theme['safeAreaVariants'];
+    variant?: keyof Theme["safeAreaVariants"];
   };
 
 // Create the SafeAreaView component using the pattern from the article

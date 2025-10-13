@@ -1,5 +1,5 @@
-import type React from 'react';
-import { Box } from '#root/ui/components';
+import type React from "react";
+import { Box } from "#root/ui/components";
 
 interface ProgressBarProps {
   progress: number; // 0 to 1

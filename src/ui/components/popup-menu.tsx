@@ -1,7 +1,7 @@
-import type React from 'react';
-import { useState } from 'react';
-import { Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import { Box, Button, Card, Text } from './index';
+import type React from "react";
+import { useState } from "react";
+import { Modal, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { Box, Button, Card, Text } from "./index";
 
 export interface PopupMenuOption {
   id: string;
@@ -82,17 +82,17 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
                         justifyContent="space-between"
                         padding="md"
                         backgroundColor={
-                          option.value === selectedValue ? 'primaryBackground' : 'transparent'
+                          option.value === selectedValue ? "primaryBackground" : "transparent"
                         }
                         borderRadius="md"
                         borderWidth={option.value === selectedValue ? 1 : 0}
-                        borderColor={option.value === selectedValue ? 'primary' : 'transparent'}
+                        borderColor={option.value === selectedValue ? "primary" : "transparent"}
                       >
                         <Box flexDirection="row" alignItems="center" flex={1}>
                           {option.icon && <Box marginRight="sm">{option.icon}</Box>}
                           <Text
                             variant="body"
-                            color={option.value === selectedValue ? 'primary' : 'text'}
+                            color={option.value === selectedValue ? "primary" : "text"}
                           >
                             {option.label}
                           </Text>

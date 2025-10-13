@@ -1,4 +1,4 @@
-import type { NavigatorScreenParams } from '@react-navigation/native';
+import type { NavigatorScreenParams } from "@react-navigation/native";
 
 // Navigation type definitions
 export type RootStackParamList = {

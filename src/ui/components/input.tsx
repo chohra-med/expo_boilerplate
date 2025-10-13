@@ -1,10 +1,10 @@
-import type React from 'react';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
-import { type StyleProp, TextInput, type TextStyle, TouchableOpacity } from 'react-native';
-import { useTheme } from '../style/theme-provider';
-import { Box } from './box';
-import { Icon } from './icon';
-import { Text } from './text';
+import type React from "react";
+import { forwardRef, useCallback, useMemo, useState } from "react";
+import { type StyleProp, TextInput, type TextStyle, TouchableOpacity } from "react-native";
+import { useTheme } from "../style/theme-provider";
+import { Box } from "./box";
+import { Icon } from "./icon";
+import { Text } from "./text";
 
 export interface InputProps {
   label?: string;
@@ -16,17 +16,17 @@ export interface InputProps {
   error?: string;
   disabled?: boolean;
   secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
   autoCorrect?: boolean;
-  autoComplete?: 'off' | 'email' | 'password' | 'name' | 'tel';
+  autoComplete?: "off" | "email" | "password" | "name" | "tel";
   multiline?: boolean;
   numberOfLines?: number;
   maxLength?: number;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  inputTypeVariant?: 'default' | 'outlined' | 'filled';
-  inputSizeVariant?: 'small' | 'medium' | 'large';
+  inputTypeVariant?: "default" | "outlined" | "filled";
+  inputSizeVariant?: "small" | "medium" | "large";
 }
 
 export const Input = forwardRef<TextInput, InputProps>(
@@ -41,17 +41,17 @@ export const Input = forwardRef<TextInput, InputProps>(
       error,
       disabled = false,
       secureTextEntry = false,
-      keyboardType = 'default',
-      autoCapitalize = 'sentences',
+      keyboardType = "default",
+      autoCapitalize = "sentences",
       autoCorrect = true,
-      autoComplete = 'off',
+      autoComplete = "off",
       multiline = false,
       numberOfLines = 1,
       maxLength,
       leftIcon,
       rightIcon,
-      inputTypeVariant = 'outlined',
-      inputSizeVariant = 'medium',
+      inputTypeVariant = "outlined",
+      inputSizeVariant = "medium",
     },
     ref
   ) => {
@@ -76,54 +76,54 @@ export const Input = forwardRef<TextInput, InputProps>(
     const getInputContainerProps = useCallback(() => {
       const baseProps = {
         borderWidth: 1,
-        borderRadius: 'md' as const,
-        flexDirection: 'row' as const,
-        alignItems: 'center' as const,
-        paddingHorizontal: 'md' as const,
+        borderRadius: "md" as const,
+        flexDirection: "row" as const,
+        alignItems: "center" as const,
+        paddingHorizontal: "md" as const,
         opacity: disabled ? 0.5 : 1,
       };
 
       switch (inputTypeVariant) {
-        case 'filled':
+        case "filled":
           return {
             ...baseProps,
-            backgroundColor: 'backgroundSecondary' as const,
-            borderColor: error ? ('error' as const) : ('transparent' as const),
+            backgroundColor: "backgroundSecondary" as const,
+            borderColor: error ? ("error" as const) : ("transparent" as const),
           };
-        case 'outlined':
+        case "outlined":
           return {
             ...baseProps,
-            backgroundColor: 'transparent' as const,
+            backgroundColor: "transparent" as const,
             borderColor: error
-              ? ('error' as const)
+              ? ("error" as const)
               : isFocused
-                ? ('primary' as const)
-                : ('border' as const),
+                ? ("primary" as const)
+                : ("border" as const),
           };
         default:
           return {
             ...baseProps,
-            backgroundColor: 'transparent' as const,
-            borderColor: error ? ('error' as const) : ('border' as const),
+            backgroundColor: "transparent" as const,
+            borderColor: error ? ("error" as const) : ("border" as const),
           };
       }
     }, [inputTypeVariant, error, isFocused, disabled]);
 
     const getInputPadding = useCallback(() => {
       switch (inputSizeVariant) {
-        case 'small':
-          return { paddingVertical: 'sm' as const };
-        case 'large':
-          return { paddingVertical: 'lg' as const };
+        case "small":
+          return { paddingVertical: "sm" as const };
+        case "large":
+          return { paddingVertical: "lg" as const };
         default:
-          return { paddingVertical: 'md' as const };
+          return { paddingVertical: "md" as const };
       }
     }, [inputSizeVariant]);
 
     const inputStyle = useMemo<StyleProp<TextStyle>>(() => {
       return {
         flex: 1,
-        textAlignVertical: multiline ? 'top' : ('center' as const),
+        textAlignVertical: multiline ? "top" : ("center" as const),
         color: theme.colors.text,
       };
     }, [multiline, theme.colors.text]);
@@ -131,7 +131,7 @@ export const Input = forwardRef<TextInput, InputProps>(
     return (
       <Box>
         {label && (
-          <Text variant="label" color={error ? 'error' : 'text'} marginBottom="sm">
+          <Text variant="label" color={error ? "error" : "text"} marginBottom="sm">
             {label}
           </Text>
         )}
@@ -163,7 +163,7 @@ export const Input = forwardRef<TextInput, InputProps>(
           {secureTextEntry && (
             <Box padding="xs">
               <TouchableOpacity onPress={togglePasswordVisibility}>
-                <Icon name={showPassword ? 'eye-off' : 'eye'} size={20} color="text" />
+                <Icon name={showPassword ? "eye-off" : "eye"} size={20} color="text" />
               </TouchableOpacity>
             </Box>
           )}
@@ -183,4 +183,4 @@ export const Input = forwardRef<TextInput, InputProps>(
   }
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";

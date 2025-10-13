@@ -1,5 +1,5 @@
-import type React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import type React from "react";
 import { MainSettingsScreen } from "../screens/main-settings-screen";
 import { ProfileScreen } from "../screens/profile-screen";
 import { QuestionnaireScreen } from "../screens/questionnaire-screen";

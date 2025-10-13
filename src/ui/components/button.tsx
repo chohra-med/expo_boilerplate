@@ -1,13 +1,13 @@
-import type React from 'react';
-import { ActivityIndicator, TouchableOpacity } from 'react-native';
-import { Box } from './box';
-import { Text } from './text';
+import type React from "react";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
+import { Box } from "./box";
+import { Text } from "./text";
 
 export interface ButtonProps {
   title: string;
   onPress: () => void;
-  buttonTypeVariant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'selection';
-  buttonSizeVariant?: 'small' | 'medium' | 'large';
+  buttonTypeVariant?: "primary" | "secondary" | "outline" | "ghost" | "selection";
+  buttonSizeVariant?: "small" | "medium" | "large";
   disabled?: boolean;
   loading?: boolean;
   leftIcon?: React.ReactNode;
@@ -18,8 +18,8 @@ export interface ButtonProps {
 export const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
-  buttonTypeVariant = 'primary',
-  buttonSizeVariant = 'medium',
+  buttonTypeVariant = "primary",
+  buttonSizeVariant = "medium",
   disabled = false,
   loading = false,
   leftIcon,
@@ -28,36 +28,36 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const getVariantProps = () => {
     switch (buttonTypeVariant) {
-      case 'primary':
+      case "primary":
         return {
-          backgroundColor: 'primary' as const,
+          backgroundColor: "primary" as const,
           borderWidth: 0,
         };
-      case 'secondary':
+      case "secondary":
         return {
-          backgroundColor: 'backgroundSecondary' as const,
+          backgroundColor: "backgroundSecondary" as const,
           borderWidth: 0,
         };
-      case 'outline':
+      case "outline":
         return {
-          backgroundColor: 'transparent' as const,
+          backgroundColor: "transparent" as const,
           borderWidth: 1,
-          borderColor: 'primary' as const,
+          borderColor: "primary" as const,
         };
-      case 'ghost':
+      case "ghost":
         return {
-          backgroundColor: 'transparent' as const,
+          backgroundColor: "transparent" as const,
           borderWidth: 0,
         };
-      case 'selection':
+      case "selection":
         return {
-          backgroundColor: selected ? ('accent' as const) : ('backgroundSecondary' as const),
+          backgroundColor: selected ? ("accent" as const) : ("backgroundSecondary" as const),
           borderWidth: 1,
-          borderColor: selected ? ('accent' as const) : ('border' as const),
+          borderColor: selected ? ("accent" as const) : ("border" as const),
         };
       default:
         return {
-          backgroundColor: 'primary' as const,
+          backgroundColor: "primary" as const,
           borderWidth: 0,
         };
     }
@@ -65,49 +65,49 @@ export const Button: React.FC<ButtonProps> = ({
 
   const getSizeProps = () => {
     switch (buttonSizeVariant) {
-      case 'small':
+      case "small":
         return {
-          paddingHorizontal: 'md' as const,
-          paddingVertical: 'sm' as const,
+          paddingHorizontal: "md" as const,
+          paddingVertical: "sm" as const,
         };
-      case 'large':
+      case "large":
         return {
-          paddingHorizontal: 'xl' as const,
-          paddingVertical: 'lg' as const,
+          paddingHorizontal: "xl" as const,
+          paddingVertical: "lg" as const,
         };
       default:
         return {
-          paddingHorizontal: 'lg' as const,
-          paddingVertical: 'md' as const,
+          paddingHorizontal: "lg" as const,
+          paddingVertical: "md" as const,
         };
     }
   };
 
   const getTextColor = () => {
     switch (buttonTypeVariant) {
-      case 'primary':
-        return 'textInverse' as const;
-      case 'secondary':
-        return 'text' as const;
-      case 'outline':
-        return 'primary' as const;
-      case 'ghost':
-        return 'primary' as const;
-      case 'selection':
-        return selected ? ('textInverse' as const) : ('text' as const);
+      case "primary":
+        return "textInverse" as const;
+      case "secondary":
+        return "text" as const;
+      case "outline":
+        return "primary" as const;
+      case "ghost":
+        return "primary" as const;
+      case "selection":
+        return selected ? ("textInverse" as const) : ("text" as const);
       default:
-        return 'textInverse' as const;
+        return "textInverse" as const;
     }
   };
 
   const getTextVariant = () => {
     switch (buttonSizeVariant) {
-      case 'small':
-        return 'buttonSmall' as const;
-      case 'large':
-        return 'button' as const;
+      case "small":
+        return "buttonSmall" as const;
+      case "large":
+        return "button" as const;
       default:
-        return 'button' as const;
+        return "button" as const;
     }
   };
 
@@ -125,7 +125,7 @@ export const Button: React.FC<ButtonProps> = ({
         {loading ? (
           <ActivityIndicator
             size="small"
-            color={buttonTypeVariant === 'primary' ? '#FFFFFF' : '#3B82F6'}
+            color={buttonTypeVariant === "primary" ? "#FFFFFF" : "#3B82F6"}
           />
         ) : (
           <>

@@ -1,6 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import type React from "react";
 import { useCallback } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { ProfileSection } from "#root/features/settings/components/profile-section";
 
 /**

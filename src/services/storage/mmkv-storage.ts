@@ -1,9 +1,9 @@
-import { MMKV } from 'react-native-mmkv';
+import { MMKV } from "react-native-mmkv";
 
 // Create MMKV instance
 const mmkv = new MMKV({
-  id: 'mobile-launcher-storage',
-  encryptionKey: 'mobile-launcher-encryption-key', // In production, use a secure key
+  id: "mobile-launcher-storage",
+  encryptionKey: "mobile-launcher-encryption-key", // In production, use a secure key
 });
 
 // Storage interface for Redux Persist
@@ -14,7 +14,7 @@ export const mmkvStorage = {
         mmkv.set(key, value);
         resolve();
       } catch (error) {
-        console.error('MMKV setItem error:', error);
+        console.error("MMKV setItem error:", error);
         resolve();
       }
     });
@@ -26,7 +26,7 @@ export const mmkvStorage = {
         const value = mmkv.getString(key);
         resolve(value || null);
       } catch (error) {
-        console.error('MMKV getItem error:', error);
+        console.error("MMKV getItem error:", error);
         resolve(null);
       }
     });
@@ -38,7 +38,7 @@ export const mmkvStorage = {
         mmkv.delete(key);
         resolve();
       } catch (error) {
-        console.error('MMKV removeItem error:', error);
+        console.error("MMKV removeItem error:", error);
         resolve();
       }
     });
@@ -50,7 +50,7 @@ export const mmkvStorage = {
         mmkv.clearAll();
         resolve();
       } catch (error) {
-        console.error('MMKV clear error:', error);
+        console.error("MMKV clear error:", error);
         resolve();
       }
     });

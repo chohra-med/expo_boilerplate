@@ -12,9 +12,9 @@ import {
   type SpacingProps,
   shadow,
   spacing,
-} from '@shopify/restyle';
-import { View } from 'react-native';
-import type { Theme } from '../style/theme';
+} from "@shopify/restyle";
+import { View } from "react-native";
+import type { Theme } from "../style/theme";
 
 // Define the props type by combining all Restyle prop types
 export type BoxProps = SpacingProps<Theme> &

@@ -1,10 +1,10 @@
-import { createStackNavigator } from '@react-navigation/stack';
-import type React from 'react';
-import { LoginScreen, selectIsAuthenticated } from '#root/features/auth';
-import { OnboardingScreen, selectIsOnboardingCompleted } from '#root/features/onboarding';
-import { useAppSelector } from '#root/store/store';
-import type { RootStackParamList } from '../routes';
-import { AppTabNavigator } from './app-tab-navigator';
+import { createStackNavigator } from "@react-navigation/stack";
+import type React from "react";
+import { LoginScreen, selectIsAuthenticated } from "#root/features/auth";
+import { OnboardingScreen, selectIsOnboardingCompleted } from "#root/features/onboarding";
+import { useAppSelector } from "#root/store/store";
+import type { RootStackParamList } from "../routes";
+import { AppTabNavigator } from "./app-tab-navigator";
 
 const RootStack = createStackNavigator<RootStackParamList>();
 

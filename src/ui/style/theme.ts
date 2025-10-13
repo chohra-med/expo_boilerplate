@@ -1,16 +1,16 @@
-import { createTheme } from '@shopify/restyle';
-import { colors } from '../tokens/colors';
-import { opacity } from '../tokens/opacity';
-import { zIndices } from '../tokens/z-indices';
-import { themeColors } from './colors-theme';
-import { borderRadiusVariants } from './variants/border-variants';
-import * as btnVariants from './variants/button-variants';
-import { cardVariants } from './variants/card-variants';
-import { inputSizeVariants, inputTypeVariants } from './variants/input-variants';
-import { safeAreaVariants } from './variants/safe-area-variants';
-import { shadowVariants } from './variants/shadow-variants';
-import { spacingVariants } from './variants/spacing-variants';
-import { textVariants } from './variants/text-variants';
+import { createTheme } from "@shopify/restyle";
+import { colors } from "../tokens/colors";
+import { opacity } from "../tokens/opacity";
+import { zIndices } from "../tokens/z-indices";
+import { themeColors } from "./colors-theme";
+import { borderRadiusVariants } from "./variants/border-variants";
+import * as btnVariants from "./variants/button-variants";
+import { cardVariants } from "./variants/card-variants";
+import { inputSizeVariants, inputTypeVariants } from "./variants/input-variants";
+import { safeAreaVariants } from "./variants/safe-area-variants";
+import { shadowVariants } from "./variants/shadow-variants";
+import { spacingVariants } from "./variants/spacing-variants";
+import { textVariants } from "./variants/text-variants";
 
 // Create base theme configuration
 const baseThemeElements = {
@@ -59,12 +59,12 @@ export type Theme = typeof lightTheme;
 // This is just for the provider and typescript for theme switching
 export type ProviderTheme = ReturnType<typeof createTheme>;
 
-export type TextVariant = Exclude<keyof Theme['textVariants'], 'defaults'>;
+export type TextVariant = Exclude<keyof Theme["textVariants"], "defaults">;
 
 // Export color scheme type
-export type ColorScheme = 'light' | 'dark';
+export type ColorScheme = "light" | "dark";
 
 // Export color types
-export type Colors = keyof Theme['colors'];
-export type Spacing = keyof Theme['spacing'];
-export type BorderRadii = keyof Theme['borderRadii'];
+export type Colors = keyof Theme["colors"];
+export type Spacing = keyof Theme["spacing"];
+export type BorderRadii = keyof Theme["borderRadii"];

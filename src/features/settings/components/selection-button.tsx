@@ -1,7 +1,7 @@
-import type { Ionicons } from '@expo/vector-icons';
-import type React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { Box, Icon, Text } from '#root/ui/components';
+import type { Ionicons } from "@expo/vector-icons";
+import type React from "react";
+import { TouchableOpacity } from "react-native";
+import { Box, Icon, Text } from "#root/ui/components";
 
 interface SelectionButtonProps {
   /** The icon name to display */
@@ -30,20 +30,20 @@ export const SelectionButton: React.FC<SelectionButtonProps> = ({
         <Box
           alignItems="center"
           padding="md"
-          backgroundColor={isSelected ? 'primaryBackground' : 'background'}
+          backgroundColor={isSelected ? "primaryBackground" : "background"}
           borderRadius="md"
           borderWidth={isSelected ? 2 : 1}
-          borderColor={isSelected ? 'primary' : 'border'}
+          borderColor={isSelected ? "primary" : "border"}
         >
           <Icon
             name={iconName as keyof typeof Ionicons.glyphMap}
             size={24}
-            color={isSelected ? 'primary' : 'textSecondary'}
+            color={isSelected ? "primary" : "textSecondary"}
           />
           <Text
             variant="caption"
             marginTop="xs"
-            color={isSelected ? 'primary' : 'textSecondary'}
+            color={isSelected ? "primary" : "textSecondary"}
             textAlign="center"
           >
             {label}

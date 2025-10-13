@@ -1,19 +1,19 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import type React from 'react';
-import { useEffect } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { RootStackNavigator } from '#root/navigation/navigators/root-stack-navigator';
-import { persistor, store } from '#root/store/store';
-import { ToastProvider } from '#root/ui/components/toast-provider';
-import { ThemeProvider } from '#root/ui/style/theme-provider';
-import '#root/config/i18n';
-import { AppErrorBoundary } from '#root/providers/app-error-boundary/app-error-boundary';
+import { NavigationContainer } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import type React from "react";
+import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { RootStackNavigator } from "#root/navigation/navigators/root-stack-navigator";
+import { persistor, store } from "#root/store/store";
+import { ToastProvider } from "#root/ui/components/toast-provider";
+import { ThemeProvider } from "#root/ui/style/theme-provider";
+import "#root/config/i18n";
+import { AppErrorBoundary } from "#root/providers/app-error-boundary/app-error-boundary";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();

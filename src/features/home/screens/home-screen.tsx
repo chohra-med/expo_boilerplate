@@ -51,23 +51,14 @@ const HomeScreenComponent: React.FC = () => {
 
     // Cards animation with delay
     cardsOpacity.value = withDelay(300, withTiming(1, { duration: 600 }));
-    cardsTranslateY.value = withDelay(
-      300,
-      withSpring(0, { damping: 15, stiffness: 100 })
-    );
+    cardsTranslateY.value = withDelay(300, withSpring(0, { damping: 15, stiffness: 100 }));
 
     // Pulse animation for the activity card
     pulseScale.value = withSequence(
       withTiming(1.05, { duration: 1000 }),
       withTiming(1, { duration: 1000 })
     );
-  }, [
-    headerOpacity,
-    headerTranslateY,
-    cardsOpacity,
-    cardsTranslateY,
-    pulseScale,
-  ]);
+  }, [headerOpacity, headerTranslateY, cardsOpacity, cardsTranslateY, pulseScale]);
 
   // Memoized animated styles
   const headerAnimatedStyle = useAnimatedStyle(
@@ -94,12 +85,7 @@ const HomeScreenComponent: React.FC = () => {
   );
 
   const shimmerAnimatedStyle = useAnimatedStyle(() => {
-    const shimmer = interpolate(
-      pulseScale.value,
-      [1, 1.05, 1],
-      [0, 1, 0],
-      Extrapolate.CLAMP
-    );
+    const shimmer = interpolate(pulseScale.value, [1, 1.05, 1], [0, 1, 0], Extrapolate.CLAMP);
     return {
       opacity: shimmer * 0.3,
     };

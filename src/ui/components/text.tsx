@@ -1,7 +1,7 @@
-import { createText } from '@shopify/restyle';
-import type { ComponentProps } from 'react';
-import type { Theme } from '#root/ui/style/theme';
-import type { TextTypeVariantProps } from '#root/ui/style/variants/text-variants';
+import { createText } from "@shopify/restyle";
+import type { ComponentProps } from "react";
+import type { Theme } from "#root/ui/style/theme";
+import type { TextTypeVariantProps } from "#root/ui/style/variants/text-variants";
 
 const BaseText = createText<Theme>();
 

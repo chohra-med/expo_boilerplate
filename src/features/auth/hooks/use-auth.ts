@@ -1,17 +1,17 @@
-import { useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '#root/store/store';
-import { useToast } from '#root/ui/hooks';
-import { useLoginMutation } from '../api/auth.api';
-import { authService } from '../services/auth.service';
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "#root/store/store";
+import { useToast } from "#root/ui/hooks";
+import { useLoginMutation } from "../api/auth.api";
+import { authService } from "../services/auth.service";
 import {
   selectAuthError,
   selectAuthLoading,
   selectAuthTokens,
   selectIsAuthenticated,
   selectUser,
-} from '../store/auth-selector';
-import { clearError, loginFailure, loginSuccess, logout, setLoading } from '../store/auth-slice';
-import type { LoginCredentials } from '../types';
+} from "../store/auth-selector";
+import { clearError, loginFailure, loginSuccess, logout, setLoading } from "../store/auth-slice";
+import type { LoginCredentials } from "../types";
 
 export const useAuth = () => {
   const dispatch = useAppDispatch();
@@ -35,9 +35,9 @@ export const useAuth = () => {
 
         // Mock user data
         const mockUser = {
-          id: '1',
+          id: "1",
           email: credentials.email,
-          name: credentials.email.split('@')[0],
+          name: credentials.email.split("@")[0],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -59,12 +59,12 @@ export const useAuth = () => {
           })
         );
 
-        showSuccess('Login Successful', 'Welcome back!');
+        showSuccess("Login Successful", "Welcome back!");
         return { success: true };
       } catch (_error: unknown) {
-        const errorMessage = 'Login failed. Please try again.';
+        const errorMessage = "Login failed. Please try again.";
         dispatch(loginFailure(errorMessage));
-        showError('Login Failed', errorMessage);
+        showError("Login Failed", errorMessage);
         return { success: false, error: errorMessage };
       }
     },
@@ -79,7 +79,7 @@ export const useAuth = () => {
       await authService.clearAuth();
 
       dispatch(logout());
-      showSuccess('Logged Out', 'You have been successfully logged out');
+      showSuccess("Logged Out", "You have been successfully logged out");
     } catch (_error) {
       // Even if clearing fails, dispatch logout
       dispatch(logout());
@@ -106,7 +106,7 @@ export const useAuth = () => {
         );
       }
     } catch (error) {
-      console.error('Failed to check auth status:', error);
+      console.error("Failed to check auth status:", error);
     }
   }, [dispatch]);
 

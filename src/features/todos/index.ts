@@ -1,14 +1,14 @@
 // API
-export { useGetTodosQuery } from './api/todos.api';
+export { useGetTodosQuery } from "./api/todos.api";
 
 // Components
-export { TodoItem } from './components/todo-item';
+export { TodoItem } from "./components/todo-item";
 
 // Hooks
-export { useTodos } from './hooks/use-todos';
+export { useTodos } from "./hooks/use-todos";
 
 // Screens
-export { TodosScreen } from './screens/todos-screen';
+export { TodosScreen } from "./screens/todos-screen";
 export {
   selectActiveTodos,
   selectCompletedTodos,
@@ -17,7 +17,7 @@ export {
   selectTodosError,
   selectTodosLoading,
   selectTodosState,
-} from './store/todos-selector';
+} from "./store/todos-selector";
 // Store
 export {
   clearCompletedTodos,
@@ -28,7 +28,7 @@ export {
   setTodos,
   todosReducer,
   toggleTodoComplete,
-} from './store/todos-slice';
+} from "./store/todos-slice";
 
 // Types
 export type {
@@ -36,4 +36,4 @@ export type {
   TodoItemProps,
   TodoState,
   TodosResponse,
-} from './types';
+} from "./types";

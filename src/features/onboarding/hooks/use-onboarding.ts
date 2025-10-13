@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '#root/store/store';
+import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useAppDispatch, useAppSelector } from "#root/store/store";
 import {
   selectCurrentLanguage,
   selectCurrentStep,
@@ -8,7 +8,7 @@ import {
   selectQuestionnaireAnswers,
   selectTotalSteps,
   selectUserPreferences,
-} from '../store/onboarding-selector';
+} from "../store/onboarding-selector";
 import {
   completeOnboarding,
   goToStep,
@@ -21,7 +21,7 @@ import {
   setQuestionnaireAnswer,
   setQuestionnaireAnswerWithQuestion,
   setQuestionnaireResponse,
-} from '../store/onboarding-slice';
+} from "../store/onboarding-slice";
 
 export const useOnboarding = () => {
   const dispatch = useAppDispatch();
@@ -76,7 +76,7 @@ export const useOnboarding = () => {
   );
 
   const handleSetLanguage = useCallback(
-    (language: 'en' | 'fr') => {
+    (language: "en" | "fr") => {
       dispatch(setLanguage(language));
       i18n.changeLanguage(language);
     },

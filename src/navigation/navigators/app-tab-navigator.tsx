@@ -11,9 +11,7 @@ import type { AppTabStackParamsList } from "../routes";
 const Tab = createBottomTabNavigator<AppTabStackParamsList>();
 
 const TodoScreen = lazy(async () => {
-  const { TodosScreen } = await import(
-    "#root/features/todos/screens/todos-screen"
-  );
+  const { TodosScreen } = await import("#root/features/todos/screens/todos-screen");
   return { default: TodosScreen };
 });
 export const AppTabNavigator: React.FC = () => {

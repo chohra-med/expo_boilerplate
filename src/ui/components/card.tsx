@@ -13,14 +13,14 @@ import {
   type SpacingProps,
   shadow,
   spacing,
-} from '@shopify/restyle';
-import { View } from 'react-native';
-import type { Theme } from '../style/theme';
+} from "@shopify/restyle";
+import { View } from "react-native";
+import type { Theme } from "../style/theme";
 
 // Create card variant function
-const cardVariant = createVariant<Theme, 'cardVariants', 'variant'>({
-  property: 'variant',
-  themeKey: 'cardVariants',
+const cardVariant = createVariant<Theme, "cardVariants", "variant">({
+  property: "variant",
+  themeKey: "cardVariants",
 });
 
 // Define the props type by combining all Restyle prop types
@@ -32,7 +32,7 @@ export type CardProps = SpacingProps<Theme> &
   ShadowProps<Theme> &
   React.ComponentProps<typeof View> & {
     // Add support for variant prop with default value
-    variant?: keyof Theme['cardVariants'];
+    variant?: keyof Theme["cardVariants"];
   };
 
 // Create the base Card component

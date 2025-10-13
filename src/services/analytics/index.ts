@@ -1,1 +1,1 @@
-export { analytics, initializeFirebaseAnalytics } from './analytics';
+export { analytics, initializeFirebaseAnalytics } from "./analytics";

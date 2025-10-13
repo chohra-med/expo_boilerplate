@@ -1,5 +1,5 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { OnboardingState, QuestionnaireAnswer, QuestionnaireResponse } from '../types';
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { OnboardingState, QuestionnaireAnswer, QuestionnaireResponse } from "../types";
 
 const initialState: OnboardingState = {
   currentStep: 0,
@@ -7,11 +7,11 @@ const initialState: OnboardingState = {
   isCompleted: false,
   questionnaireAnswers: {},
   userPreferences: {},
-  currentLanguage: 'en',
+  currentLanguage: "en",
 };
 
 const onboardingSlice = createSlice({
-  name: 'onboarding',
+  name: "onboarding",
   initialState,
   reducers: {
     nextStep: (state) => {
@@ -43,16 +43,16 @@ const onboardingSlice = createSlice({
 
       // Update user preferences based on stepId
       switch (stepId) {
-        case 'primary_use_case':
+        case "primary_use_case":
           state.userPreferences.primaryUseCase = answer as string;
           break;
-        case 'app_usage_frequency':
+        case "app_usage_frequency":
           state.userPreferences.appUsageFrequency = answer as string;
           break;
-        case 'interests':
+        case "interests":
           state.userPreferences.interests = answer as string[];
           break;
-        case 'notification_preferences':
+        case "notification_preferences":
           state.userPreferences.notificationPreferences = answer as string;
           break;
         default:
@@ -83,16 +83,16 @@ const onboardingSlice = createSlice({
 
       // Update user preferences based on stepId
       switch (stepId) {
-        case 'primary_use_case':
+        case "primary_use_case":
           state.userPreferences.primaryUseCase = answer as string;
           break;
-        case 'app_usage_frequency':
+        case "app_usage_frequency":
           state.userPreferences.appUsageFrequency = answer as string;
           break;
-        case 'interests':
+        case "interests":
           state.userPreferences.interests = answer as string[];
           break;
-        case 'notification_preferences':
+        case "notification_preferences":
           state.userPreferences.notificationPreferences = answer as string;
           break;
         default:
@@ -112,16 +112,16 @@ const onboardingSlice = createSlice({
         }
 
         switch (stepId) {
-          case 'primary_use_case':
+          case "primary_use_case":
             state.userPreferences.primaryUseCase = answerData.userAnswer as string;
             break;
-          case 'app_usage_frequency':
+          case "app_usage_frequency":
             state.userPreferences.appUsageFrequency = answerData.userAnswer as string;
             break;
-          case 'interests':
+          case "interests":
             state.userPreferences.interests = answerData.userAnswer as string[];
             break;
-          case 'notification_preferences':
+          case "notification_preferences":
             state.userPreferences.notificationPreferences = answerData.userAnswer as string;
             break;
           default:
@@ -129,7 +129,7 @@ const onboardingSlice = createSlice({
         }
       });
     },
-    setLanguage: (state, action: PayloadAction<'en' | 'fr'>) => {
+    setLanguage: (state, action: PayloadAction<"en" | "fr">) => {
       state.currentLanguage = action.payload;
     },
     completeOnboarding: (state) => {

@@ -1,15 +1,15 @@
-import type React from 'react';
-import { useCallback } from 'react';
-import { Pressable } from 'react-native';
+import type React from "react";
+import { useCallback } from "react";
+import { Pressable } from "react-native";
 import Animated, {
   runOnJS,
   SlideInRight,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-} from 'react-native-reanimated';
-import { Box, Icon, Text } from '#root/ui/components';
-import type { TodoItemProps } from '../types';
+} from "react-native-reanimated";
+import { Box, Icon, Text } from "#root/ui/components";
+import type { TodoItemProps } from "../types";
 
 const AnimatedBox = Animated.createAnimatedComponent(Box);
 
@@ -62,7 +62,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggleComplete, isCo
             width={24}
             height={24}
             borderRadius="full"
-            backgroundColor={isCompleted ? 'primary' : 'border'}
+            backgroundColor={isCompleted ? "primary" : "border"}
             alignItems="center"
             justifyContent="center"
           >
@@ -72,8 +72,8 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggleComplete, isCo
           <Box flex={1}>
             <Text
               variant="body"
-              color={isCompleted ? 'textSecondary' : 'text'}
-              textDecorationLine={isCompleted ? 'line-through' : 'none'}
+              color={isCompleted ? "textSecondary" : "text"}
+              textDecorationLine={isCompleted ? "line-through" : "none"}
             >
               {todo.title}
             </Text>
@@ -83,7 +83,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggleComplete, isCo
             width={8}
             height={8}
             borderRadius="full"
-            backgroundColor={isCompleted ? 'success' : 'warning'}
+            backgroundColor={isCompleted ? "success" : "warning"}
           />
         </Box>
       </Pressable>

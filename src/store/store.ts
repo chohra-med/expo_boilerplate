@@ -1,5 +1,5 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { type TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { configureStore } from "@reduxjs/toolkit";
+import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import {
   FLUSH,
   PAUSE,
@@ -9,15 +9,15 @@ import {
   persistStore,
   REGISTER,
   REHYDRATE,
-} from 'redux-persist';
-import { api } from '#root/services/api/api';
-import { mmkvStorage } from '#root/services/storage/mmkv-storage';
-import { rootReducer } from './reducers';
+} from "redux-persist";
+import { api } from "#root/services/api/api";
+import { mmkvStorage } from "#root/services/storage/mmkv-storage";
+import { rootReducer } from "./reducers";
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage: mmkvStorage,
-  whitelist: ['app', 'auth', 'onboarding'], // Only persist these reducers
+  whitelist: ["app", "auth", "onboarding"], // Only persist these reducers
   blacklist: [api.reducerPath], // Don't persist API cache
 };
 

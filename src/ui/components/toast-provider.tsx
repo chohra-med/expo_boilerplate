@@ -1,5 +1,5 @@
-import type React from 'react';
-import Toast from 'react-native-toast-message';
+import type React from "react";
+import Toast from "react-native-toast-message";
 
 interface ToastProviderProps {
   children: React.ReactNode;

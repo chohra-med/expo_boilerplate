@@ -1,8 +1,8 @@
-import { createStackNavigator } from '@react-navigation/stack';
-import type React from 'react';
-import { LoginScreen } from '#root/features/auth';
-import { OnboardingScreen } from '#root/features/onboarding';
-import type { OnboardingStackParamsList } from '../routes';
+import { createStackNavigator } from "@react-navigation/stack";
+import type React from "react";
+import { LoginScreen } from "#root/features/auth";
+import { OnboardingScreen } from "#root/features/onboarding";
+import type { OnboardingStackParamsList } from "../routes";
 
 const OnboardingStack = createStackNavigator<OnboardingStackParamsList>();
 

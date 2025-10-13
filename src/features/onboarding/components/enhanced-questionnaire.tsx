@@ -1,9 +1,9 @@
-import type React from 'react';
-import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
-import { Box, Button, Input, Text } from '#root/ui/components';
-import type { QuestionnaireStep } from '../utils/onboarding_constants';
+import type React from "react";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ScrollView } from "react-native";
+import { Box, Button, Input, Text } from "#root/ui/components";
+import type { QuestionnaireStep } from "../utils/onboarding_constants";
 
 interface EnhancedQuestionnaireProps {
   questionnaire: QuestionnaireStep;
@@ -30,19 +30,19 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
     return selectedAnswers ? [selectedAnswers as string] : [];
   });
 
-  const [otherText, setOtherText] = useState<string>('');
+  const [otherText, setOtherText] = useState<string>("");
   const [showOtherInput, setShowOtherInput] = useState<boolean>(false);
 
   const handleOptionSelect = useCallback(
     (optionValue: string) => {
-      if (optionValue === 'other') {
+      if (optionValue === "other") {
         setShowOtherInput(!showOtherInput);
         if (showOtherInput) {
           // Remove other from answers when hiding input
-          const newAnswers = localAnswers.filter((answer) => answer !== 'other');
+          const newAnswers = localAnswers.filter((answer) => answer !== "other");
           setLocalAnswers(newAnswers);
           onAnswer(newAnswers);
-          setOtherText('');
+          setOtherText("");
         }
         return;
       }
@@ -55,7 +55,7 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
         setLocalAnswers(newAnswers);
         onAnswer(newAnswers);
       } else {
-        const newAnswer = localAnswers.includes(optionValue) ? '' : optionValue;
+        const newAnswer = localAnswers.includes(optionValue) ? "" : optionValue;
         setLocalAnswers(newAnswer ? [newAnswer] : []);
         onAnswer(newAnswer);
       }
@@ -68,14 +68,14 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
       setOtherText(text);
       if (text.trim()) {
         // Add other with custom text to answers
-        const otherAnswers = localAnswers.filter((answer) => answer !== 'other');
+        const otherAnswers = localAnswers.filter((answer) => answer !== "other");
         const newAnswers = [...otherAnswers, `other:${text.trim()}`];
         setLocalAnswers(newAnswers);
         onAnswer(newAnswers);
       } else {
         // Remove other from answers if text is empty
         const newAnswers = localAnswers.filter(
-          (answer) => answer !== 'other' && !answer.startsWith('other:')
+          (answer) => answer !== "other" && !answer.startsWith("other:")
         );
         setLocalAnswers(newAnswers);
         onAnswer(newAnswers);
@@ -113,7 +113,7 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
         </Text>
         {questionnaire.multiple && (
           <Text variant="bodySmall" textAlign="center" color="textSecondary" marginBottom="md">
-            {t('onboarding.buttons.selectAll')}
+            {t("onboarding.buttons.selectAll")}
           </Text>
         )}
       </Box>
@@ -132,7 +132,7 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
                 onPress={() => handleOptionSelect(option.value)}
                 buttonTypeVariant="selection"
                 selected={
-                  isOptionSelected(option.value) || (option.value === 'other' && showOtherInput)
+                  isOptionSelected(option.value) || (option.value === "other" && showOtherInput)
                 }
                 buttonSizeVariant="medium"
               />
@@ -144,7 +144,7 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
             <Box marginTop="md">
               <Input
                 placeholder={
-                  questionnaire.otherOptionPlaceholder || t('onboarding.buttons.pleaseSpecify')
+                  questionnaire.otherOptionPlaceholder || t("onboarding.buttons.pleaseSpecify")
                 }
                 value={otherText}
                 onChangeText={handleOtherTextChange}
@@ -162,7 +162,7 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
         <Box>
           {questionnaire.isSkippable && (
             <Button
-              title={t('onboarding.buttons.skip')}
+              title={t("onboarding.buttons.skip")}
               onPress={onSkip}
               buttonTypeVariant="ghost"
               buttonSizeVariant="small"
@@ -173,7 +173,7 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
         {/* Next/Complete button on the right */}
         <Box>
           <Button
-            title={isLastStep ? t('onboarding.buttons.done') : t('onboarding.buttons.next')}
+            title={isLastStep ? t("onboarding.buttons.done") : t("onboarding.buttons.next")}
             onPress={handleNext}
             disabled={!canProceed}
             buttonTypeVariant="primary"

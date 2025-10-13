@@ -1,8 +1,8 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface AppState {
   isInitialized: boolean;
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system";
   language: string;
   isOnline: boolean;
   lastActiveTime: number | null;
@@ -10,20 +10,20 @@ export interface AppState {
 
 const initialState: AppState = {
   isInitialized: false,
-  theme: 'system',
-  language: 'en',
+  theme: "system",
+  language: "en",
   isOnline: true,
   lastActiveTime: null,
 };
 
 const appSlice = createSlice({
-  name: 'app',
+  name: "app",
   initialState,
   reducers: {
     setInitialized: (state, action: PayloadAction<boolean>) => {
       state.isInitialized = action.payload;
     },
-    setTheme: (state, action: PayloadAction<'light' | 'dark' | 'system'>) => {
+    setTheme: (state, action: PayloadAction<"light" | "dark" | "system">) => {
       state.theme = action.payload;
     },
     setLanguage: (state, action: PayloadAction<string>) => {
@@ -37,8 +37,8 @@ const appSlice = createSlice({
     },
     resetApp: (state) => {
       state.isInitialized = false;
-      state.theme = 'system';
-      state.language = 'en';
+      state.theme = "system";
+      state.language = "en";
       state.isOnline = true;
       state.lastActiveTime = null;
     },

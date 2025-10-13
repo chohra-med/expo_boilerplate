@@ -1,6 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import type React from "react";
 import { useCallback } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { QuestionnaireDetailView } from "#root/features/settings/components/questionnaire-detail-view";
 
 /**
@@ -25,10 +25,5 @@ export const QuestionnaireScreen: React.FC = () => {
     console.log("Edit questionnaire");
   }, []);
 
-  return (
-    <QuestionnaireDetailView
-      onBack={handleBack}
-      onEdit={handleEditQuestionnaire}
-    />
-  );
+  return <QuestionnaireDetailView onBack={handleBack} onEdit={handleEditQuestionnaire} />;
 };

@@ -43,7 +43,7 @@ export interface OnboardingState {
   isCompleted: boolean;
   questionnaireAnswers: Record<string, string | string[]>;
   userPreferences: UserPreferences;
-  currentLanguage: 'en' | 'fr';
+  currentLanguage: "en" | "fr";
 }
 
 export interface OnboardingData {

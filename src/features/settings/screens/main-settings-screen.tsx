@@ -1,10 +1,10 @@
+import { useNavigation } from "@react-navigation/native";
 import type React from "react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Box, Button, Icon, SafeArea, Text } from "#root/ui/components";
 import { SelectionButton } from "#root/features/settings/components/selection-button";
+import { Box, Button, Icon, SafeArea, Text } from "#root/ui/components";
 import { useSettings } from "../hooks/use-settings";
 
 /**
@@ -14,8 +14,7 @@ import { useSettings } from "../hooks/use-settings";
 export const MainSettingsScreen: React.FC = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const { themeMode, language, setThemeMode, setLanguage, handleLogout } =
-    useSettings();
+  const { themeMode, language, setThemeMode, setLanguage, handleLogout } = useSettings();
 
   /**
    * Handles theme selection
@@ -61,11 +60,7 @@ export const MainSettingsScreen: React.FC = () => {
 
           <Box gap="lg">
             {/* Profile Section */}
-            <Box
-              backgroundColor="backgroundSecondary"
-              padding="lg"
-              borderRadius="md"
-            >
+            <Box backgroundColor="backgroundSecondary" padding="lg" borderRadius="md">
               <Text variant="h4" marginBottom="md">
                 {t("settings.profile.title")}
               </Text>
@@ -81,11 +76,7 @@ export const MainSettingsScreen: React.FC = () => {
             </Box>
 
             {/* Theme Settings */}
-            <Box
-              backgroundColor="backgroundSecondary"
-              padding="lg"
-              borderRadius="md"
-            >
+            <Box backgroundColor="backgroundSecondary" padding="lg" borderRadius="md">
               <Text variant="h4" marginBottom="md">
                 {t("settings.theme.title")}
               </Text>
@@ -116,11 +107,7 @@ export const MainSettingsScreen: React.FC = () => {
             </Box>
 
             {/* Language Settings */}
-            <Box
-              backgroundColor="backgroundSecondary"
-              padding="lg"
-              borderRadius="md"
-            >
+            <Box backgroundColor="backgroundSecondary" padding="lg" borderRadius="md">
               <Text variant="h4" marginBottom="md">
                 {t("settings.language.title")}
               </Text>
@@ -145,11 +132,7 @@ export const MainSettingsScreen: React.FC = () => {
             </Box>
 
             {/* Logout */}
-            <Box
-              backgroundColor="backgroundSecondary"
-              padding="lg"
-              borderRadius="md"
-            >
+            <Box backgroundColor="backgroundSecondary" padding="lg" borderRadius="md">
               <Button
                 title={t("settings.logout")}
                 onPress={handleLogout}

@@ -1,4 +1,4 @@
-import { logger } from '../logging/logger';
+import { logger } from "../logging/logger";
 
 // Firebase Analytics interface
 interface FirebaseAnalytics {
@@ -29,9 +29,9 @@ export const initializeFirebaseAnalytics = async () => {
     // TODO: Initialize Firebase Analytics here
     // const analytics = getAnalytics();
     // firebaseAnalytics = analytics;
-    logger.log('[Analytics] Firebase Analytics initialized');
+    logger.log("[Analytics] Firebase Analytics initialized");
   } catch (error) {
-    logger.error('[Analytics] Failed to initialize Firebase Analytics', error as Error);
+    logger.error("[Analytics] Failed to initialize Firebase Analytics", error as Error);
   }
 };
 
@@ -43,8 +43,8 @@ const getAnalytics = (): FirebaseAnalytics => {
 
   if (!firebaseAnalytics) {
     logger.error(
-      '[Analytics] Firebase Analytics not initialized',
-      new Error('Analytics not available')
+      "[Analytics] Firebase Analytics not initialized",
+      new Error("Analytics not available")
     );
     return mockFirebaseAnalytics;
   }
@@ -69,7 +69,7 @@ export const analytics = {
       const analyticsInstance = getAnalytics();
       await analyticsInstance.setUserProperties(data);
     } catch (error) {
-      logger.error('[Analytics] Failed to log user data', error as Error);
+      logger.error("[Analytics] Failed to log user data", error as Error);
     }
   },
 
@@ -77,14 +77,14 @@ export const analytics = {
   recordError: async (error: Error, context?: Record<string, unknown>) => {
     try {
       const analyticsInstance = getAnalytics();
-      await analyticsInstance.logEvent('error_occurred', {
+      await analyticsInstance.logEvent("error_occurred", {
         error_message: error.message,
         error_stack: error.stack,
         error_name: error.name,
         ...context,
       });
     } catch (analyticsError) {
-      logger.error('[Analytics] Failed to record error', analyticsError as Error);
+      logger.error("[Analytics] Failed to record error", analyticsError as Error);
     }
   },
 
@@ -94,13 +94,13 @@ export const analytics = {
       const analyticsInstance = getAnalytics();
       await analyticsInstance.setUserId(userId);
     } catch (error) {
-      logger.error('[Analytics] Failed to set user ID', error as Error);
+      logger.error("[Analytics] Failed to set user ID", error as Error);
     }
   },
 
   // Legacy methods for backward compatibility
   log: async (message: string, data?: unknown) => {
-    await analytics.logEvent('custom_log', { message, data });
+    await analytics.logEvent("custom_log", { message, data });
   },
 
   error: async (message: string, error: Error) => {

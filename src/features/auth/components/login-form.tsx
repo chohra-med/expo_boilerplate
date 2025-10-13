@@ -87,11 +87,7 @@ const _LoginForm: React.FC<LoginFormProps> = ({
               secureTextEntry={!showPassword}
               rightIcon={
                 <Button
-                  title={
-                    showPassword
-                      ? t("auth.hidePassword")
-                      : t("auth.showPassword")
-                  }
+                  title={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
                   onPress={() => setShowPassword(!showPassword)}
                   buttonTypeVariant="ghost"
                   buttonSizeVariant="small"

@@ -1,7 +1,7 @@
-import { FlashList, type FlashListProps, type FlashListRef } from '@shopify/flash-list';
-import type React from 'react';
-import { forwardRef } from 'react';
-import { Box } from './box';
+import { FlashList, type FlashListProps, type FlashListRef } from "@shopify/flash-list";
+import type React from "react";
+import { forwardRef } from "react";
+import { Box } from "./box";
 
 export interface LargeListProps<T> extends FlashListProps<T> {}
 

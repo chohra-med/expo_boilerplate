@@ -1,5 +1,5 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { Todo, TodoState } from '../types';
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { Todo, TodoState } from "../types";
 
 const initialState: TodoState = {
   todos: [],
@@ -10,7 +10,7 @@ const initialState: TodoState = {
 };
 
 const todosSlice = createSlice({
-  name: 'todos',
+  name: "todos",
   initialState,
   reducers: {
     setTodos: (state, action: PayloadAction<Todo[]>) => {

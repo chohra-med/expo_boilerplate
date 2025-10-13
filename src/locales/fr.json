@@ -25,7 +25,9 @@
     "emailRequired": "L'email est requis",
     "passwordRequired": "Le mot de passe est requis",
     "invalidEmail": "Veuillez entrer une adresse email valide",
-    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères"
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+    "showPassword": "Afficher",
+    "hidePassword": "Masquer"
   },
   "navigation": {
     "home": "Accueil",
@@ -35,10 +37,14 @@
     "title": "Bienvenue à la maison",
     "subtitle": "Votre tableau de bord",
     "recentActivity": "Activité récente",
-    "quickActions": "Actions rapides"
+    "quickActions": "Actions rapides",
+    "viewAllTodos": "Voir tous les tâches",
+    "manageTodos": "Gérer les tâches",
+    "appSettings": "Paramètres de l'application"
   },
   "settings": {
     "title": "Paramètres",
+    "subtitle": "Gérez vos préférences et paramètres de compte",
     "appearance": "Apparence",
     "notifications": "Notifications",
     "privacy": "Confidentialité",
@@ -56,7 +62,29 @@
       "english": "English",
       "french": "Français"
     },
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "profile": {
+      "title": "Mon Profil",
+      "subtitle": "Consultez vos informations de profil et réponses au questionnaire",
+      "editProfile": "Modifier le Profil",
+      "viewProfile": "Voir le Profil",
+      "noQuestionnaireData": "Aucune Donnée de Questionnaire",
+      "noQuestionnaireDescription": "Complétez le questionnaire d'intégration pour voir vos informations de profil ici.",
+      "completeQuestionnaire": "Compléter le Questionnaire",
+      "preferencesSummary": "Résumé des Préférences",
+      "primaryUse": "Usage Principal",
+      "usage": "Utilisation",
+      "interests": "Centres d'Intérêt",
+      "questionnaireDetails": "Détails du Questionnaire",
+      "questionnaireComplete": "Questionnaire Terminé",
+      "questionnaireCompleteDescription": "Vous avez répondu à {{count}} questions. Vos réponses nous aident à personnaliser votre expérience.",
+      "noQuestionnaireDetails": "Aucune Donnée de Questionnaire",
+      "noQuestionnaireDetailsDescription": "Complétez le questionnaire d'intégration pour voir vos réponses détaillées ici.",
+      "yourAnswer": "Votre Réponse",
+      "selectedOptions": "Options Sélectionnées",
+      "singleChoice": "Choix unique",
+      "selected": "sélectionné"
+    }
   },
   "onboarding": {
     "welcome": {

@@ -1,17 +1,19 @@
-import { Ionicons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import type React from 'react';
-import { lazy } from 'react';
-import { useTranslation } from 'react-i18next';
-import { HomeScreen } from '#root/features/home';
-import { SettingsScreen } from '#root/features/settings';
-import { useTheme } from '#root/ui/style/theme-provider';
-import type { AppTabStackParamsList } from '../routes';
+import { Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import type React from "react";
+import { lazy } from "react";
+import { useTranslation } from "react-i18next";
+import { HomeScreen } from "#root/features/home";
+import { SettingsNavigator } from "#root/features/settings";
+import { useTheme } from "#root/ui/style/theme-provider";
+import type { AppTabStackParamsList } from "../routes";
 
 const Tab = createBottomTabNavigator<AppTabStackParamsList>();
 
 const TodoScreen = lazy(async () => {
-  const { TodosScreen } = await import('#root/features/todos/screens/todos-screen');
+  const { TodosScreen } = await import(
+    "#root/features/todos/screens/todos-screen"
+  );
   return { default: TodosScreen };
 });
 export const AppTabNavigator: React.FC = () => {
@@ -24,14 +26,14 @@ export const AppTabNavigator: React.FC = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap;
 
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Todos') {
-            iconName = focused ? 'list' : 'list-outline';
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'settings' : 'settings-outline';
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Todos") {
+            iconName = focused ? "list" : "list-outline";
+          } else if (route.name === "Settings") {
+            iconName = focused ? "settings" : "settings-outline";
           } else {
-            iconName = 'help-outline';
+            iconName = "help-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -53,21 +55,21 @@ export const AppTabNavigator: React.FC = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          title: t('navigation.home'),
+          title: t("navigation.home"),
         }}
       />
       <Tab.Screen
         name="Todos"
         component={TodoScreen}
         options={{
-          title: t('navigation.todos'),
+          title: t("navigation.todos"),
         }}
       />
       <Tab.Screen
         name="Settings"
-        component={SettingsScreen}
+        component={SettingsNavigator}
         options={{
-          title: t('navigation.settings'),
+          title: t("navigation.settings"),
         }}
       />
     </Tab.Navigator>

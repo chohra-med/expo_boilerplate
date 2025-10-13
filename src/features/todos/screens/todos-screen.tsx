@@ -23,6 +23,11 @@ if (UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
+/**
+ * Todos screen component
+ * Displays active and completed todos with statistics
+ * Includes smooth animations and scroll functionality
+ */
 export const TodosScreen: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -56,12 +61,19 @@ export const TodosScreen: React.FC = () => {
     }
   }, [error, dispatch]);
 
+  /**
+   * Scrolls to the top of the completed todos list
+   */
   const scrollToCompleted = useCallback(() => {
     if (completedListRef.current) {
       completedListRef.current.scrollToOffset({ offset: 0, animated: true });
     }
   }, []);
 
+  /**
+   * Handles toggling todo completion status
+   * @param id - The ID of the todo to toggle
+   */
   const handleToggleComplete = useCallback(
     (id: number) => {
       // Configure layout animation for smooth item removal/addition

@@ -53,10 +53,11 @@ const App: React.FC = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider>
-          <AppErrorBoundary>
-            <AppContent />
-          </AppErrorBoundary>
-          <ToastProvider>{null}</ToastProvider>
+          <ToastProvider>
+            <AppErrorBoundary>
+              <AppContent />
+            </AppErrorBoundary>
+          </ToastProvider>
         </ThemeProvider>
       </PersistGate>
     </Provider>

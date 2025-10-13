@@ -1,4 +1,5 @@
 import type React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Button, Text } from '#root/ui/components';
 import type { OnboardingStep } from '../types';
 
@@ -8,6 +9,7 @@ interface OnboardingStepProps {
   onSkip: () => void;
   canGoNext: boolean;
   isLastStep: boolean;
+  showSkip?: boolean;
 }
 
 export const OnboardingStepComponent: React.FC<OnboardingStepProps> = ({
@@ -16,26 +18,9 @@ export const OnboardingStepComponent: React.FC<OnboardingStepProps> = ({
   onSkip,
   canGoNext,
   isLastStep,
+  showSkip = true,
 }) => {
-  // Simple translation function for now
-  const t = (key: string): string => {
-    const translations: Record<string, string> = {
-      'onboarding.welcome.title': 'Welcome to MobileLauncher',
-      'onboarding.welcome.subtitle': 'Your personal mobile companion',
-      'onboarding.welcome.description': 'Discover amazing features and customize your experience',
-      'onboarding.features.title': 'Powerful Features',
-      'onboarding.features.subtitle': 'Everything you need in one place',
-      'onboarding.features.description': 'Easily access all your favorite apps and tools',
-      'onboarding.customization.title': 'Customize Your Experience',
-      'onboarding.customization.subtitle': 'Make it truly yours',
-      'onboarding.customization.description':
-        'Customize themes, layouts, and preferences to match your style',
-      'onboarding.buttons.skip': 'Skip',
-      'onboarding.buttons.next': 'Next',
-      'onboarding.buttons.done': 'Done',
-    };
-    return translations[key] || key;
-  };
+  const { t } = useTranslation();
 
   return (
     <Box flex={1} padding="md">
@@ -57,7 +42,7 @@ export const OnboardingStepComponent: React.FC<OnboardingStepProps> = ({
       <Box flexDirection="row" justifyContent="space-between" alignItems="center" paddingTop="md">
         {/* Skip button on the left */}
         <Box>
-          {!isLastStep && (
+          {!isLastStep && showSkip && (
             <Button
               title={t('onboarding.buttons.skip')}
               onPress={onSkip}

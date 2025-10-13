@@ -1,8 +1,9 @@
-import type React from 'react';
-import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
-import { Box, Button, Text } from '#root/ui/components';
-import type { Questionnaire } from '../types';
+import type React from "react";
+import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { ScrollView } from "react-native";
+import { Box, Button, Text } from "#root/ui/components";
+import type { Questionnaire } from "../types";
 
 interface QuestionnaireProps {
   questionnaire: Questionnaire;
@@ -21,15 +22,26 @@ export const QuestionnaireComponent: React.FC<QuestionnaireProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleAnswer = (answer: string) => {
-    onAnswer(answer);
-  };
+  /**
+   * Handles answer selection
+   * @param answer - The selected answer value
+   */
+  const handleAnswer = useCallback(
+    (answer: string) => {
+      onAnswer(answer);
+    },
+    [onAnswer]
+  );
 
-  const handleNext = () => {
+  /**
+   * Handles next button press
+   * Only proceeds if an answer is selected
+   */
+  const handleNext = useCallback(() => {
     if (selectedAnswer) {
       onNext();
     }
-  };
+  }, [selectedAnswer, onNext]);
 
   return (
     <Box flex={1} padding="md">
@@ -43,17 +55,16 @@ export const QuestionnaireComponent: React.FC<QuestionnaireProps> = ({
       </Box>
 
       <Box flex={1} marginBottom="lg">
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 10 }}
-        >
+        <ScrollView showsVerticalScrollIndicator={false}>
           <Box gap="sm">
             {questionnaire.options.map((option) => (
               <Button
                 key={option.id}
                 title={t(option.label)}
                 onPress={() => handleAnswer(option.value)}
-                buttonTypeVariant={selectedAnswer === option.value ? 'primary' : 'outline'}
+                buttonTypeVariant={
+                  selectedAnswer === option.value ? "primary" : "outline"
+                }
                 buttonSizeVariant="medium"
               />
             ))}
@@ -62,11 +73,16 @@ export const QuestionnaireComponent: React.FC<QuestionnaireProps> = ({
       </Box>
 
       {/* Fixed bottom buttons */}
-      <Box flexDirection="row" justifyContent="space-between" alignItems="center" paddingTop="md">
+      <Box
+        flexDirection="row"
+        justifyContent="space-between"
+        alignItems="center"
+        paddingTop="md"
+      >
         {/* Skip button on the left */}
         <Box>
           <Button
-            title={t('onboarding.buttons.skip')}
+            title={t("onboarding.buttons.skip")}
             onPress={onPrevious}
             buttonTypeVariant="ghost"
             buttonSizeVariant="small"
@@ -76,7 +92,7 @@ export const QuestionnaireComponent: React.FC<QuestionnaireProps> = ({
         {/* Next button on the right */}
         <Box>
           <Button
-            title={t('onboarding.buttons.next')}
+            title={t("onboarding.buttons.next")}
             onPress={handleNext}
             disabled={!selectedAnswer}
             buttonTypeVariant="primary"

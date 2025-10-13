@@ -1,9 +1,11 @@
 // Components
-
+export { ConfigurableQuestionnaire } from './components/configurable-questionnaire';
 export { EnhancedQuestionnaire } from './components/enhanced-questionnaire';
 export { OnboardingStepComponent } from './components/onboarding-step';
 export { ProgressBar } from './components/progress-bar';
 export { QuestionnaireComponent } from './components/questionnaire';
+// Config
+export * from './config';
 // Data
 export { onboardingData } from './data/onboarding-data';
 // Hooks

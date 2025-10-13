@@ -1,17 +1,9 @@
 import type React from 'react';
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Box, Button, Input, Text } from '#root/ui/components';
 import type { QuestionnaireStep } from '../utils/onboarding_constants';
-
-// Simple translation function for now
-const t = (key: string): string => {
-  const translations: Record<string, string> = {
-    'onboarding.buttons.selectAll': 'Select all that apply',
-    'onboarding.buttons.pleaseSpecify': 'Please specify...',
-  };
-  return translations[key] || key;
-};
 
 interface EnhancedQuestionnaireProps {
   questionnaire: QuestionnaireStep;
@@ -30,6 +22,7 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
   onSkip,
   isLastStep,
 }) => {
+  const { t } = useTranslation();
   const [localAnswers, setLocalAnswers] = useState<string[]>(() => {
     if (questionnaire.multiple) {
       return Array.isArray(selectedAnswers) ? selectedAnswers : [];
@@ -169,7 +162,7 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
         <Box>
           {questionnaire.isSkippable && (
             <Button
-              title="Skip"
+              title={t('onboarding.buttons.skip')}
               onPress={onSkip}
               buttonTypeVariant="ghost"
               buttonSizeVariant="small"
@@ -180,7 +173,7 @@ export const EnhancedQuestionnaire: React.FC<EnhancedQuestionnaireProps> = ({
         {/* Next/Complete button on the right */}
         <Box>
           <Button
-            title={isLastStep ? 'Complete' : 'Next →'}
+            title={isLastStep ? t('onboarding.buttons.done') : t('onboarding.buttons.next')}
             onPress={handleNext}
             disabled={!canProceed}
             buttonTypeVariant="primary"

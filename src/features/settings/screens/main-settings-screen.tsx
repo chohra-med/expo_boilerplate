@@ -1,11 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
 import type React from "react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
 import { SelectionButton } from "#root/features/settings/components/selection-button";
+import type { SettingsStackParamList } from "#root/navigation/routes";
 import { Box, Button, Icon, SafeArea, Text } from "#root/ui/components";
 import { useSettings } from "../hooks/use-settings";
+
+// Navigation type for main settings screen
+type MainSettingsScreenNavigationProp = StackNavigationProp<SettingsStackParamList, "MainSettings">;
 
 /**
  * Main settings screen component for managing app preferences
@@ -13,7 +18,7 @@ import { useSettings } from "../hooks/use-settings";
  */
 export const MainSettingsScreen: React.FC = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<MainSettingsScreenNavigationProp>();
   const { themeMode, language, setThemeMode, setLanguage, handleLogout } = useSettings();
 
   /**
@@ -42,7 +47,7 @@ export const MainSettingsScreen: React.FC = () => {
    * Navigate to profile screen
    */
   const handleNavigateToProfile = useCallback(() => {
-    navigation.navigate("Profile" as never);
+    navigation.navigate("Profile");
   }, [navigation]);
 
   return (

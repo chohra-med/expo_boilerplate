@@ -1,14 +1,9 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import type React from "react";
+import type { SettingsStackParamList } from "#root/navigation/routes";
 import { MainSettingsScreen } from "../screens/main-settings-screen";
 import { ProfileScreen } from "../screens/profile-screen";
 import { QuestionnaireScreen } from "../screens/questionnaire-screen";
-
-export type SettingsStackParamList = {
-  MainSettings: undefined;
-  Profile: undefined;
-  Questionnaire: undefined;
-};
 
 const SettingsStack = createStackNavigator<SettingsStackParamList>();
 

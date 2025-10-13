@@ -1,3 +1,4 @@
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,10 +13,14 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import type { AppTabStackParamsList } from "#root/navigation/routes";
 import { Box, Button, Card, Icon, SafeArea, Text } from "#root/ui/components";
 
 const AnimatedBox = Animated.createAnimatedComponent(Box);
 const AnimatedCard = Animated.createAnimatedComponent(Card);
+
+// Navigation type for home screen
+type HomeScreenNavigationProp = BottomTabNavigationProp<AppTabStackParamsList, "Home">;
 
 /**
  * Home screen component with clean architecture
@@ -25,7 +30,7 @@ const AnimatedCard = Animated.createAnimatedComponent(Card);
  */
 const HomeScreenComponent: React.FC = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
 
   // Animation values
   const headerOpacity = useSharedValue(0);
@@ -36,11 +41,11 @@ const HomeScreenComponent: React.FC = () => {
 
   // Memoized navigation handlers
   const handleNavigateToTodos = useCallback(() => {
-    navigation.navigate("Todos" as never);
+    navigation.navigate("Todos", undefined);
   }, [navigation]);
 
   const handleNavigateToSettings = useCallback(() => {
-    navigation.navigate("Settings" as never);
+    navigation.navigate("Settings", { screen: "MainSettings" });
   }, [navigation]);
 
   // Animation effects - memoized to prevent recreation

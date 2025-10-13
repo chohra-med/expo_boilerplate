@@ -38,4 +38,5 @@ export type {
   AppTabStackParamsList,
   OnboardingStackParamsList,
   RootStackParamList,
+  SettingsStackParamList,
 } from "./routes.types";

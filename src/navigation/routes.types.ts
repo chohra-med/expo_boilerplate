@@ -1,5 +1,12 @@
 import type { NavigatorScreenParams } from "@react-navigation/native";
 
+// Settings navigation types
+export type SettingsStackParamList = {
+  MainSettings: undefined;
+  Profile: undefined;
+  Questionnaire: undefined;
+};
+
 // Navigation type definitions
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -16,7 +23,7 @@ export type OnboardingStackParamsList = {
 export type AppTabStackParamsList = {
   Home: undefined;
   Todos: undefined;
-  Settings: undefined;
+  Settings: NavigatorScreenParams<SettingsStackParamList>;
 };
 
 // Helper type for no-args routes

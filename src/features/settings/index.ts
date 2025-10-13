@@ -5,7 +5,7 @@ export { SelectionButton } from "./components/selection-button";
 
 // Hooks
 export { useSettings } from "./hooks/use-settings";
-export type { SettingsStackParamList } from "./navigation/settings-navigator";
+
 // Navigation
 export { SettingsNavigator } from "./navigation/settings-navigator";
 

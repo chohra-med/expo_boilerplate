@@ -1,0 +1,2010 @@
+---
+alwaysApply: true
+---
+
+# MobileLauncher LT - Development Rules & Guidelines
+
+This document outlines the essential rules and guidelines for developing with the MobileLauncher LT boilerplate. Follow these rules to maintain consistency, scalability, and code quality across the project.
+
+## 🏗️ Architecture Rules
+
+### 1. Feature-First Structure
+- **Always organize code by business features**, not technical layers
+- Each feature must be self-contained with its own:
+  - `components/` - Feature-specific UI components
+  - `screens/` - Screen components
+  - `hooks/` - Custom hooks for business logic
+  - `store/` - Redux slice and selectors
+  - `api/` - RTK Query endpoints
+  - `services/` - Business logic services
+  - `types/` - TypeScript type definitions
+  - `index.ts` - Barrel exports
+
+**Example:**
+```
+src/features/auth/
+├── components/
+│   ├── login-form.tsx
+│   └── index.ts
+├── screens/
+│   ├── login-screen.tsx
+│   └── index.ts
+├── hooks/
+│   ├── use-auth.ts
+│   └── index.ts
+├── store/
+│   ├── auth-slice.ts
+│   ├── auth-selector.ts
+│   └── index.ts
+├── api/
+│   ├── auth.api.ts
+│   └── index.ts
+├── services/
+│   ├── auth.service.ts
+│   └── index.ts
+├── types/
+│   ├── index.ts
+├── index.ts
+```
+
+### 2. Shared Resources
+- **Extract common functionality** to global directories (`src/ui/`, `src/services/`, `src/utils/`)
+- **Never duplicate code** - if used in 2+ features, move to shared
+- **Use absolute imports** with `#root/` prefix for clean imports
+- **Expo ecosystem**: use expo.dev ecosystem for packages and yarn to install packages.
+
+**Example:**
+```typescript
+// ❌ Wrong - duplicated across features
+// features/auth/components/button.tsx
+// features/settings/components/button.tsx
+
+// ✅ Correct - shared component
+// src/ui/components/button.tsx
+import { Button } from '#root/ui/components/button';
+
+// ✅ Correct - shared utility
+// src/utils/format-date.ts
+import { formatDate } from '#root/utils/format-date';
+```
+
+## 🎨 UI Component Rules
+
+### 3. Component Design
+- **Use Restyle for all styling** - never use StyleSheet directly
+- **Create type-safe components** with proper TypeScript interfaces
+- **Export prop interfaces** for reusability
+- **Use React.memo** for performance optimization
+- **Follow single responsibility principle**
+- **Memorzie Functions**: use useCallback for functions
+- **Avoid inline functions**: extract functions outside render or use useCallback
+- **Avoid inline styling**: use theme values and component variants instead
+
+**Example:**
+```typescript
+// ✅ Correct - Performance optimized component
+import React, { useCallback } from 'react';
+import { createBox } from '@shopify/restyle';
+import type { Theme } from '#root/ui/style/theme';
+
+const StyledButton = createBox<Theme>();
+
+export interface ButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: 'primary' | 'secondary';
+  disabled?: boolean;
+}
+
+const _Button = ({ title, onPress, variant = 'primary', disabled = false }: ButtonProps) => {
+  const handlePress = useCallback(() => {
+    if (!disabled) {
+      onPress();
+    }
+  }, [onPress, disabled]);
+
+  return (
+    <StyledButton
+      backgroundColor={variant === 'primary' ? 'primary' : 'secondary'}
+      padding="md"
+      borderRadius="md"
+      onPress={handlePress}
+      opacity={disabled ? 0.5 : 1}
+    >
+      <Text color="white" textAlign="center">
+        {title}
+      </Text>
+    </StyledButton>
+  );
+};
+
+export const Button = React.memo(_Button);
+```
+
+### 4. Theme Usage
+- **Always use theme values** for colors, spacing, typography
+- **Use borderRadius theme values**: `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `full`
+- **Use "full" for circles** instead of calculating half width/height
+- **Never hardcode values** in theme props
+
+**Example:**
+```typescript
+// ❌ Wrong - hardcoded values
+<Box 
+  backgroundColor="#3B82F6" 
+  padding={16} 
+  borderRadius={8}
+  width={50}
+  height={50}
+/>
+
+// ✅ Correct - theme values
+<Box 
+  backgroundColor="primary" 
+  padding="md" 
+  borderRadius="md"
+  width={50}
+  height={50}
+  borderRadius="full" // For circles
+/>
+```
+
+### 5. Component Variants
+- **Create multiple variants** for each component (size, type, state)
+- **Use consistent naming**: `buttonTypeVariant`, `buttonSizeVariant`
+- **Define variants in theme** using Restyle's variant system
+
+**Example:**
+```typescript
+// Theme definition
+export const buttonVariants = createVariant<Theme, 'buttonVariants', 'variant'>({
+  property: 'variant',
+  themeKey: 'buttonVariants',
+});
+
+// Component usage
+<Button 
+  title="Save" 
+  buttonTypeVariant="primary" 
+  buttonSizeVariant="large"
+  onPress={handleSave} 
+/>
+```
+
+## 🔄 State Management Rules
+
+### 6. Redux Patterns
+- **Use Redux Toolkit** for all state management
+- **Create feature slices** with proper action creators
+- **Use createSelector** for derived state
+- **Keep state normalized** and flat
+- **Use RTK Query** for all API calls
+
+**Example:**
+```typescript
+// Redux slice
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState: { todos: [], loading: false },
+  reducers: {
+    addTodo: (state, action) => {
+      state.todos.push(action.payload);
+    },
+    toggleTodo: (state, action) => {
+      const todo = state.todos.find(t => t.id === action.payload);
+      if (todo) todo.completed = !todo.completed;
+    },
+  },
+});
+
+// Selector
+export const selectCompletedTodos = createSelector(
+  (state: RootState) => state.todos.todos,
+  (todos) => todos.filter(todo => todo.completed)
+);
+```
+
+### 7. Selectors
+- **Create selectors for all state access**
+- **Use createSelector for performance**
+- **Export selectors from feature index**
+- **Never access state directly in components**
+
+**Example:**
+```typescript
+// ❌ Wrong - direct state access
+const MyComponent = () => {
+  const todos = useSelector(state => state.todos.todos);
+  const loading = useSelector(state => state.todos.loading);
+};
+
+// ✅ Correct - using selectors
+const MyComponent = () => {
+  const todos = useAppSelector(selectTodos);
+  const loading = useAppSelector(selectTodosLoading);
+  const completedCount = useAppSelector(selectCompletedTodosCount);
+};
+```
+
+## 🧭 Navigation Rules
+
+### 8. Type-Safe Navigation
+- **Always use proper TypeScript navigation types**
+- **Never use `as never` or `as any`** for navigation
+- **Define all routes in `routes.types.ts`**
+- **Use centralized route definitions**
+- **Follow navigation patterns consistently**
+
+**Example:**
+```typescript
+// ❌ Wrong - unsafe navigation
+const MyComponent = () => {
+  const navigation = useNavigation();
+  navigation.navigate('Profile' as any, { userId: 123 });
+};
+
+// ✅ Correct - type-safe navigation
+type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
+
+const MyComponent = () => {
+  const navigation = useNavigation<ProfileScreenNavigationProp>();
+  navigation.navigate('Profile', { userId: 123 });
+};
+```
+
+### 9. Navigation Structure
+- **Use nested navigators** (Stack → Tab)
+- **Implement authentication guards**
+- **Use proper screen options**
+- **Handle deep linking properly**
+
+**Example:**
+```typescript
+// Root Navigator with auth guards
+export const RootStackNavigator = () => {
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  
+  return (
+    <RootStack.Navigator>
+      {!isAuthenticated ? (
+        <RootStack.Group>
+          <RootStack.Screen name="Login" component={LoginScreen} />
+        </RootStack.Group>
+      ) : (
+        <RootStack.Group>
+          <RootStack.Screen name="AppTabs" component={AppTabNavigator} />
+        </RootStack.Group>
+      )}
+    </RootStack.Navigator>
+  );
+};
+```
+
+## 🌐 API Integration Rules
+
+### 10. RTK Query Usage
+- **Use RTK Query for all API calls**
+- **Define endpoints in feature API files**
+- **Use Zod schemas for validation**
+- **Implement proper error handling**
+- **Use appropriate caching strategies**
+
+**Example:**
+```typescript
+// API endpoint definition
+const todosApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    getTodos: builder.query<Todo[], void>({
+      query: () => '/todos',
+      transformResponse: (response: unknown) => {
+        return TodoResponseSchema.parse(response);
+      },
+      providesTags: ['Todo'],
+    }),
+    addTodo: builder.mutation<Todo, CreateTodoRequest>({
+      query: (newTodo) => ({
+        url: '/todos',
+        method: 'POST',
+        body: newTodo,
+      }),
+      invalidatesTags: ['Todo'],
+    }),
+  }),
+});
+
+export const { useGetTodosQuery, useAddTodoMutation } = todosApi;
+```
+
+### 11. Data Validation
+- **Validate all API responses** with Zod schemas
+- **Type all request/response interfaces**
+- **Handle loading and error states**
+- **Use optimistic updates where appropriate**
+
+**Example:**
+```typescript
+// Zod schema
+const TodoSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  completed: z.boolean(),
+  createdAt: z.string(),
+});
+
+// Component with validation
+const TodoComponent = () => {
+  const { data: todos, isLoading, error } = useGetTodosQuery();
+  
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage error={error} />;
+  
+  const renderTodoItem = useCallback(({ item }: { item: Todo }) => (
+    <TodoItem todo={item} />
+  ), []);
+
+  return (
+    <FlatList
+      data={todos}
+      renderItem={renderTodoItem}
+    />
+  );
+};
+```
+
+## 🗄️ Storage Rules
+
+### 12. Storage Selection
+- **Use Secure Store for sensitive data** (tokens, credentials)
+- **Use MMKV for high-performance storage** (app data, preferences)
+- **Use AsyncStorage for simple data** (caching, temporary data)
+- **Use Redux Persist for state persistence**
+
+**Example:**
+```typescript
+// Secure Store for sensitive data
+await SecureStore.setItemAsync('auth_token', token);
+
+// MMKV for app data
+mmkv.set('user_preferences', JSON.stringify(preferences));
+
+// AsyncStorage for simple data
+await AsyncStorage.setItem('last_sync', Date.now().toString());
+
+// Redux Persist configuration
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  whitelist: ['auth', 'user'],
+};
+```
+
+### 13. Storage Services
+- **Create service classes** for storage operations
+- **Use singleton pattern** for services
+- **Implement proper error handling**
+- **Type all storage operations**
+
+**Example:**
+```typescript
+class StorageService {
+  private static instance: StorageService;
+  
+  static getInstance(): StorageService {
+    if (!StorageService.instance) {
+      StorageService.instance = new StorageService();
+    }
+    return StorageService.instance;
+  }
+  
+  async setItem(key: string, value: string): Promise<void> {
+    try {
+      await SecureStore.setItemAsync(key, value);
+    } catch (error) {
+      console.error('Storage error:', error);
+      throw new Error('Failed to save data');
+    }
+  }
+  
+  async getItem(key: string): Promise<string | null> {
+    try {
+      return await SecureStore.getItemAsync(key);
+    } catch (error) {
+      console.error('Storage error:', error);
+      return null;
+    }
+  }
+}
+```
+
+## 🌍 Internationalization Rules
+
+### 14. Translation Management
+- **All UI text must be translatable**
+- **Use translation keys** instead of hardcoded strings
+- **Organize keys by feature** in translation files
+- **Use interpolation for dynamic content**
+- **Test with multiple languages**
+
+**Example:**
+```typescript
+// ❌ Wrong - hardcoded strings
+<Text>Welcome to the app!</Text>
+<Text>You have {count} messages</Text>
+
+// ✅ Correct - using translations
+const MyComponent = () => {
+  const { t } = useTranslation();
+  const messageCount = 5;
+  
+  return (
+    <Text>{t('welcome.message')}</Text>
+    <Text>{t('messages.count', { count: messageCount })}</Text>
+  );
+};
+
+// Translation files
+// en.json
+{
+  "welcome": {
+    "message": "Welcome to the app!"
+  },
+  "messages": {
+    "count": "You have {{count}} messages"
+  }
+}
+```
+
+### 15. Translation Usage
+- **Use useTranslation hook** in components
+- **Use t() function for all text**
+- **Provide fallback text** for missing translations
+- **Use proper pluralization**
+
+**Example:**
+```typescript
+const TodoList = () => {
+  const { t } = useTranslation();
+  const todos = useAppSelector(selectTodos);
+  
+  return (
+    <View>
+      <Text>{t('todos.title')}</Text>
+      <Text>{t('todos.count', { count: todos.length })}</Text>
+      {todos.map(todo => (
+        <Text key={todo.id}>{t('todos.item', { title: todo.title })}</Text>
+      ))}
+    </View>
+  );
+};
+```
+
+## 🧪 Testing Rules
+
+### 16. Test Coverage
+- **Write tests for all custom hooks**
+- **Test Redux slices and selectors**
+- **Test API endpoints and services**
+- **Test utility functions**
+- **Maintain 70%+ code coverage**
+
+**Example:**
+```typescript
+// Hook test
+describe('useTodos', () => {
+  it('should return todos and loading state', () => {
+    const { result } = renderHook(() => useTodos(), {
+      wrapper: TestWrapper,
+    });
+    
+    expect(result.current.todos).toEqual([]);
+    expect(result.current.isLoading).toBe(false);
+  });
+  
+  it('should toggle todo completion', () => {
+    const { result } = renderHook(() => useTodos(), {
+      wrapper: TestWrapper,
+    });
+    
+    act(() => {
+      result.current.toggleComplete(1);
+    });
+    
+    expect(result.current.todos[0].completed).toBe(true);
+  });
+});
+```
+
+### 17. Test Structure
+- **Use describe/it blocks** for test organization
+- **Mock external dependencies**
+- **Test both success and error cases**
+- **Use meaningful test descriptions**
+- **Follow AAA pattern** (Arrange, Act, Assert)
+
+**Example:**
+```typescript
+describe('TodoService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  
+  describe('addTodo', () => {
+    it('should add todo successfully', async () => {
+      // Arrange
+      const mockTodo = { title: 'Test Todo', completed: false };
+      const mockResponse = { id: 1, ...mockTodo };
+      mockApi.post.mockResolvedValue(mockResponse);
+      
+      // Act
+      const result = await todoService.addTodo(mockTodo);
+      
+      // Assert
+      expect(result).toEqual(mockResponse);
+      expect(mockApi.post).toHaveBeenCalledWith('/todos', mockTodo);
+    });
+    
+    it('should handle API errors', async () => {
+      // Arrange
+      const mockError = new Error('API Error');
+      mockApi.post.mockRejectedValue(mockError);
+      
+      // Act & Assert
+      await expect(todoService.addTodo({ title: 'Test' }))
+        .rejects.toThrow('API Error');
+    });
+  });
+});
+```
+
+## 📁 File Organization Rules
+
+### 18. File Naming
+- **Use kebab-case for files**: `user-profile.tsx`
+- **Use PascalCase for components**: `UserProfile`
+- **Use camelCase for functions**: `getUserData`
+- **Use UPPER_CASE for constants**: `API_BASE_URL`
+
+**Example:**
+```typescript
+// File: user-profile-screen.tsx
+export const UserProfileScreen = () => { ... };
+
+// File: auth.service.ts
+export const getUserData = () => { ... };
+
+// File: constants.ts
+export const API_BASE_URL = 'https://api.example.com';
+```
+
+### 19. Import Organization
+- **Group imports**: React, third-party, internal, relative
+- **Use absolute imports** with `#root/` prefix
+- **Sort imports alphabetically**
+- **Remove unused imports**
+
+**Example:**
+```typescript
+// ✅ Correct import organization
+import React, { useCallback, useState } from 'react';
+import { View, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+import { Button } from '#root/ui/components/button';
+import { useAuth } from '#root/features/auth';
+import { logger } from '#root/services/logging';
+
+import { TodoItem } from './todo-item';
+import type { Todo } from './types';
+```
+
+## 🔧 Code Quality Rules
+
+### 20. TypeScript Usage
+- **Use strict TypeScript configuration**
+- **Type all function parameters and return values**
+- **Use proper interfaces and types**
+- **Avoid `any` type usage**
+- **Use type assertions sparingly**
+
+**Example:**
+```typescript
+// ❌ Wrong - no types
+const addTodo = (title, completed) => {
+  return { title, completed, id: Date.now() };
+};
+
+// ✅ Correct - proper typing
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+  createdAt: string;
+}
+
+const addTodo = (title: string, completed: boolean = false): Todo => {
+  return {
+    id: Date.now(),
+    title,
+    completed,
+    createdAt: new Date().toISOString(),
+  };
+};
+```
+
+### 21. Error Handling
+- **Handle all possible errors**
+- **Use error boundaries for UI errors**
+- **Log errors appropriately**
+- **Provide user-friendly error messages**
+- **Implement retry mechanisms**
+
+**Example:**
+```typescript
+const TodoComponent = () => {
+  const [error, setError] = useState<string | null>(null);
+  
+  const handleAddTodo = async (title: string) => {
+    try {
+      setError(null);
+      await addTodo(title);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+      logger.error('Failed to add todo', err);
+    }
+  };
+  
+  if (error) {
+    return <ErrorMessage message={error} onRetry={() => setError(null)} />;
+  }
+  
+  return <TodoForm onSubmit={handleAddTodo} />;
+};
+```
+
+## 🚀 Performance Rules
+
+### 22. Optimization
+- **Use React.memo for expensive components**
+- **Use useCallback and useMemo appropriately**
+- **Implement lazy loading for routes**
+- **Use FlashList for large lists**
+- **Optimize images and assets**
+- **Avoid inline functions** - extract to useCallback or outside component
+- **Avoid inline styling** - use theme values and component variants
+
+
+**Example:**
+```typescript
+// Performance optimized component
+const _ExpensiveComponent = ({ data, onPress }: Props) => {
+  const processedData = useMemo(() => {
+    return data.map(item => ({
+      ...item,
+      processed: heavyComputation(item)
+    }));
+  }, [data]);
+  
+  const handlePress = useCallback((id: string) => {
+    onPress(id);
+  }, [onPress]);
+  
+  // ✅ Extract render function to avoid inline function
+  const renderItem = useCallback(({ item }: { item: ProcessedItem }) => (
+    <MemoizedItem item={item} onPress={handlePress} />
+  ), [handlePress]);
+  
+  return (
+    <FlashList
+      data={processedData}
+      renderItem={renderItem}
+      estimatedItemSize={100}
+    />
+  );
+};
+
+export const ExpensiveComponent = React.memo(_ExpensiveComponent);
+```
+
+### 23. Bundle Size
+- **Use tree shaking** for unused code
+- **Implement code splitting**
+- **Minimize dependencies**
+- **Use dynamic imports** for heavy libraries
+
+**Example:**
+```typescript
+// Lazy loading for routes
+const ProfileScreen = lazy(() => import('#root/features/profile/screens/profile-screen'));
+
+// Dynamic imports for heavy libraries
+const loadChartLibrary = async () => {
+  const { Chart } = await import('chart.js');
+  return Chart;
+};
+
+// Tree shaking friendly imports
+import { debounce } from 'lodash/debounce'; // ✅ Good
+import _ from 'lodash'; // ❌ Bad - imports entire library
+```
+
+## 🔐 Security Rules
+
+### 24. Data Protection
+- **Never store sensitive data in plain text**
+- **Use Secure Store for tokens and credentials**
+- **Validate all user inputs**
+- **Sanitize data before storage**
+- **Implement proper authentication**
+
+**Example:**
+```typescript
+// ❌ Wrong - storing sensitive data in plain text
+AsyncStorage.setItem('password', userPassword);
+
+// ✅ Correct - using Secure Store
+await SecureStore.setItemAsync('auth_token', token);
+
+// Input validation
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// Sanitize data before storage
+const sanitizeUserInput = (input: string): string => {
+  return input.trim().replace(/[<>]/g, '');
+};
+```
+
+### 25. API Security
+- **Use HTTPS for all API calls**
+- **Implement proper token management**
+- **Validate API responses**
+- **Handle authentication errors**
+- **Use proper headers**
+
+**Example:**
+```typescript
+// API configuration with security
+const api = createApi({
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://api.example.com', // HTTPS only
+    prepareHeaders: (headers, { getState }) => {
+      const token = selectAuthToken(getState());
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`);
+      }
+      headers.set('content-type', 'application/json');
+      return headers;
+    },
+  }),
+});
+
+// Token refresh logic
+const refreshToken = async (): Promise<string | null> => {
+  try {
+    const refreshToken = await SecureStore.getItemAsync('refresh_token');
+    const response = await fetch('/auth/refresh', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${refreshToken}` },
+    });
+    const { accessToken } = await response.json();
+    await SecureStore.setItemAsync('auth_token', accessToken);
+    return accessToken;
+  } catch (error) {
+    await logout();
+    return null;
+  }
+};
+```
+
+## 📝 Documentation Rules
+
+### 26. Code Documentation
+- **Write JSDoc comments** for complex functions
+- **Document component props** with interfaces
+- **Explain business logic** in comments
+- **Keep README files updated**
+- **Document API endpoints**
+
+**Example:**
+```typescript
+/**
+ * Calculates the total price including tax and discounts
+ * @param basePrice - The base price before any calculations
+ * @param taxRate - The tax rate as a decimal (0.1 for 10%)
+ * @param discount - Optional discount amount
+ * @returns The final price after all calculations
+ */
+const calculateTotalPrice = (
+  basePrice: number, 
+  taxRate: number, 
+  discount?: number
+): number => {
+  const discountedPrice = discount ? basePrice - discount : basePrice;
+  return discountedPrice * (1 + taxRate);
+};
+
+/**
+ * Props for the TodoItem component
+ */
+export interface TodoItemProps {
+  /** The todo item data */
+  todo: Todo;
+  /** Callback when todo is toggled */
+  onToggle: (id: number) => void;
+  /** Whether the todo is currently being edited */
+  isEditing?: boolean;
+}
+```
+
+### 27. Commit Messages
+- **Use conventional commits**: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`
+- **Write descriptive commit messages**
+- **Reference issues and PRs**
+- **Keep commits atomic**
+
+**Example:**
+```bash
+# ✅ Good commit messages
+feat(auth): add biometric authentication support
+fix(todos): resolve memory leak in todo list component
+docs(readme): update installation instructions
+test(auth): add unit tests for login hook
+refactor(ui): extract common button styles to theme
+
+# ❌ Bad commit messages
+fix stuff
+update
+changes
+wip
+```
+
+## 🎯 Feature Development Rules
+
+### 28. New Feature Checklist
+- [ ] Create feature directory structure
+- [ ] Define TypeScript types
+- [ ] Create Redux slice
+- [ ] Implement API endpoints
+- [ ] Create components and screens
+- [ ] Add custom hooks
+- [ ] Write tests
+- [ ] Add translations
+- [ ] Update navigation
+- [ ] Document the feature
+
+**Example:**
+```bash
+# Creating a new feature
+mkdir -p src/features/notifications/{components,screens,hooks,store,api,services,types}
+
+# Generate boilerplate files
+touch src/features/notifications/{components,screens,hooks,store,api,services,types}/index.ts
+touch src/features/notifications/types/index.ts
+touch src/features/notifications/store/notifications-slice.ts
+touch src/features/notifications/hooks/use-notifications.ts
+```
+
+### 29. Code Review Checklist
+- [ ] Follows architecture patterns
+- [ ] Uses proper TypeScript types
+- [ ] Implements error handling
+- [ ] Has appropriate tests
+- [ ] Uses theme values
+- [ ] Follows naming conventions
+- [ ] Has proper documentation
+- [ ] Is performant
+- [ ] Is accessible
+
+**Example:**
+```typescript
+// Code review checklist example
+const TodoItem = ({ todo, onToggle }: TodoItemProps) => {
+  // ✅ Uses proper TypeScript types
+  // ✅ Implements error handling
+  // ✅ Uses theme values
+  // ✅ Follows naming conventions
+  // ✅ Is performant with useCallback
+  // ✅ Is accessible
+  
+  const handleToggle = useCallback(() => {
+    try {
+      onToggle(todo.id);
+    } catch (error) {
+      logger.error('Failed to toggle todo', error);
+    }
+  }, [onToggle, todo.id]);
+  
+  return (
+    <Box
+      backgroundColor="background"
+      padding="md"
+      borderRadius="md"
+      accessibilityRole="button"
+      accessibilityLabel={`Toggle ${todo.title}`}
+    >
+      <Text variant="body">{todo.title}</Text>
+    </Box>
+  );
+};
+```
+
+## 🚫 Anti-Patterns to Avoid
+
+### 30. Common Mistakes
+- **Don't use StyleSheet** instead of Restyle. except if to avoid inline styling
+- **Don't access Redux state directly** in components
+- **Don't hardcode strings** instead of using translations
+- **Don't use `any` type** in TypeScript
+- **Don't skip error handling**
+- **Don't ignore performance** implications
+- **Don't use inline functions** in render methods
+- **Don't use inline styling** - use theme values and variants
+
+**Example:**
+```typescript
+// ❌ Common mistakes to avoid
+
+// 1. Using StyleSheet instead of Restyle
+const styles = StyleSheet.create({
+  container: { backgroundColor: '#fff', padding: 16 }
+});
+
+// 2. Direct Redux state access
+const todos = useSelector(state => state.todos.todos);
+
+// 3. Hardcoded strings
+<Text>Welcome to the app!</Text>
+
+// 4. Using any type
+const data: any = response.data;
+
+// 5. No error handling
+const result = await api.getData();
+
+// 6. Inline functions
+<FlatList renderItem={({ item }) => <TodoItem todo={item} />} />
+
+// 7. Inline styling
+<View style={{ backgroundColor: '#fff', padding: 16 }} />
+
+// ✅ Correct approaches
+
+// 1. Use Restyle
+<Box backgroundColor="background" padding="md" />
+
+// 2. Use selectors
+const todos = useAppSelector(selectTodos);
+
+// 3. Use translations
+<Text>{t('welcome.message')}</Text>
+
+// 4. Proper typing
+const data: Todo[] = response.data;
+
+// 5. Error handling
+try {
+  const result = await api.getData();
+} catch (error) {
+  logger.error('API Error', error);
+}
+
+// 6. Extract functions
+const renderTodoItem = useCallback(({ item }: { item: Todo }) => (
+  <TodoItem todo={item} />
+), []);
+
+<FlatList renderItem={renderTodoItem} />
+
+// 7. Use theme values
+<Box backgroundColor="background" padding="md" />
+```
+
+---
+
+**Remember**: These rules ensure consistency, maintainability, and scalability. When in doubt, follow the established patterns in the codebase and refer to the feature-first architecture guide.
+# MobileLauncher LT - Development Rules & Guidelines
+
+This document outlines the essential rules and guidelines for developing with the MobileLauncher LT boilerplate. Follow these rules to maintain consistency, scalability, and code quality across the project.
+
+## 🏗️ Architecture Rules
+
+### 1. Feature-First Structure
+- **Always organize code by business features**, not technical layers
+- Each feature must be self-contained with its own:
+  - `components/` - Feature-specific UI components
+  - `screens/` - Screen components
+  - `hooks/` - Custom hooks for business logic
+  - `store/` - Redux slice and selectors
+  - `api/` - RTK Query endpoints
+  - `services/` - Business logic services
+  - `types/` - TypeScript type definitions
+  - `index.ts` - Barrel exports
+
+**Example:**
+```
+src/features/auth/
+├── components/
+│   ├── login-form.tsx
+│   └── index.ts
+├── screens/
+│   ├── login-screen.tsx
+│   └── index.ts
+├── hooks/
+│   ├── use-auth.ts
+│   └── index.ts
+├── store/
+│   ├── auth-slice.ts
+│   ├── auth-selector.ts
+│   └── index.ts
+├── api/
+│   ├── auth.api.ts
+│   └── index.ts
+├── services/
+│   ├── auth.service.ts
+│   └── index.ts
+├── types/
+│   ├── index.ts
+├── index.ts
+```
+
+### 2. Shared Resources
+- **Extract common functionality** to global directories (`src/ui/`, `src/services/`, `src/utils/`)
+- **Never duplicate code** - if used in 2+ features, move to shared
+- **Use absolute imports** with `#root/` prefix for clean imports
+- **Expo ecosystem**: use expo.dev ecosystem for packages and yarn to install packages.
+
+**Example:**
+```typescript
+// ❌ Wrong - duplicated across features
+// features/auth/components/button.tsx
+// features/settings/components/button.tsx
+
+// ✅ Correct - shared component
+// src/ui/components/button.tsx
+import { Button } from '#root/ui/components/button';
+
+// ✅ Correct - shared utility
+// src/utils/format-date.ts
+import { formatDate } from '#root/utils/format-date';
+```
+
+## 🎨 UI Component Rules
+
+### 3. Component Design
+- **Use Restyle for all styling** - never use StyleSheet directly
+- **Create type-safe components** with proper TypeScript interfaces
+- **Export prop interfaces** for reusability
+- **Use React.memo** for performance optimization
+- **Follow single responsibility principle**
+- **Memorzie Functions**: use useCallback for functions
+- **Avoid inline functions**: extract functions outside render or use useCallback
+- **Avoid inline styling**: use theme values and component variants instead
+
+**Example:**
+```typescript
+// ✅ Correct - Performance optimized component
+import React, { useCallback } from 'react';
+import { createBox } from '@shopify/restyle';
+import type { Theme } from '#root/ui/style/theme';
+
+const StyledButton = createBox<Theme>();
+
+export interface ButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: 'primary' | 'secondary';
+  disabled?: boolean;
+}
+
+const _Button = ({ title, onPress, variant = 'primary', disabled = false }: ButtonProps) => {
+  const handlePress = useCallback(() => {
+    if (!disabled) {
+      onPress();
+    }
+  }, [onPress, disabled]);
+
+  return (
+    <StyledButton
+      backgroundColor={variant === 'primary' ? 'primary' : 'secondary'}
+      padding="md"
+      borderRadius="md"
+      onPress={handlePress}
+      opacity={disabled ? 0.5 : 1}
+    >
+      <Text color="white" textAlign="center">
+        {title}
+      </Text>
+    </StyledButton>
+  );
+};
+
+export const Button = React.memo(_Button);
+```
+
+### 4. Theme Usage
+- **Always use theme values** for colors, spacing, typography
+- **Use borderRadius theme values**: `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `full`
+- **Use "full" for circles** instead of calculating half width/height
+- **Never hardcode values** in theme props
+
+**Example:**
+```typescript
+// ❌ Wrong - hardcoded values
+<Box 
+  backgroundColor="#3B82F6" 
+  padding={16} 
+  borderRadius={8}
+  width={50}
+  height={50}
+/>
+
+// ✅ Correct - theme values
+<Box 
+  backgroundColor="primary" 
+  padding="md" 
+  borderRadius="md"
+  width={50}
+  height={50}
+  borderRadius="full" // For circles
+/>
+```
+
+### 5. Component Variants
+- **Create multiple variants** for each component (size, type, state)
+- **Use consistent naming**: `buttonTypeVariant`, `buttonSizeVariant`
+- **Define variants in theme** using Restyle's variant system
+
+**Example:**
+```typescript
+// Theme definition
+export const buttonVariants = createVariant<Theme, 'buttonVariants', 'variant'>({
+  property: 'variant',
+  themeKey: 'buttonVariants',
+});
+
+// Component usage
+<Button 
+  title="Save" 
+  buttonTypeVariant="primary" 
+  buttonSizeVariant="large"
+  onPress={handleSave} 
+/>
+```
+
+## 🔄 State Management Rules
+
+### 6. Redux Patterns
+- **Use Redux Toolkit** for all state management
+- **Create feature slices** with proper action creators
+- **Use createSelector** for derived state
+- **Keep state normalized** and flat
+- **Use RTK Query** for all API calls
+
+**Example:**
+```typescript
+// Redux slice
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState: { todos: [], loading: false },
+  reducers: {
+    addTodo: (state, action) => {
+      state.todos.push(action.payload);
+    },
+    toggleTodo: (state, action) => {
+      const todo = state.todos.find(t => t.id === action.payload);
+      if (todo) todo.completed = !todo.completed;
+    },
+  },
+});
+
+// Selector
+export const selectCompletedTodos = createSelector(
+  (state: RootState) => state.todos.todos,
+  (todos) => todos.filter(todo => todo.completed)
+);
+```
+
+### 7. Selectors
+- **Create selectors for all state access**
+- **Use createSelector for performance**
+- **Export selectors from feature index**
+- **Never access state directly in components**
+
+**Example:**
+```typescript
+// ❌ Wrong - direct state access
+const MyComponent = () => {
+  const todos = useSelector(state => state.todos.todos);
+  const loading = useSelector(state => state.todos.loading);
+};
+
+// ✅ Correct - using selectors
+const MyComponent = () => {
+  const todos = useAppSelector(selectTodos);
+  const loading = useAppSelector(selectTodosLoading);
+  const completedCount = useAppSelector(selectCompletedTodosCount);
+};
+```
+
+## 🧭 Navigation Rules
+
+### 8. Type-Safe Navigation
+- **Always use proper TypeScript navigation types**
+- **Never use `as never` or `as any`** for navigation
+- **Define all routes in `routes.types.ts`**
+- **Use centralized route definitions**
+- **Follow navigation patterns consistently**
+
+**Example:**
+```typescript
+// ❌ Wrong - unsafe navigation
+const MyComponent = () => {
+  const navigation = useNavigation();
+  navigation.navigate('Profile' as any, { userId: 123 });
+};
+
+// ✅ Correct - type-safe navigation
+type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
+
+const MyComponent = () => {
+  const navigation = useNavigation<ProfileScreenNavigationProp>();
+  navigation.navigate('Profile', { userId: 123 });
+};
+```
+
+### 9. Navigation Structure
+- **Use nested navigators** (Stack → Tab)
+- **Implement authentication guards**
+- **Use proper screen options**
+- **Handle deep linking properly**
+
+**Example:**
+```typescript
+// Root Navigator with auth guards
+export const RootStackNavigator = () => {
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  
+  return (
+    <RootStack.Navigator>
+      {!isAuthenticated ? (
+        <RootStack.Group>
+          <RootStack.Screen name="Login" component={LoginScreen} />
+        </RootStack.Group>
+      ) : (
+        <RootStack.Group>
+          <RootStack.Screen name="AppTabs" component={AppTabNavigator} />
+        </RootStack.Group>
+      )}
+    </RootStack.Navigator>
+  );
+};
+```
+
+## 🌐 API Integration Rules
+
+### 10. RTK Query Usage
+- **Use RTK Query for all API calls**
+- **Define endpoints in feature API files**
+- **Use Zod schemas for validation**
+- **Implement proper error handling**
+- **Use appropriate caching strategies**
+
+**Example:**
+```typescript
+// API endpoint definition
+const todosApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    getTodos: builder.query<Todo[], void>({
+      query: () => '/todos',
+      transformResponse: (response: unknown) => {
+        return TodoResponseSchema.parse(response);
+      },
+      providesTags: ['Todo'],
+    }),
+    addTodo: builder.mutation<Todo, CreateTodoRequest>({
+      query: (newTodo) => ({
+        url: '/todos',
+        method: 'POST',
+        body: newTodo,
+      }),
+      invalidatesTags: ['Todo'],
+    }),
+  }),
+});
+
+export const { useGetTodosQuery, useAddTodoMutation } = todosApi;
+```
+
+### 11. Data Validation
+- **Validate all API responses** with Zod schemas
+- **Type all request/response interfaces**
+- **Handle loading and error states**
+- **Use optimistic updates where appropriate**
+
+**Example:**
+```typescript
+// Zod schema
+const TodoSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  completed: z.boolean(),
+  createdAt: z.string(),
+});
+
+// Component with validation
+const TodoComponent = () => {
+  const { data: todos, isLoading, error } = useGetTodosQuery();
+  
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage error={error} />;
+  
+  const renderTodoItem = useCallback(({ item }: { item: Todo }) => (
+    <TodoItem todo={item} />
+  ), []);
+
+  return (
+    <FlatList
+      data={todos}
+      renderItem={renderTodoItem}
+    />
+  );
+};
+```
+
+## 🗄️ Storage Rules
+
+### 12. Storage Selection
+- **Use Secure Store for sensitive data** (tokens, credentials)
+- **Use MMKV for high-performance storage** (app data, preferences)
+- **Use AsyncStorage for simple data** (caching, temporary data)
+- **Use Redux Persist for state persistence**
+
+**Example:**
+```typescript
+// Secure Store for sensitive data
+await SecureStore.setItemAsync('auth_token', token);
+
+// MMKV for app data
+mmkv.set('user_preferences', JSON.stringify(preferences));
+
+// AsyncStorage for simple data
+await AsyncStorage.setItem('last_sync', Date.now().toString());
+
+// Redux Persist configuration
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  whitelist: ['auth', 'user'],
+};
+```
+
+### 13. Storage Services
+- **Create service classes** for storage operations
+- **Use singleton pattern** for services
+- **Implement proper error handling**
+- **Type all storage operations**
+
+**Example:**
+```typescript
+class StorageService {
+  private static instance: StorageService;
+  
+  static getInstance(): StorageService {
+    if (!StorageService.instance) {
+      StorageService.instance = new StorageService();
+    }
+    return StorageService.instance;
+  }
+  
+  async setItem(key: string, value: string): Promise<void> {
+    try {
+      await SecureStore.setItemAsync(key, value);
+    } catch (error) {
+      console.error('Storage error:', error);
+      throw new Error('Failed to save data');
+    }
+  }
+  
+  async getItem(key: string): Promise<string | null> {
+    try {
+      return await SecureStore.getItemAsync(key);
+    } catch (error) {
+      console.error('Storage error:', error);
+      return null;
+    }
+  }
+}
+```
+
+## 🌍 Internationalization Rules
+
+### 14. Translation Management
+- **All UI text must be translatable**
+- **Use translation keys** instead of hardcoded strings
+- **Organize keys by feature** in translation files
+- **Use interpolation for dynamic content**
+- **Test with multiple languages**
+
+**Example:**
+```typescript
+// ❌ Wrong - hardcoded strings
+<Text>Welcome to the app!</Text>
+<Text>You have {count} messages</Text>
+
+// ✅ Correct - using translations
+const MyComponent = () => {
+  const { t } = useTranslation();
+  const messageCount = 5;
+  
+  return (
+    <Text>{t('welcome.message')}</Text>
+    <Text>{t('messages.count', { count: messageCount })}</Text>
+  );
+};
+
+// Translation files
+// en.json
+{
+  "welcome": {
+    "message": "Welcome to the app!"
+  },
+  "messages": {
+    "count": "You have {{count}} messages"
+  }
+}
+```
+
+### 15. Translation Usage
+- **Use useTranslation hook** in components
+- **Use t() function for all text**
+- **Provide fallback text** for missing translations
+- **Use proper pluralization**
+
+**Example:**
+```typescript
+const TodoList = () => {
+  const { t } = useTranslation();
+  const todos = useAppSelector(selectTodos);
+  
+  return (
+    <View>
+      <Text>{t('todos.title')}</Text>
+      <Text>{t('todos.count', { count: todos.length })}</Text>
+      {todos.map(todo => (
+        <Text key={todo.id}>{t('todos.item', { title: todo.title })}</Text>
+      ))}
+    </View>
+  );
+};
+```
+
+## 🧪 Testing Rules
+
+### 16. Test Coverage
+- **Write tests for all custom hooks**
+- **Test Redux slices and selectors**
+- **Test API endpoints and services**
+- **Test utility functions**
+- **Maintain 70%+ code coverage**
+
+**Example:**
+```typescript
+// Hook test
+describe('useTodos', () => {
+  it('should return todos and loading state', () => {
+    const { result } = renderHook(() => useTodos(), {
+      wrapper: TestWrapper,
+    });
+    
+    expect(result.current.todos).toEqual([]);
+    expect(result.current.isLoading).toBe(false);
+  });
+  
+  it('should toggle todo completion', () => {
+    const { result } = renderHook(() => useTodos(), {
+      wrapper: TestWrapper,
+    });
+    
+    act(() => {
+      result.current.toggleComplete(1);
+    });
+    
+    expect(result.current.todos[0].completed).toBe(true);
+  });
+});
+```
+
+### 17. Test Structure
+- **Use describe/it blocks** for test organization
+- **Mock external dependencies**
+- **Test both success and error cases**
+- **Use meaningful test descriptions**
+- **Follow AAA pattern** (Arrange, Act, Assert)
+
+**Example:**
+```typescript
+describe('TodoService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  
+  describe('addTodo', () => {
+    it('should add todo successfully', async () => {
+      // Arrange
+      const mockTodo = { title: 'Test Todo', completed: false };
+      const mockResponse = { id: 1, ...mockTodo };
+      mockApi.post.mockResolvedValue(mockResponse);
+      
+      // Act
+      const result = await todoService.addTodo(mockTodo);
+      
+      // Assert
+      expect(result).toEqual(mockResponse);
+      expect(mockApi.post).toHaveBeenCalledWith('/todos', mockTodo);
+    });
+    
+    it('should handle API errors', async () => {
+      // Arrange
+      const mockError = new Error('API Error');
+      mockApi.post.mockRejectedValue(mockError);
+      
+      // Act & Assert
+      await expect(todoService.addTodo({ title: 'Test' }))
+        .rejects.toThrow('API Error');
+    });
+  });
+});
+```
+
+## 📁 File Organization Rules
+
+### 18. File Naming
+- **Use kebab-case for files**: `user-profile.tsx`
+- **Use PascalCase for components**: `UserProfile`
+- **Use camelCase for functions**: `getUserData`
+- **Use UPPER_CASE for constants**: `API_BASE_URL`
+
+**Example:**
+```typescript
+// File: user-profile-screen.tsx
+export const UserProfileScreen = () => { ... };
+
+// File: auth.service.ts
+export const getUserData = () => { ... };
+
+// File: constants.ts
+export const API_BASE_URL = 'https://api.example.com';
+```
+
+### 19. Import Organization
+- **Group imports**: React, third-party, internal, relative
+- **Use absolute imports** with `#root/` prefix
+- **Sort imports alphabetically**
+- **Remove unused imports**
+
+**Example:**
+```typescript
+// ✅ Correct import organization
+import React, { useCallback, useState } from 'react';
+import { View, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+import { Button } from '#root/ui/components/button';
+import { useAuth } from '#root/features/auth';
+import { logger } from '#root/services/logging';
+
+import { TodoItem } from './todo-item';
+import type { Todo } from './types';
+```
+
+## 🔧 Code Quality Rules
+
+### 20. TypeScript Usage
+- **Use strict TypeScript configuration**
+- **Type all function parameters and return values**
+- **Use proper interfaces and types**
+- **Avoid `any` type usage**
+- **Use type assertions sparingly**
+
+**Example:**
+```typescript
+// ❌ Wrong - no types
+const addTodo = (title, completed) => {
+  return { title, completed, id: Date.now() };
+};
+
+// ✅ Correct - proper typing
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+  createdAt: string;
+}
+
+const addTodo = (title: string, completed: boolean = false): Todo => {
+  return {
+    id: Date.now(),
+    title,
+    completed,
+    createdAt: new Date().toISOString(),
+  };
+};
+```
+
+### 21. Error Handling
+- **Handle all possible errors**
+- **Use error boundaries for UI errors**
+- **Log errors appropriately**
+- **Provide user-friendly error messages**
+- **Implement retry mechanisms**
+
+**Example:**
+```typescript
+const TodoComponent = () => {
+  const [error, setError] = useState<string | null>(null);
+  
+  const handleAddTodo = async (title: string) => {
+    try {
+      setError(null);
+      await addTodo(title);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+      logger.error('Failed to add todo', err);
+    }
+  };
+  
+  if (error) {
+    return <ErrorMessage message={error} onRetry={() => setError(null)} />;
+  }
+  
+  return <TodoForm onSubmit={handleAddTodo} />;
+};
+```
+
+## 🚀 Performance Rules
+
+### 22. Optimization
+- **Use React.memo for expensive components**
+- **Use useCallback and useMemo appropriately**
+- **Implement lazy loading for routes**
+- **Use FlashList for large lists**
+- **Optimize images and assets**
+- **Avoid inline functions** - extract to useCallback or outside component
+- **Avoid inline styling** - use theme values and component variants
+
+
+**Example:**
+```typescript
+// Performance optimized component
+const _ExpensiveComponent = ({ data, onPress }: Props) => {
+  const processedData = useMemo(() => {
+    return data.map(item => ({
+      ...item,
+      processed: heavyComputation(item)
+    }));
+  }, [data]);
+  
+  const handlePress = useCallback((id: string) => {
+    onPress(id);
+  }, [onPress]);
+  
+  // ✅ Extract render function to avoid inline function
+  const renderItem = useCallback(({ item }: { item: ProcessedItem }) => (
+    <MemoizedItem item={item} onPress={handlePress} />
+  ), [handlePress]);
+  
+  return (
+    <FlashList
+      data={processedData}
+      renderItem={renderItem}
+      estimatedItemSize={100}
+    />
+  );
+};
+
+export const ExpensiveComponent = React.memo(_ExpensiveComponent);
+```
+
+### 23. Bundle Size
+- **Use tree shaking** for unused code
+- **Implement code splitting**
+- **Minimize dependencies**
+- **Use dynamic imports** for heavy libraries
+
+**Example:**
+```typescript
+// Lazy loading for routes
+const ProfileScreen = lazy(() => import('#root/features/profile/screens/profile-screen'));
+
+// Dynamic imports for heavy libraries
+const loadChartLibrary = async () => {
+  const { Chart } = await import('chart.js');
+  return Chart;
+};
+
+// Tree shaking friendly imports
+import { debounce } from 'lodash/debounce'; // ✅ Good
+import _ from 'lodash'; // ❌ Bad - imports entire library
+```
+
+## 🔐 Security Rules
+
+### 24. Data Protection
+- **Never store sensitive data in plain text**
+- **Use Secure Store for tokens and credentials**
+- **Validate all user inputs**
+- **Sanitize data before storage**
+- **Implement proper authentication**
+
+**Example:**
+```typescript
+// ❌ Wrong - storing sensitive data in plain text
+AsyncStorage.setItem('password', userPassword);
+
+// ✅ Correct - using Secure Store
+await SecureStore.setItemAsync('auth_token', token);
+
+// Input validation
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// Sanitize data before storage
+const sanitizeUserInput = (input: string): string => {
+  return input.trim().replace(/[<>]/g, '');
+};
+```
+
+### 25. API Security
+- **Use HTTPS for all API calls**
+- **Implement proper token management**
+- **Validate API responses**
+- **Handle authentication errors**
+- **Use proper headers**
+
+**Example:**
+```typescript
+// API configuration with security
+const api = createApi({
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://api.example.com', // HTTPS only
+    prepareHeaders: (headers, { getState }) => {
+      const token = selectAuthToken(getState());
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`);
+      }
+      headers.set('content-type', 'application/json');
+      return headers;
+    },
+  }),
+});
+
+// Token refresh logic
+const refreshToken = async (): Promise<string | null> => {
+  try {
+    const refreshToken = await SecureStore.getItemAsync('refresh_token');
+    const response = await fetch('/auth/refresh', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${refreshToken}` },
+    });
+    const { accessToken } = await response.json();
+    await SecureStore.setItemAsync('auth_token', accessToken);
+    return accessToken;
+  } catch (error) {
+    await logout();
+    return null;
+  }
+};
+```
+
+## 📝 Documentation Rules
+
+### 26. Code Documentation
+- **Write JSDoc comments** for complex functions
+- **Document component props** with interfaces
+- **Explain business logic** in comments
+- **Keep README files updated**
+- **Document API endpoints**
+
+**Example:**
+```typescript
+/**
+ * Calculates the total price including tax and discounts
+ * @param basePrice - The base price before any calculations
+ * @param taxRate - The tax rate as a decimal (0.1 for 10%)
+ * @param discount - Optional discount amount
+ * @returns The final price after all calculations
+ */
+const calculateTotalPrice = (
+  basePrice: number, 
+  taxRate: number, 
+  discount?: number
+): number => {
+  const discountedPrice = discount ? basePrice - discount : basePrice;
+  return discountedPrice * (1 + taxRate);
+};
+
+/**
+ * Props for the TodoItem component
+ */
+export interface TodoItemProps {
+  /** The todo item data */
+  todo: Todo;
+  /** Callback when todo is toggled */
+  onToggle: (id: number) => void;
+  /** Whether the todo is currently being edited */
+  isEditing?: boolean;
+}
+```
+
+### 27. Commit Messages
+- **Use conventional commits**: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`
+- **Write descriptive commit messages**
+- **Reference issues and PRs**
+- **Keep commits atomic**
+
+**Example:**
+```bash
+# ✅ Good commit messages
+feat(auth): add biometric authentication support
+fix(todos): resolve memory leak in todo list component
+docs(readme): update installation instructions
+test(auth): add unit tests for login hook
+refactor(ui): extract common button styles to theme
+
+# ❌ Bad commit messages
+fix stuff
+update
+changes
+wip
+```
+
+## 🎯 Feature Development Rules
+
+### 28. New Feature Checklist
+- [ ] Create feature directory structure
+- [ ] Define TypeScript types
+- [ ] Create Redux slice
+- [ ] Implement API endpoints
+- [ ] Create components and screens
+- [ ] Add custom hooks
+- [ ] Write tests
+- [ ] Add translations
+- [ ] Update navigation
+- [ ] Document the feature
+
+**Example:**
+```bash
+# Creating a new feature
+mkdir -p src/features/notifications/{components,screens,hooks,store,api,services,types}
+
+# Generate boilerplate files
+touch src/features/notifications/{components,screens,hooks,store,api,services,types}/index.ts
+touch src/features/notifications/types/index.ts
+touch src/features/notifications/store/notifications-slice.ts
+touch src/features/notifications/hooks/use-notifications.ts
+```
+
+### 29. Code Review Checklist
+- [ ] Follows architecture patterns
+- [ ] Uses proper TypeScript types
+- [ ] Implements error handling
+- [ ] Has appropriate tests
+- [ ] Uses theme values
+- [ ] Follows naming conventions
+- [ ] Has proper documentation
+- [ ] Is performant
+- [ ] Is accessible
+
+**Example:**
+```typescript
+// Code review checklist example
+const TodoItem = ({ todo, onToggle }: TodoItemProps) => {
+  // ✅ Uses proper TypeScript types
+  // ✅ Implements error handling
+  // ✅ Uses theme values
+  // ✅ Follows naming conventions
+  // ✅ Is performant with useCallback
+  // ✅ Is accessible
+  
+  const handleToggle = useCallback(() => {
+    try {
+      onToggle(todo.id);
+    } catch (error) {
+      logger.error('Failed to toggle todo', error);
+    }
+  }, [onToggle, todo.id]);
+  
+  return (
+    <Box
+      backgroundColor="background"
+      padding="md"
+      borderRadius="md"
+      accessibilityRole="button"
+      accessibilityLabel={`Toggle ${todo.title}`}
+    >
+      <Text variant="body">{todo.title}</Text>
+    </Box>
+  );
+};
+```
+
+## 🚫 Anti-Patterns to Avoid
+
+### 30. Common Mistakes
+- **Don't use StyleSheet** instead of Restyle. except if to avoid inline styling
+- **Don't access Redux state directly** in components
+- **Don't hardcode strings** instead of using translations
+- **Don't use `any` type** in TypeScript
+- **Don't skip error handling**
+- **Don't ignore performance** implications
+- **Don't use inline functions** in render methods
+- **Don't use inline styling** - use theme values and variants
+
+**Example:**
+```typescript
+// ❌ Common mistakes to avoid
+
+// 1. Using StyleSheet instead of Restyle
+const styles = StyleSheet.create({
+  container: { backgroundColor: '#fff', padding: 16 }
+});
+
+// 2. Direct Redux state access
+const todos = useSelector(state => state.todos.todos);
+
+// 3. Hardcoded strings
+<Text>Welcome to the app!</Text>
+
+// 4. Using any type
+const data: any = response.data;
+
+// 5. No error handling
+const result = await api.getData();
+
+// 6. Inline functions
+<FlatList renderItem={({ item }) => <TodoItem todo={item} />} />
+
+// 7. Inline styling
+<View style={{ backgroundColor: '#fff', padding: 16 }} />
+
+// ✅ Correct approaches
+
+// 1. Use Restyle
+<Box backgroundColor="background" padding="md" />
+
+// 2. Use selectors
+const todos = useAppSelector(selectTodos);
+
+// 3. Use translations
+<Text>{t('welcome.message')}</Text>
+
+// 4. Proper typing
+const data: Todo[] = response.data;
+
+// 5. Error handling
+try {
+  const result = await api.getData();
+} catch (error) {
+  logger.error('API Error', error);
+}
+
+// 6. Extract functions
+const renderTodoItem = useCallback(({ item }: { item: Todo }) => (
+  <TodoItem todo={item} />
+), []);
+
+<FlatList renderItem={renderTodoItem} />
+
+// 7. Use theme values
+<Box backgroundColor="background" padding="md" />
+```
+
+---
+
+**Remember**: These rules ensure consistency, maintainability, and scalability. When in doubt, follow the established patterns in the codebase and refer to the feature-first architecture guide.

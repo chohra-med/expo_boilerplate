@@ -370,6 +370,40 @@ logger.logEvent('screen_load_time', {
 
 ## 🧪 Development
 
+### Testing
+
+The project includes comprehensive unit testing with Jest and React Native Testing Library:
+
+```bash
+# Run all tests
+yarn test
+
+# Run tests in watch mode
+yarn test:watch
+
+# Run tests with coverage
+yarn test:coverage
+```
+
+#### Testing Features
+- **Unit Tests**: Custom hooks, Redux slices, and utility functions
+- **Component Tests**: UI component testing with React Native Testing Library
+- **API Tests**: RTK Query endpoint testing
+- **Mocking**: Comprehensive mocking for external dependencies
+- **Coverage**: 70%+ code coverage requirement
+
+#### Test Structure
+```
+src/
+├── features/
+│   └── todos/
+│       └── hooks/
+│           └── __tests__/
+│               └── use-todos.test.ts
+└── __tests__/
+    └── setup.ts
+```
+
 ### Linting and Formatting
 
 ```bash
@@ -394,12 +428,26 @@ The project uses Biome for:
 - Import sorting
 - Consistent code style
 
+### Development Rules
+
+Follow the comprehensive development rules outlined in [`ai_articles/app_rules.md`](ai_articles/app_rules.md) to maintain consistency and code quality:
+
+- **Feature-First Architecture**: Organize code by business features
+- **UI Component Guidelines**: Use Restyle for styling and follow component patterns
+- **State Management**: Use Redux Toolkit and RTK Query patterns
+- **Testing Standards**: Maintain 70%+ code coverage with comprehensive tests
+- **TypeScript Usage**: Strict typing throughout the application
+- **Performance Optimization**: Follow performance best practices
+
 ## 📦 Available Scripts
 
 - `yarn start` - Start the Expo development server
 - `yarn ios` - Run on iOS simulator
 - `yarn android` - Run on Android emulator
 - `yarn web` - Run on web browser
+- `yarn test` - Run all tests
+- `yarn test:watch` - Run tests in watch mode
+- `yarn test:coverage` - Run tests with coverage report
 - `yarn lint` - Check for linting issues
 - `yarn lint:fix` - Fix linting issues
 - `yarn format` - Format code

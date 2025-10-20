@@ -14,11 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mblauncherlt.app",
-      "icon": {
-        "light": "./assets/icon-light.png",
-        "dark": "./assets/icon-dark.png"
-      }
+      "bundleIdentifier": "com.mblauncherlt.app"
     },
     "android": {
       "adaptiveIcon": {

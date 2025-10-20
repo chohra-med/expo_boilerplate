@@ -18,6 +18,28 @@ A comprehensive React Native boilerplate built with Expo, following feature-firs
 - **Error Handling**: Global error boundary with recovery mechanisms
 - **Analytics**: Built-in logging and analytics service
 
+## 📱 Screenshots
+
+<div align="center">
+  <h3>App Flow Overview</h3>
+  <p>Experience the complete user journey from onboarding to main features</p>
+</div>
+
+### Welcome & Onboarding
+<div align="center">
+  <img src="screenshots/01-welcome-screen.png" alt="Welcome Screen" width="200" />
+  <img src="screenshots/02-onboarding-step1.png" alt="Onboarding Step 1" width="200" />
+  <img src="screenshots/03-onboarding-step2.png" alt="Onboarding Step 2" width="200" />
+  <img src="screenshots/04-onboarding-step3.png" alt="Onboarding Step 3" width="200" />
+</div>
+
+### Authentication & Main Features
+<div align="center">
+  <img src="screenshots/05-login-screen.png" alt="Login Screen" width="200" />
+  <img src="screenshots/06-home-screen.png" alt="Home Screen" width="200" />
+  <img src="screenshots/07-todos-screen.png" alt="Todos Screen" width="200" />
+</div>
+
 ## 📁 Project Structure
 
 ```

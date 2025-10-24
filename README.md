@@ -1,6 +1,13 @@
 # MobileLauncher - React Native Boilerplate
 
-A comprehensive React Native boilerplate built with Expo, following feature-first architecture principles. This project includes authentication, onboarding, internationalization, theming, and modern state management.
+> **Lite Version of [<img src="screenshots/icon.png" alt="AIMobileLauncher Icon" width="32" style="vertical-align:middle;"/> <span style="font-size:1.5em;">AIMobileLauncher</span>](https://www.aimobilelauncher.com/)**  
+>
+> Explore the full-featured version here:<br>
+> <a href="https://www.aimobilelauncher.com/" style="font-size:1.25em; font-weight:bold;">
+> <img src="screenshots/icon.png" alt="AIMobileLauncher Icon" width="28" style="vertical-align:middle; margin-right:8px;" /> www.aimobilelauncher.com
+> </a>
+
+A comprehensive React Native boilerplate built with Expo, following feature-first architecture principles. This project is a streamlined, lighter version of the AIMobileLauncher, including authentication, onboarding, internationalization, theming, and modern state management.
 
 ## 🚀 Features
 

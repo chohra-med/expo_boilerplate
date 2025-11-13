@@ -2005,6 +2005,3 @@ const renderTodoItem = useCallback(({ item }: { item: Todo }) => (
 <Box backgroundColor="background" padding="md" />
 ```
 
----
-
-**Remember**: These rules ensure consistency, maintainability, and scalability. When in doubt, follow the established patterns in the codebase and refer to the feature-first architecture guide.

@@ -7,18 +7,34 @@
     "icon": "./assets/icon-light.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/icon-light.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#007AFF"
-    },
+    "scheme": "mblauncherlt",
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFFFFF",
+          "image": "./assets/splash-icon-dark.png",
+          "dark": {
+            "image": "./assets/splash-icon-light.png",
+            "backgroundColor": "#000000"
+          },
+          "imageWidth": 200
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mblauncherlt.app"
+      "bundleIdentifier": "com.mblauncherlt.app",
+      "icon": {
+        "light": "./assets/icon-light.png",
+        "dark": "./assets/icon-dark.png",
+        "tinted": "./assets/icon-tinted.png"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon-light.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#007AFF"
       },
       "edgeToEdgeEnabled": true,

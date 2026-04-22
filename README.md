@@ -10,7 +10,7 @@
 Feature-first architecture, TypeScript strict, auth, i18n, theming, Redux Toolkit, and Expo SDK 54 with the New Architecture. Structured so Cursor, Claude Code, and Antigravity generate consistent code without hallucinating your patterns.
 
 > **Want the full version?** RevenueCat, Firebase, U-AMOS 2.0 memory bank, and AI Pro features are in the paid tier.<br>
-> → **[AI Mobile Launcher — aimobilelauncher.com](https://www.aimobilelauncher.com/)**
+> → **[AI Mobile Launcher — aimobilelauncher.com](https://www.aimobilelauncher.com/?utm_source=github&utm_medium=readme&utm_campaign=expo_boilerplate&utm_content=hero_cta)**
 
 ---
 
@@ -524,7 +524,7 @@ MIT — see the [LICENSE](LICENSE) file for details.
 
 - [Open an issue](https://github.com/chohra-med/expo_boilerplate/issues)
 - Follow the build in public on [LinkedIn](https://www.linkedin.com/in/malik-chohra/)
-- Weekly signal in [Code Meet AI newsletter](https://aimeetcode.substack.com/)
+- Weekly signal in [Code Meet AI newsletter](https://aimeetcode.substack.com/?utm_source=github&utm_medium=readme&utm_campaign=expo_boilerplate&utm_content=support_newsletter)
 
 ---
 
@@ -538,4 +538,4 @@ MIT — see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Built by [Malik Chohra](https://www.linkedin.com/in/malik-chohra/) — AI-first mobile engineer, founder of [CasaInnov](https://casainnov.com/) and [AI Mobile Launcher](https://www.aimobilelauncher.com/).**
+**Built by [Malik Chohra](https://www.linkedin.com/in/malik-chohra/) — AI-first mobile engineer, founder of [CasaInnov](https://casainnov.com/?utm_source=github&utm_medium=readme&utm_campaign=expo_boilerplate&utm_content=footer_casainnov) and [AI Mobile Launcher](https://www.aimobilelauncher.com/?utm_source=github&utm_medium=readme&utm_campaign=expo_boilerplate&utm_content=footer_aiml).**

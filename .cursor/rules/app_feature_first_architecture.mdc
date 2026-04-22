@@ -1,0 +1,939 @@
+---
+alwaysApply: true
+---
+# Feature-First Architecture Guide
+
+## Overview
+
+Feature-first architecture is a design pattern that organizes code by business features rather than technical layers. This approach promotes better maintainability, scalability, and team collaboration by keeping related functionality together and reducing coupling between different parts of the application.
+
+## Core Principles
+
+### 1. Feature Isolation
+- Each feature is self-contained with its own components, logic, and state
+- Features communicate through well-defined interfaces
+- Minimal dependencies between features
+- Clear boundaries and responsibilities
+
+### 2. Shared Resources
+- Common functionality is extracted to shared directories
+- UI components, utilities, and services are globally accessible
+- Consistent patterns across all features
+
+### 3. Scalability
+- Easy to add new features without affecting existing ones
+- Clear structure for team members to work independently
+- Simple to remove or refactor features
+
+## Project Structure
+
+```
+src/
+├── features/                    # Feature-specific code
+│   ├── auth/                   # Authentication feature
+│   │   ├── api/               # API calls and endpoints
+│   │   ├── components/        # Feature-specific components
+│   │   ├── hooks/            # Custom hooks
+│   │   ├── screens/          # Screen components
+│   │   ├── services/         # Business logic
+│   │   ├── store/            # State management
+│   │   └── types/            # Type definitions
+│   ├── media-library/         # Media management feature
+│   ├── collections/           # Collections feature
+│   └── settings/              # Settings feature
+├── navigation/                 # Navigation configuration
+│   ├── navigators/           # Navigator components
+│   ├── routes.ts             # Route definitions
+│   └── routes.types.ts       # Navigation types
+├── services/                  # Global services
+│   ├── api/                  # API configuration
+│   ├── datadog/              # Monitoring service
+│   └── logging/              # Logging services
+├── store/                     # Global store configuration
+│   ├── store.ts              # Store setup
+│   ├── reducers.ts           # Root reducer
+│   └── app.slice.ts          # App-level state
+├── ui/                        # Shared UI components
+│   ├── components/           # Reusable components
+│   ├── style/                # Theme and styling
+│   └── tokens/               # Design tokens
+├── utils/                     # Utility functions
+├── schemas/                   # Data validation schemas
+├── config/                    # Configuration files
+└── entrypoints/              # App entry points
+```
+
+## Feature Structure Deep Dive
+
+### 1. API Layer (`api/`)
+```typescript
+// features/auth/api/auth.api.ts
+import { api } from "#root/services/api/api";
+import { AuthSchema, type AuthResponse } from "./types";
+
+const authApi = api.injectEndpoints({
+  overrideExisting: true,
+  endpoints: (builder) => ({
+    login: builder.mutation<AuthResponse, LoginCredentials>({
+      query: (credentials) => ({
+        url: "/auth/login",
+        method: "POST",
+        body: credentials,
+      }),
+      responseSchema: AuthSchema,
+    }),
+  }),
+});
+
+export const { useLoginMutation } = authApi;
+```
+
+**Best Practices:**
+- Use RTK Query for all API calls
+- Define response schemas with Zod validation
+- Type all request/response interfaces
+- Use proper error handling
+- Implement caching strategies
+
+### 2. Components (`components/`)
+```typescript
+// features/auth/components/login-form.tsx
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormData } from "../types";
+
+export interface LoginFormProps {
+  onSuccess: (data: LoginFormData) => void;
+  onError: (error: string) => void;
+}
+
+export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
+  const { control, handleSubmit } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  // Implementation...
+};
+```
+
+**Best Practices:**
+- Clear prop interfaces with proper exports
+- Use React.memo for performance optimization
+- Implement proper form validation
+- Follow single responsibility principle
+- Use TypeScript template literal types for variants
+
+### 3. Hooks (`hooks/`)
+```typescript
+// features/auth/hooks/use-auth.ts
+import { useAppSelector, useAppDispatch } from "#root/store/store";
+import { selectAuthState } from "../store/auth-selector";
+import { login, logout } from "../store/auth-slice";
+
+export const useAuth = () => {
+  const dispatch = useAppDispatch();
+  const authState = useAppSelector(selectAuthState);
+
+  const handleLogin = useCallback(
+    (credentials: LoginCredentials) => {
+      dispatch(login(credentials));
+    },
+    [dispatch]
+  );
+
+  const handleLogout = useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
+
+  return {
+    ...authState,
+    login: handleLogin,
+    logout: handleLogout,
+  };
+};
+```
+
+**Best Practices:**
+- Encapsulate feature-specific logic
+- Use proper TypeScript types
+- Implement proper error handling
+- Use useCallback for performance
+- Return consistent interfaces
+
+### 4. Screens (`screens/`)
+```typescript
+// features/auth/screens/login-screen.tsx
+import { useNavigation } from "@react-navigation/native";
+import { LoginForm } from "../components/login-form";
+import { useAuth } from "../hooks/use-auth";
+
+export const LoginScreen = () => {
+  const navigation = useNavigation();
+  const { login, isLoading, error } = useAuth();
+
+  const handleLoginSuccess = useCallback(
+    (data: LoginFormData) => {
+      login(data);
+      navigation.navigate("Home");
+    },
+    [login, navigation]
+  );
+
+  return (
+    <LoginForm
+      onSuccess={handleLoginSuccess}
+      onError={(error) => console.error(error)}
+    />
+  );
+};
+```
+
+**Best Practices:**
+- Keep screens focused on navigation and orchestration
+- Use custom hooks for business logic
+- Implement proper loading and error states
+- Follow navigation patterns consistently
+
+### 5. Services (`services/`)
+```typescript
+// features/auth/services/auth.service.ts
+import { SecureStorage } from "#root/services/storage/secure-storage";
+import type { AuthTokens } from "../types";
+
+export class AuthService {
+  private static instance: AuthService;
+  private secureStorage = new SecureStorage();
+
+  static getInstance(): AuthService {
+    if (!AuthService.instance) {
+      AuthService.instance = new AuthService();
+    }
+    return AuthService.instance;
+  }
+
+  async saveTokens(tokens: AuthTokens): Promise<void> {
+    await this.secureStorage.setItem("access_token", tokens.accessToken);
+    await this.secureStorage.setItem("refresh_token", tokens.refreshToken);
+  }
+
+  async getTokens(): Promise<AuthTokens | null> {
+    const accessToken = await this.secureStorage.getItem("access_token");
+    const refreshToken = await this.secureStorage.getItem("refresh_token");
+    
+    if (!accessToken || !refreshToken) return null;
+    
+    return { accessToken, refreshToken };
+  }
+}
+```
+
+**Best Practices:**
+- Use singleton pattern for services
+- Implement proper error handling
+- Use dependency injection where appropriate
+- Type all service methods
+- Implement proper cleanup methods
+
+### 6. Store (`store/`)
+```typescript
+// features/auth/store/auth-slice.ts
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { User, AuthState } from "../types";
+
+const initialState: AuthState = {
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
+};
+
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    setUser: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
+      state.isAuthenticated = true;
+      state.error = null;
+    },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.isAuthenticated = false;
+      state.error = null;
+    },
+  },
+});
+
+export const { setUser, setLoading, setError, logout } = authSlice.actions;
+export const authReducer = authSlice.reducer;
+```
+
+```typescript
+// features/auth/store/auth-selector.ts
+import { createSelector } from "@reduxjs/toolkit";
+import type { RootState } from "#root/store/store";
+
+const selectAuth = (state: RootState) => state.auth;
+
+export const selectUser = createSelector(
+  selectAuth,
+  (auth) => auth.user
+);
+
+export const selectIsAuthenticated = createSelector(
+  selectAuth,
+  (auth) => auth.isAuthenticated
+);
+
+export const selectAuthState = createSelector(
+  selectAuth,
+  (auth) => auth
+);
+```
+
+**Best Practices:**
+- Use Redux Toolkit for state management
+- Implement proper selectors with createSelector
+- Keep state normalized
+- Use proper action creators
+- Follow immutability patterns
+- Type all state and actions
+
+### 7. Types (`types/`)
+```typescript
+// features/auth/types/index.ts
+import { z } from "zod";
+
+export const LoginCredentialsSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export const UserSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  name: z.string(),
+  role: z.enum(["admin", "player", "sponsor"]),
+});
+
+export const AuthTokensSchema = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string(),
+});
+
+export type LoginCredentials = z.infer<typeof LoginCredentialsSchema>;
+export type User = z.infer<typeof UserSchema>;
+export type AuthTokens = z.infer<typeof AuthTokensSchema>;
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
+```
+
+**Best Practices:**
+- Use Zod for schema validation
+- Export types and schemas separately
+- Use proper TypeScript types
+- Group related types together
+- Use enums for constants
+
+## Navigation Architecture
+
+### 1. Centralized Navigation Types
+```typescript
+// navigation/routes.types.ts
+import type { NavigatorScreenParams } from "@react-navigation/native";
+
+// Feature-specific navigation types
+export type SettingsStackParamList = {
+  MainSettings: undefined;
+  Profile: undefined;
+  Questionnaire: undefined;
+};
+
+// Main navigation type definitions
+export type RootStackParamList = {
+  Onboarding: undefined;
+  Login: undefined;
+  Authenticated: NavigatorScreenParams<AppTabStackParamsList>;
+};
+
+export type OnboardingStackParamsList = {
+  Welcome: undefined;
+  Login: undefined;
+  OnboardingFlow: undefined;
+};
+
+export type AppTabStackParamsList = {
+  Home: undefined;
+  Todos: undefined;
+  Settings: NavigatorScreenParams<SettingsStackParamList>;
+};
+
+// Helper type for no-args routes
+declare global {
+  namespace routeTypes {
+    interface NoArgs {}
+  }
+}
+```
+
+### 2. Route Definitions
+```typescript
+// navigation/routes.ts
+const noArgs = () => ({}) satisfies routeTypes.NoArgs;
+
+export const routes = {
+  Onboarding: {
+    Welcome: {
+      name: "Welcome",
+      args: noArgs,
+    } as const,
+    Login: {
+      name: "Login",
+      args: noArgs,
+    } as const,
+    OnboardingFlow: {
+      name: "OnboardingFlow",
+      args: noArgs,
+    } as const,
+  },
+  Authenticated: {
+    AppTabs: {
+      Home: {
+        name: "Home",
+        args: noArgs,
+      } as const,
+      Todos: {
+        name: "Todos",
+        args: noArgs,
+      } as const,
+      Settings: {
+        name: "Settings",
+        args: noArgs,
+      } as const,
+    },
+  },
+} as const;
+
+// Re-export types for convenience
+export type {
+  AppTabStackParamsList,
+  OnboardingStackParamsList,
+  RootStackParamList,
+  SettingsStackParamList,
+} from "./routes.types";
+```
+
+### 3. Navigator Structure
+```typescript
+// navigation/navigators/root-stack-navigator.tsx
+import { createStackNavigator } from "@react-navigation/stack";
+import type React from "react";
+import { LoginScreen, selectIsAuthenticated } from "#root/features/auth";
+import { OnboardingScreen, selectIsOnboardingCompleted } from "#root/features/onboarding";
+import { useAppSelector } from "#root/store/store";
+import type { RootStackParamList } from "../routes";
+import { AppTabNavigator } from "./app-tab-navigator";
+
+const RootStack = createStackNavigator<RootStackParamList>();
+
+export const RootStackNavigator: React.FC = () => {
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isOnboardingCompleted = useAppSelector(selectIsOnboardingCompleted);
+
+  return (
+    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      {!isOnboardingCompleted ? (
+        <RootStack.Group>
+          <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
+        </RootStack.Group>
+      ) : !isAuthenticated ? (
+        <RootStack.Group>
+          <RootStack.Screen name="Login" component={LoginScreen} />
+        </RootStack.Group>
+      ) : (
+        <RootStack.Group>
+          <RootStack.Screen name="Authenticated" component={AppTabNavigator} />
+        </RootStack.Group>
+      )}
+    </RootStack.Navigator>
+  );
+};
+```
+
+### 4. Feature-Specific Navigators
+```typescript
+// features/settings/navigation/settings-navigator.tsx
+import { createStackNavigator } from "@react-navigation/stack";
+import type React from "react";
+import type { SettingsStackParamList } from "#root/navigation/routes";
+import { MainSettingsScreen } from "../screens/main-settings-screen";
+import { ProfileScreen } from "../screens/profile-screen";
+import { QuestionnaireScreen } from "../screens/questionnaire-screen";
+
+const SettingsStack = createStackNavigator<SettingsStackParamList>();
+
+export const SettingsNavigator: React.FC = () => {
+  return (
+    <SettingsStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        gestureEnabled: true,
+        cardStyleInterpolator: ({ current, layouts }) => {
+          return {
+            cardStyle: {
+              transform: [
+                {
+                  translateX: current.progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [layouts.screen.width, 0],
+                  }),
+                },
+              ],
+            },
+          };
+        },
+      }}
+    >
+      <SettingsStack.Screen
+        name="MainSettings"
+        component={MainSettingsScreen}
+        options={{ title: "Settings" }}
+      />
+      <SettingsStack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ title: "Profile" }}
+      />
+      <SettingsStack.Screen
+        name="Questionnaire"
+        component={QuestionnaireScreen}
+        options={{ title: "Questionnaire Details" }}
+      />
+    </SettingsStack.Navigator>
+  );
+};
+```
+
+### 5. Type-Safe Screen Navigation
+```typescript
+// features/home/screens/home-screen.tsx
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
+import React, { useCallback } from "react";
+import type { AppTabStackParamsList } from "#root/navigation/routes";
+
+// Navigation type for home screen
+type HomeScreenNavigationProp = BottomTabNavigationProp<AppTabStackParamsList, "Home">;
+
+const HomeScreenComponent: React.FC = () => {
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+
+  // Type-safe navigation calls
+  const handleNavigateToTodos = useCallback(() => {
+    navigation.navigate("Todos", undefined);
+  }, [navigation]);
+
+  const handleNavigateToSettings = useCallback(() => {
+    navigation.navigate("Settings", { screen: "MainSettings" });
+  }, [navigation]);
+
+  // Component implementation...
+};
+```
+
+```typescript
+// features/settings/screens/main-settings-screen.tsx
+import { useNavigation } from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import type React from "react";
+import { useCallback } from "react";
+import type { SettingsStackParamList } from "#root/navigation/routes";
+
+// Navigation type for main settings screen
+type MainSettingsScreenNavigationProp = StackNavigationProp<SettingsStackParamList, "MainSettings">;
+
+export const MainSettingsScreen: React.FC = () => {
+  const navigation = useNavigation<MainSettingsScreenNavigationProp>();
+
+  // Type-safe navigation calls
+  const handleNavigateToProfile = useCallback(() => {
+    navigation.navigate("Profile");
+  }, [navigation]);
+
+  // Component implementation...
+};
+```
+
+### 6. Navigation Type Patterns
+
+#### For Tab Navigation:
+```typescript
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
+
+type ScreenNavigationProp = BottomTabNavigationProp<AppTabStackParamsList, "ScreenName">;
+const navigation = useNavigation<ScreenNavigationProp>();
+```
+
+#### For Stack Navigation:
+```typescript
+import type { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+
+type ScreenNavigationProp = StackNavigationProp<StackParamList, "ScreenName">;
+const navigation = useNavigation<ScreenNavigationProp>();
+```
+
+#### For Nested Navigation:
+```typescript
+// When navigating to nested navigators
+navigation.navigate("Settings", { screen: "MainSettings" });
+navigation.navigate("Settings", { screen: "Profile" });
+```
+
+**Best Practices:**
+- **Type Safety**: Always use proper TypeScript navigation types
+- **Centralized Types**: Define all navigation types in `routes.types.ts`
+- **Feature Isolation**: Each feature can have its own navigation stack
+- **No Type Assertions**: Never use `as never` or `as any` for navigation
+- **Proper Imports**: Import navigation types from centralized location
+- **Nested Navigation**: Use proper parameters for nested navigator navigation
+- **Consistent Patterns**: Follow the same navigation pattern across all screens
+- **Error Prevention**: Let TypeScript catch navigation errors at compile time
+
+## Global Services Architecture
+
+### 1. API Service
+```typescript
+// services/api/api.ts
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_BASE_URL } from "#root/config/constants";
+
+export const api = createApi({
+  reducerPath: "api",
+  baseQuery: fetchBaseQuery({
+    baseUrl: API_BASE_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = selectAuthToken(getState());
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ["User", "Media", "Collection"],
+  endpoints: () => ({}),
+});
+```
+
+### 2. Storage Service
+```typescript
+// services/storage/secure-storage.ts
+import * as SecureStore from "expo-secure-store";
+
+export class SecureStorage {
+  async setItem(key: string, value: string): Promise<void> {
+    try {
+      await SecureStore.setItemAsync(key, value);
+    } catch (error) {
+      console.error("Failed to save item:", error);
+    }
+  }
+
+  async getItem(key: string): Promise<string | null> {
+    try {
+      return await SecureStore.getItemAsync(key);
+    } catch (error) {
+      console.error("Failed to get item:", error);
+      return null;
+    }
+  }
+
+  async removeItem(key: string): Promise<void> {
+    try {
+      await SecureStore.deleteItemAsync(key);
+    } catch (error) {
+      console.error("Failed to remove item:", error);
+    }
+  }
+}
+```
+
+### 3. Logging Service
+```typescript
+// services/logging/analytics/analytics-service.ts
+export class AnalyticsService {
+  private static instance: AnalyticsService;
+
+  static getInstance(): AnalyticsService {
+    if (!AnalyticsService.instance) {
+      AnalyticsService.instance = new AnalyticsService();
+    }
+    return AnalyticsService.instance;
+  }
+
+  trackEvent(eventName: string, properties?: Record<string, any>): void {
+    // Implementation
+  }
+
+  setUserProperties(properties: Record<string, any>): void {
+    // Implementation
+  }
+}
+```
+
+## UI Component Architecture
+
+### 1. Design System
+```typescript
+// ui/style/theme.ts
+import { createTheme } from "@shopify/restyle";
+
+export const theme = createTheme({
+  colors: {
+    primary: "#007AFF",
+    secondary: "#5856D6",
+    background: "#FFFFFF",
+    text: "#000000",
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+  },
+  textVariants: {
+    h1: {
+      fontSize: 32,
+      fontWeight: "bold",
+    },
+    body: {
+      fontSize: 16,
+      fontWeight: "normal",
+    },
+  },
+});
+```
+
+### 2. Base Components
+```typescript
+// ui/components/box.tsx
+import { createBox } from "@shopify/restyle";
+import type { Theme } from "../style/theme";
+
+export const Box = createBox<Theme>();
+```
+
+```typescript
+// ui/components/text.tsx
+import { createText } from "@shopify/restyle";
+import type { Theme } from "../style/theme";
+
+export const Text = createText<Theme>();
+```
+
+### 3. Complex Components
+```typescript
+// ui/components/button/button.tsx
+import { createBox } from "@shopify/restyle";
+import type { Theme } from "../../style/theme";
+
+const StyledButton = createBox<Theme>();
+
+export type ButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: "primary" | "secondary";
+  size?: "small" | "medium" | "large";
+}
+
+ const _Button = ({ title, onPress, variant = "primary", size = "medium" }: ButtonProps) => {
+  return (
+    <StyledButton
+      backgroundColor={variant === "primary" ? "primary" : "secondary"}
+      padding={size === "small" ? "sm" : size === "large" ? "lg" : "md"}
+      onPress={onPress}
+    >
+      <Text color="white" textAlign="center">
+        {title}
+      </Text>
+    </StyledButton>
+  );
+};
+
+export const Button = React.memo(_Button)
+```
+
+## State Management Architecture
+
+### 1. Store Configuration
+```typescript
+// store/store.ts
+import { configureStore } from "@reduxjs/toolkit";
+import { persistStore, persistReducer } from "redux-persist";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api } from "#root/services/api/api";
+import { rootReducer } from "./reducers";
+
+const persistConfig = {
+  key: "root",
+  storage: AsyncStorage,
+  whitelist: ["auth", "user", "app"],
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(api.middleware),
+});
+
+export const persistor = persistStore(store);
+```
+
+### 2. Root Reducer
+```typescript
+// store/reducers.ts
+import { combineReducers } from "@reduxjs/toolkit";
+import { api } from "#root/services/api/api";
+import { authReducer } from "#root/features/auth/store/auth-slice";
+import { userReducer } from "#root/features/user/store/user-slice";
+import { appReducer } from "./app.slice";
+
+export const rootReducer = combineReducers({
+  [api.reducerPath]: api.reducer,
+  auth: authReducer,
+  user: userReducer,
+  app: appReducer,
+});
+
+export type RootState = ReturnType<typeof rootReducer>;
+```
+
+## Best Practices Summary
+
+### 1. Code Organization
+- **Feature Isolation**: Keep feature-specific code within feature directories
+- **Shared Resources**: Extract common functionality to global directories
+- **Consistent Naming**: Follow consistent naming conventions across features
+- **Barrel Exports**: Use index.ts files for clean imports
+
+### 2. Component Design
+- **Single Responsibility**: Each component should have one clear purpose
+- **Props Interface**: Define clear prop interfaces with proper exports
+- **Performance**: Use React.memo and useCallback appropriately
+- **TypeScript**: Use proper TypeScript types throughout
+
+### 3. State Management
+- **Redux Toolkit**: Use RTK for all state management
+- **Selectors**: Implement proper selectors with createSelector
+- **Normalization**: Keep state normalized and flat
+- **Persistence**: Use redux-persist for important state
+
+### 4. API Integration
+- **RTK Query**: Use RTK Query for all API calls
+- **Schema Validation**: Use Zod for response validation
+- **Error Handling**: Implement proper error handling
+- **Caching**: Use appropriate caching strategies
+
+### 5. Navigation
+- **Type Safety**: Always use proper TypeScript navigation types, never use `as never` or `as any`
+- **Centralized Types**: Define all navigation types in `routes.types.ts` and re-export from `routes.ts`
+- **Feature Isolation**: Each feature can have its own navigation stack with proper typing
+- **Navigation Guards**: Implement proper authentication guards
+- **Nested Navigators**: Use proper parameters for nested navigator navigation
+- **Consistent Patterns**: Follow the same navigation pattern across all screens
+- **Error Prevention**: Let TypeScript catch navigation errors at compile time
+
+### 6. Testing
+- **Unit Tests**: Write unit tests for utilities and hooks
+- **Component Tests**: Test components in isolation
+- **Integration Tests**: Test feature integration
+- **E2E Tests**: Write end-to-end tests for critical flows
+
+### 7. Performance
+- **Lazy Loading**: Implement lazy loading for routes
+- **Memoization**: Use React.memo and useMemo appropriately
+- **Code Splitting**: Split code by features
+- **Image Optimization**: Optimize images and assets
+
+### 8. Security
+- **Secure Storage**: Use secure storage for sensitive data
+- **Token Management**: Implement proper token refresh
+- **Input Validation**: Validate all user inputs
+- **API Security**: Use proper authentication headers
+
+## Migration Guide
+
+### From Layer-Based to Feature-Based
+
+1. **Identify Features**: List all business features in your app
+2. **Create Feature Directories**: Set up the feature directory structure
+3. **Move Components**: Move feature-specific components to their features
+4. **Extract Shared Code**: Move shared components to the UI directory
+5. **Update Imports**: Update all import paths
+6. **Refactor State**: Move feature state to feature stores
+7. **Update Navigation**: Restructure navigation by features
+8. **Test Thoroughly**: Ensure all functionality still works
+
+### Boilerplate Template
+
+```bash
+# Create new feature
+mkdir -p src/features/new-feature/{api,components,hooks,screens,services,store,types}
+
+# Create feature files
+touch src/features/new-feature/api/new-feature.api.ts
+touch src/features/new-feature/components/new-feature-component.tsx
+touch src/features/new-feature/hooks/use-new-feature.ts
+touch src/features/new-feature/screens/new-feature-screen.tsx
+touch src/features/new-feature/services/new-feature.service.ts
+touch src/features/new-feature/store/new-feature-slice.ts
+touch src/features/new-feature/types/index.ts
+touch src/features/new-feature/index.ts
+```
+
+This architecture provides a solid foundation for building scalable, maintainable React Native applications with clear separation of concerns and excellent developer experience.
+
+
+## Others
+### Theme usage
+#### Best Practices for BorderRadius
+ 1. Available theme values:
+ - none (0)
+ - xs (2)
+ - sm (4)
+ - md (8)
+ - lg (12)
+ - xl (16)
+ - 2xl (20)
+ - 3xl (24)
+ - full (9999) - for perfect circles
+2. Best Practice Rules:
+ - Always use theme values when using the borderRadius prop on theme-aware components
+ -  Use "full" for circles instead of calculating half the width/height
+ - Only use hardcoded values in React Native style props (not theme props)
+ - Be consistent with the design system's predefined values
+3. For other components and theme usage, index that first, and then use from the theme values so you don't get lost 
+ ```typescript
+  <Box flex={1} padding="md" marginBottom="lg">
+  // rest of the component.... 
+  ``` 
+4. when you finish working on feature, always run `yarn lint` and fix the issues. remember the rules and the issues that you found, and add them to /ai_articles/rules-updates so next time you can avoid them

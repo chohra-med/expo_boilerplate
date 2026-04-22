@@ -166,11 +166,11 @@ export const QuestionnaireDetailView: React.FC<QuestionnaireDetailViewProps> = (
                   {t("settings.profile.selectedOptions")}:
                 </Text>
                 <Box flexDirection="row" flexWrap="wrap" gap="xs">
-                  {answer.map((ans, idx) => {
+                  {answer.map((ans, _idx) => {
                     const option = step.stepOptions.find((opt) => opt.value === ans);
                     return (
                       <Box
-                        key={idx}
+                        key={ans}
                         backgroundColor="primary"
                         paddingHorizontal="sm"
                         paddingVertical="xs"

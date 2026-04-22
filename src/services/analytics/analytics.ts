@@ -1,5 +1,3 @@
-
-
 // Firebase Analytics interface
 interface FirebaseAnalytics {
   logEvent: (eventName: string, parameters?: Record<string, unknown>) => Promise<void>;

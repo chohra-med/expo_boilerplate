@@ -1,0 +1,119 @@
+{
+  // Connects to the Biome schema to provide intelligent autocomplete and validation inside your IDE.
+  "$schema": "https://biomejs.dev/schemas/2.4.12/schema.json",
+
+  // Version Control System (VCS) integration module
+  "vcs": {
+    "enabled": true, // Turns on VCS awareness so Biome can operate contextually.
+    "clientKind": "git", // Specifies Git.
+    "useIgnoreFile": true // Crucial: Biome will automatically parse your `.gitignore` and prevent linting/processing on files you are ignoring, speeding up indexing.
+  },
+
+  // Defines exactly which files the Biome toolchain is permitted to see
+  "files": {
+    "ignoreUnknown": false, // Instead of silently failing, throw a warning if an unrecognized file extension is processed.
+    "includes": [
+      "src/**/*", // ONLY act on source code. Massive performance gain over scanning the whole repository.
+
+      // The `!!` syntax guarantees strict negations.
+      // We are forcibly excluding massive compilation folders and third-party binaries to prevent IDE freezes.
+      "!!**/node_modules",
+      "!!**/dist",
+      "!!**/build",
+      "!!**/.expo",
+      "!!**/android",
+      "!!**/ios",
+      "!!**/web-build",
+      "!!**/*.log"
+    ]
+  },
+
+  // The formatting behavior (replaces Prettier)
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false, // If the file has a hard syntax error, don't try to format it (prevents corrupting broken code).
+    "indentStyle": "space", // Spaces instead of tabs.
+    "indentWidth": 2, // The widely accepted JS/React standard of 2 spaces.
+    "lineEnding": "lf", // Forces Unix line endings. Critical if your team uses a mix of Mac/Windows/Linux to avoid massive git diffs.
+    "lineWidth": 100, // Forces line breaking at 100 chars, balancing readability and vertical space.
+    "attributePosition": "auto" // Decides if `<View style={} />` should be single line or wrap intelligently.
+  },
+
+  // The linting behavior (replaces ESLint)
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true, // Turns on dozens of safest best-practice checks without manually declaring them.
+
+      "correctness": {
+        "noUnusedVariables": "error", // Enforces dead-code elimination. Keeps bundle sizes small.
+        "noUnusedImports": "error", // Keeps dependency trees pure.
+        "useExhaustiveDependencies": "warn" // The equivalent of React's "hooks-eslint" rule. Warns you if your `useEffect` is missing a dependency to prevent stale closures.
+      },
+
+      "style": {
+        "noNonNullAssertion": "warn", // Discourages TS assertions like `const a = b!`. Bypassing TS is a common source of crashes.
+        "useConst": "error", // Automatically forces `let` to `const` if the variable is never reassigned.
+        "useTemplate": "error", // Modernizes `"hello " + name` to `` `hello ${name}` `` for better readability.
+        "useSelfClosingElements": "error", // Rewrites `<Text></Text>` to `<Text />`.
+        "useImportType": "warn", // VERY IMPORTANT for React Native: Using `import type` guarantees TS removes the import in the final bundle, improving Fast Refresh times.
+        "useExportType": "warn" // Same logic as above for exports.
+      },
+
+      "suspicious": {
+        "noExplicitAny": "warn", // Flags the `any` keyword. `any` disables TS completely, so we warn against it aggressively.
+        "noArrayIndexKey": "warn" // Extremely important for React UI. If you `.map((item, idx))` and use `key={idx}`, it introduces massive visual bugs if the data reorders.
+      },
+
+      "complexity": {
+        "noForEach": "off", // We permit `.forEach()` loops, disabling the strict functional programming rule that prefers `.map/reduce`.
+        "useOptionalChain": "error" // Auto-formats `if (res && res.data && res.data.id)` into `if (res?.data?.id)`.
+      },
+
+      "performance": {
+        "noAccumulatingSpread": "warn" // Blocks putting `...spread` operators inside massive `.reduce` functions, which causes exponential memory overhead.
+      }
+    }
+  },
+
+  // Auto-fix interactions (on file save)
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on" // Alphabetically sorts and groups react, local, and relative path imports.
+      }
+    }
+  },
+
+  // Language specific logic (JavaScript / TypeScript)
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double", // Forces double quotes in React Props: `<Box bg="primary" />`
+      "quoteProperties": "asNeeded", // Standardizes `{ "foo-bar": 1, normal: 2 }`.
+      "trailingCommas": "es5", // Retains trailing commas in objects/arrays but not TS generic definitions. (Prettier's default logic).
+      "semicolons": "always", // Avoids ASI (Automatic Semicolon Insertion) edge-case bugs by enforcing semicolons.
+      "arrowParentheses": "always", // Enforces `(e) => ` over `e => `, making it easy to drop in type definitions later.
+      "bracketSpacing": true, // `{ foo }` instead of `{foo}`.
+      "bracketSameLine": false, // When a React tag has multiple props, the closing `>` goes on its own line.
+      "quoteStyle": "double", // Strings generally use double quotes `""`.
+      "attributePosition": "auto"
+    }
+  },
+
+  // Contextual file overrides
+  "overrides": [
+    {
+      "includes": ["*.config.js", "*.config.ts", "metro.config.js", "babel.config.js"],
+      "linter": {
+        "rules": {
+          "style": {
+            // Usually, exporting defaults is bad for refactoring (named exports are preferred).
+            // However, Metro, Expo, Babel, and Jest EXPLICITLY REQUIRE `module.exports =` or `export default`.
+            // We turn the rule off solely for tooling config files to prevent annoying errors.
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    }
+  ]
+}

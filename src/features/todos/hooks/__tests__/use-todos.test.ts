@@ -1,13 +1,13 @@
-import { renderHook, act } from '@testing-library/react-native';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import React from 'react';
-import { todosReducer } from '../../store/todos-slice';
+import { configureStore } from "@reduxjs/toolkit";
+import { act, renderHook } from "@testing-library/react-native";
+import React from "react";
+import { Provider } from "react-redux";
+import { todosReducer } from "../../store/todos-slice";
 
 // Mock the API
-jest.mock('#root/services/api/api', () => ({
+jest.mock("#root/services/api/api", () => ({
   api: {
-    reducerPath: 'api',
+    reducerPath: "api",
     reducer: jest.fn(() => ({})),
     middleware: jest.fn(),
     endpoints: {},
@@ -15,11 +15,11 @@ jest.mock('#root/services/api/api', () => ({
 }));
 
 // Mock the todos API
-jest.mock('../../api/todos.api', () => ({
+jest.mock("../../api/todos.api", () => ({
   useGetTodosQuery: jest.fn(),
 }));
 
-import { useGetTodosQuery } from '../../api/todos.api';
+import { useGetTodosQuery } from "../../api/todos.api";
 
 const mockUseGetTodosQuery = useGetTodosQuery as jest.MockedFunction<typeof useGetTodosQuery>;
 
@@ -48,14 +48,20 @@ const createTestStore = (initialState = {}) => {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children, store }: { children: React.ReactNode; store: any }) => {
+const TestWrapper = ({
+  children,
+  store,
+}: {
+  children: React.ReactNode;
+  store: ReturnType<typeof createTestStore>;
+}) => {
   return React.createElement(Provider, { store }, children);
 };
 
 // Simple hook that mimics useTodos behavior
 const useTodosTest = () => {
   const mockQuery = mockUseGetTodosQuery();
-  
+
   return {
     todosData: mockQuery.data || [],
     activeTodos: [],
@@ -70,15 +76,15 @@ const useTodosTest = () => {
   };
 };
 
-describe('useTodos (Simple Test)', () => {
+describe("useTodos (Simple Test)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should return initial state correctly', () => {
+  it("should return initial state correctly", () => {
     const mockTodosData = [
-      { id: 1, title: 'Test Todo 1', completed: false },
-      { id: 2, title: 'Test Todo 2', completed: true },
+      { id: 1, title: "Test Todo 1", completed: false },
+      { id: 2, title: "Test Todo 2", completed: true },
     ];
 
     mockUseGetTodosQuery.mockReturnValue({
@@ -86,7 +92,7 @@ describe('useTodos (Simple Test)', () => {
       isLoading: false,
       error: null,
       refetch: jest.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof useGetTodosQuery>);
 
     const store = createTestStore();
     const { result } = renderHook(() => useTodosTest(), {
@@ -101,13 +107,13 @@ describe('useTodos (Simple Test)', () => {
     expect(result.current.error).toBe(null);
   });
 
-  it('should handle loading state', () => {
+  it("should handle loading state", () => {
     mockUseGetTodosQuery.mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
       refetch: jest.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof useGetTodosQuery>);
 
     const store = createTestStore();
     const { result } = renderHook(() => useTodosTest(), {
@@ -117,15 +123,15 @@ describe('useTodos (Simple Test)', () => {
     expect(result.current.isLoading).toBe(true);
   });
 
-  it('should handle error state', () => {
-    const mockError = new Error('Failed to fetch todos');
+  it("should handle error state", () => {
+    const mockError = new Error("Failed to fetch todos");
 
     mockUseGetTodosQuery.mockReturnValue({
       data: undefined,
       isLoading: false,
       error: mockError,
       refetch: jest.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof useGetTodosQuery>);
 
     const store = createTestStore();
     const { result } = renderHook(() => useTodosTest(), {
@@ -135,7 +141,7 @@ describe('useTodos (Simple Test)', () => {
     expect(result.current.error).toBe(mockError);
   });
 
-  it('should call refetch when refresh is called', () => {
+  it("should call refetch when refresh is called", () => {
     const mockRefetch = jest.fn();
 
     mockUseGetTodosQuery.mockReturnValue({
@@ -143,7 +149,7 @@ describe('useTodos (Simple Test)', () => {
       isLoading: false,
       error: null,
       refetch: mockRefetch,
-    } as any);
+    } as unknown as ReturnType<typeof useGetTodosQuery>);
 
     const store = createTestStore();
     const { result } = renderHook(() => useTodosTest(), {

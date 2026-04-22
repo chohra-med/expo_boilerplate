@@ -119,7 +119,7 @@ src/
 
 ## 🛠️ Tech Stack
 
-- **React Native** with Expo SDK 54 + New Architecture
+- **React Native** with Expo SDK 55 + New Architecture
 - **TypeScript** — strict mode, no implicit any
 - **Redux Toolkit** — state management
 - **RTK Query** — data fetching and caching
@@ -138,17 +138,43 @@ src/
 
 ## 🤖 AI Coding Tool Setup
 
-This boilerplate ships with two context files that make AI coding tools work correctly inside your codebase:
+This boilerplate ships with a layered AI rules system. Every tool — Claude Code, Cursor, Antigravity, or any agent — reads from the same source of truth and generates architecture-consistent code from session one.
 
-**[`CLAUDE.md`](CLAUDE.md)** — tells Claude Code your architecture rules, TypeScript conventions, state management patterns, and what not to touch. Loaded automatically by Claude Code at session start.
+### What's tracked in git (shipped with the boilerplate)
 
-**[`AGENTS.md`](AGENTS.md)** — the cross-tool standard read by Cursor, Antigravity, and other AI IDEs at session start. Same constraints, tool-agnostic format.
+| File | Tool | Purpose |
+|---|---|---|
+| [`CLAUDE.md`](CLAUDE.md) | Claude Code | Loaded automatically at session start. Routes to rule files, surfaces the project skill. |
+| [`AGENTS.md`](AGENTS.md) | Cursor, Antigravity, all agents | Cross-tool context: architecture, banned patterns, what to generate and what not to. |
+| [`CLAUDE_SKILL.md`](CLAUDE_SKILL.md) | Claude Code | Documents the `/mobilelauncher` skill and all available commands. |
+| [`boilerplate_content.md`](boilerplate_content.md) | Reference | Full architecture reference: every package, every pattern, every rule in one file. |
+| [`.claude/skills/mobilelauncher/`](.claude/skills/mobilelauncher/skill.md) | Claude Code | Executable skill — generates features, screens, components, hooks, slices, endpoints, and schemas that match this codebase exactly. |
 
-**[`boilerplate_content.md`](boilerplate_content.md)** — full architecture reference: every package, every pattern, every rule in one place.
 
-Without these files, AI tools guess your patterns. With them, they generate code that fits your architecture from the first prompt — no re-priming, no hallucinated folder structures.
+### The Claude Code skill
 
-See [`ai_articles/memory-bank/`](ai_articles/memory-bank/) for the memory bank implementation and deeper architectural context.
+Once you clone the repo, run `/mobilelauncher orient` to get a full project briefing. Then use the skill to scaffold new code:
+
+```
+/mobilelauncher feature notifications    → full feature scaffold (8 files)
+/mobilelauncher screen home dashboard    → typed, memoized screen
+/mobilelauncher component avatar         → Restyle UI component
+/mobilelauncher hook use-pagination      → custom hook
+/mobilelauncher schema invoice           → Zod schema
+```
+
+Every generated file follows the repo's conventions — feature-first, Restyle-only, typed selectors, FlashList, i18next — with a post-generation checklist of what to register (reducer, route, translations, tests).
+
+### Why this approach works
+
+Without these files, AI tools guess your patterns and produce code you have to rewrite. With them:
+
+- Cursor reads `.cursor/rules/` before writing any code
+- Claude Code reads `CLAUDE.md`, then the skill generates compliant files
+- Any new agent reads `AGENTS.md` and knows exactly what to produce and what to never generate
+- The memory bank in `ai_articles/memory-bank/` gives AI tools architectural context that doesn't fit in rules
+
+One set of rules. Every tool, every session, every engineer.
 
 ---
 

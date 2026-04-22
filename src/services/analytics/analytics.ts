@@ -1,4 +1,4 @@
-import { logger } from "../logging/logger";
+
 
 // Firebase Analytics interface
 interface FirebaseAnalytics {
@@ -29,9 +29,9 @@ export const initializeFirebaseAnalytics = async () => {
     // TODO: Initialize Firebase Analytics here
     // const analytics = getAnalytics();
     // firebaseAnalytics = analytics;
-    logger.log("[Analytics] Firebase Analytics initialized");
+    console.log("[Analytics] Firebase Analytics initialized");
   } catch (error) {
-    logger.error("[Analytics] Failed to initialize Firebase Analytics", error as Error);
+    console.error("[Analytics] Failed to initialize Firebase Analytics", error);
   }
 };
 
@@ -42,7 +42,7 @@ const getAnalytics = (): FirebaseAnalytics => {
   }
 
   if (!firebaseAnalytics) {
-    logger.error(
+    console.error(
       "[Analytics] Firebase Analytics not initialized",
       new Error("Analytics not available")
     );
@@ -59,7 +59,7 @@ export const analytics = {
       const analyticsInstance = getAnalytics();
       await analyticsInstance.logEvent(eventName, parameters);
     } catch (error) {
-      logger.error(`[Analytics] Failed to log event: ${eventName}`, error as Error);
+      console.error(`[Analytics] Failed to log event: ${eventName}`, error);
     }
   },
 
@@ -69,7 +69,7 @@ export const analytics = {
       const analyticsInstance = getAnalytics();
       await analyticsInstance.setUserProperties(data);
     } catch (error) {
-      logger.error("[Analytics] Failed to log user data", error as Error);
+      console.error("[Analytics] Failed to log user data", error);
     }
   },
 
@@ -84,7 +84,7 @@ export const analytics = {
         ...context,
       });
     } catch (analyticsError) {
-      logger.error("[Analytics] Failed to record error", analyticsError as Error);
+      console.error("[Analytics] Failed to record error", analyticsError);
     }
   },
 
@@ -94,7 +94,7 @@ export const analytics = {
       const analyticsInstance = getAnalytics();
       await analyticsInstance.setUserId(userId);
     } catch (error) {
-      logger.error("[Analytics] Failed to set user ID", error as Error);
+      console.error("[Analytics] Failed to set user ID", error);
     }
   },
 

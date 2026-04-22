@@ -16,9 +16,13 @@ const resources = {
   },
 };
 
+const locales = Localization.getLocales();
+const languageTag = locales && locales.length > 0 ? locales[0].languageTag : "en-US";
+const extractedLng = languageTag.split("-")[0];
+
 i18n.use(initReactI18next).init({
   resources,
-  lng: Localization.locale.split("-")[0], // Get language code (e.g., 'en' from 'en-US')
+  lng: extractedLng, // Get language code (e.g., 'en' from 'en-US')
   fallbackLng: "en",
   interpolation: {
     escapeValue: false,

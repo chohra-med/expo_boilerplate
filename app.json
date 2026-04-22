@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon-light.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "scheme": "mblauncherlt",
     "plugins": [
       [
@@ -40,7 +39,6 @@
         "monochromeImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#007AFF"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.mblauncherlt.app"
     },

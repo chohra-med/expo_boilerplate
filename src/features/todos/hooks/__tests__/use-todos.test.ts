@@ -55,7 +55,7 @@ const TestWrapper = ({
   children: React.ReactNode;
   store: ReturnType<typeof createTestStore>;
 }) => {
-  return React.createElement(Provider, { store }, children);
+  return React.createElement(Provider, { store, children });
 };
 
 // Simple hook that mimics useTodos behavior

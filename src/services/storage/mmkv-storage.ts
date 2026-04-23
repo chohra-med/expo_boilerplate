@@ -1,9 +1,8 @@
-import { MMKV } from "react-native-mmkv";
+import { createMMKV } from "react-native-mmkv";
 
-// Create MMKV instance
-const mmkv = new MMKV({
+const mmkv = createMMKV({
   id: "mobile-launcher-storage",
-  encryptionKey: "mobile-launcher-encryption-key", // In production, use a secure key
+  encryptionKey: "mobile-launcher-encryption-key",
 });
 
 // Storage interface for Redux Persist
@@ -35,7 +34,7 @@ export const mmkvStorage = {
   removeItem: (key: string): Promise<void> => {
     return new Promise((resolve) => {
       try {
-        mmkv.delete(key);
+        mmkv.remove(key);
         resolve();
       } catch (error) {
         console.error("MMKV removeItem error:", error);
@@ -57,5 +56,4 @@ export const mmkvStorage = {
   },
 };
 
-// Direct MMKV instance for advanced usage
 export { mmkv };

@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx expo-doctor *)"
+      "Bash(npx expo-doctor *)",
+      "WebSearch",
+      "Bash(yarn add *)",
+      "Bash(yarn tsc *)",
+      "Bash(yarn test *)"
     ]
   }
 }

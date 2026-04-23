@@ -26,14 +26,16 @@ jest.mock('expo-splash-screen', () => ({
   preventAutoHideAsync: jest.fn(),
 }));
 
-// Mock MMKV
+// Mock MMKV (v4 — createMMKV factory, .remove() replaces .delete())
 jest.mock('react-native-mmkv', () => ({
-  MMKV: jest.fn(() => ({
+  createMMKV: jest.fn(() => ({
     set: jest.fn(),
     getString: jest.fn(),
     getNumber: jest.fn(),
     getBoolean: jest.fn(),
-    delete: jest.fn(),
+    remove: jest.fn(),
+    contains: jest.fn(() => false),
+    getAllKeys: jest.fn(() => []),
     clearAll: jest.fn(),
   })),
 }));

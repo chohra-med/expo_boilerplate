@@ -17,4 +17,4 @@ a 6-agent spec-driven pipeline + a verifier + a learning loop. No dependency, ju
 - `goal.md`               — the current verifiable end-state the verifier checks
 
 ## Three pillars
-**UAMOS** (memory) · **Spec-Driven Development** · **Harness** (ratchet + verifier + learning loop).
+**memory bank** (memory) · **Spec-Driven Development** · **Harness** (ratchet + verifier + learning loop).

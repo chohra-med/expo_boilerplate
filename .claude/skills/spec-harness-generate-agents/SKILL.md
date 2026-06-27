@@ -11,7 +11,7 @@ Make the generic agents project-specific. Run `bash <spec-harness>/bin/sh-gen-ag
 1. **Load the full procedure** — read the command doc and follow it exactly:
    `.claude/commands/spec-harness/generate-agents.md` (this repo) or the spec-harness source `commands/generate-agents.md`.
 2. **Agents** — spawn from `.claude/agents/`: researcher.
-3. **Stay inside the 3 pillars** — UAMOS (memory `.memory/`) · Spec-Driven Development · Harness (ratchet `AGENTS.md` + verifier + learning loop). Read `SPEC-HARNESS.md` for how this repo is wired.
+3. **Stay inside the 3 pillars** — memory bank ( `.memory/`) · Spec-Driven Development · Harness (ratchet `AGENTS.md` + verifier + learning loop). Read `SPEC-HARNESS.md` for how this repo is wired.
 
 ## Non-negotiables
 - The ratchet only tightens (rules are append/sharpen, never drop).

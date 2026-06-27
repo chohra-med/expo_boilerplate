@@ -1,6 +1,14 @@
 module.exports = {
   preset: '@testing-library/react-native',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  // Only *.test / *.spec files are suites. Keeps shared helpers (e.g.
+  // src/__tests__/utils/test-utils.tsx) from being picked up as empty suites.
+  testMatch: [
+    '**/__tests__/**/*.test.{ts,tsx}',
+    '**/*.test.{ts,tsx}',
+    '**/__tests__/**/*.spec.{ts,tsx}',
+    '**/*.spec.{ts,tsx}',
+  ],
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/.expo/',

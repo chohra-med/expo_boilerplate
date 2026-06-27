@@ -1,18 +1,23 @@
-# MobileLauncher — React Native Boilerplate
+<div align="center">
 
-[![GitHub stars](https://img.shields.io/github/stars/chohra-med/expo_boilerplate?style=flat-square)](https://github.com/chohra-med/expo_boilerplate/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/chohra-med/expo_boilerplate?style=flat-square)](https://github.com/chohra-med/expo_boilerplate/network)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Last commit](https://img.shields.io/github/last-commit/chohra-med/expo_boilerplate?style=flat-square)](https://github.com/chohra-med/expo_boilerplate/commits)
+# AI Mobile Launcher
 
-**The React Native foundation I use on every production project — open-sourced.**
+**The AI-first React Native + Expo boilerplate.**
 
 Feature-first architecture, TypeScript strict, auth, i18n, theming, Redux Toolkit, and Expo SDK 54 with the New Architecture. Structured so Cursor, Claude Code, and Antigravity generate consistent code without hallucinating your patterns.
 
-> **Want the full version?** RevenueCat, Firebase, U-AMOS 2.0 memory bank, and AI Pro features are in the paid tier.<br>
-> → **[AI Mobile Launcher — aimobilelauncher.com](https://www.aimobilelauncher.com/?utm_source=github&utm_medium=readme&utm_campaign=expo_boilerplate&utm_content=hero_cta)**
+[![license](https://img.shields.io/github/license/chohra-med/expo_boilerplate.svg)](LICENSE)
+[![stars](https://img.shields.io/github/stars/chohra-med/expo_boilerplate.svg?style=social)](https://github.com/chohra-med/expo_boilerplate)
+
+Created by [**Malik Chohra**](https://getwireai.com?utm_source=github&utm_medium=readme&utm_campaign=creator) · [Code Meet AI newsletter](https://codemeetai.substack.com?utm_source=github&utm_medium=readme&utm_campaign=newsletter)
+
+Sponsored by [AI Mobile Launcher](https://aimobilelauncher.com?utm_source=github&utm_medium=readme&utm_campaign=sponsor) and [CasaInnov](https://casainnov.com?utm_source=github&utm_medium=readme&utm_campaign=sponsor)
+
+</div>
 
 ---
+
+> **Need the complete, production-ready boilerplate?** This is the open Lite starter. The full **AI Mobile Launcher** (auth, payments, AI features, and the rest) is at **[aimobilelauncher.com](https://aimobilelauncher.com?utm_source=github&utm_medium=readme&utm_campaign=complete)**.
 
 ## Why this boilerplate?
 
@@ -514,6 +519,14 @@ yarn format:fix
 
 ---
 
+## Built with Spec Harness
+
+This repo ships with the **Spec Harness** dev workflow baked in (`.claude/` agents and commands, `constitution.md`, and a persistent `.memory/` bank). Every feature runs the same loop: spec, plan, tasks, build, VERIFY, learn.
+
+Lessons get captured into a memory bank that survives across sessions, so contributions stay specced, verified, and consistent. See `SPEC-HARNESS.md` for the integrate guide.
+
+---
+
 ## 📄 License
 
 MIT — see the [LICENSE](LICENSE) file for details.
@@ -524,7 +537,7 @@ MIT — see the [LICENSE](LICENSE) file for details.
 
 - [Open an issue](https://github.com/chohra-med/expo_boilerplate/issues)
 - Follow the build in public on [LinkedIn](https://www.linkedin.com/in/malik-chohra/)
-- Weekly signal in [Code Meet AI newsletter](https://aimeetcode.substack.com/?utm_source=github&utm_medium=readme&utm_campaign=expo_boilerplate&utm_content=support_newsletter)
+- Weekly signal in [Code Meet AI newsletter](https://codemeetai.substack.com/?utm_source=github&utm_medium=readme&utm_campaign=expo_boilerplate&utm_content=support_newsletter)
 
 ---
 
@@ -539,3 +552,11 @@ MIT — see the [LICENSE](LICENSE) file for details.
 ---
 
 **Built by [Malik Chohra](https://www.linkedin.com/in/malik-chohra/) — AI-first mobile engineer, founder of [CasaInnov](https://casainnov.com/?utm_source=github&utm_medium=readme&utm_campaign=expo_boilerplate&utm_content=footer_casainnov) and [AI Mobile Launcher](https://www.aimobilelauncher.com/?utm_source=github&utm_medium=readme&utm_campaign=expo_boilerplate&utm_content=footer_aiml).**
+
+---
+
+## More from Code Meet AI
+
+**Open source:** [wireai-rn](https://github.com/chohra-med/wireai-rn) · [colorway-c-brand](https://github.com/chohra-med/colorway-c-brand) · [claude_design_skill](https://github.com/chohra-med/claude_design_skill)
+**Products:** [AI Mobile Launcher](https://aimobilelauncher.com) · [AI Web Launcher](https://aiweblauncher.com) · [Wire AI](https://getwireai.com) · [CasaInnov](https://casainnov.com)
+**Follow:** [Newsletter](https://codemeetai.substack.com) · [YouTube](https://youtube.com/@codemeetai)

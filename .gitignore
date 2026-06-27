@@ -33,6 +33,8 @@ yarn-error.*
 # local env files
 .env*.local
 .env*
+# but keep the sanitized template tracked
+!.env.example
 
 # typescript
 *.tsbuildinfo
@@ -46,3 +48,6 @@ coverage/
 /ai_articles/*
 .cursor/*
 .memory/*
+
+# Local-only AI sync instructions (vault paths, internal references — never publish)
+CLAUDE.local.md

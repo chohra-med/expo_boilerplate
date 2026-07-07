@@ -8,6 +8,8 @@ export interface ButtonProps {
   onPress: () => void;
   buttonTypeVariant?: "primary" | "secondary" | "outline" | "ghost" | "selection";
   buttonSizeVariant?: "small" | "medium" | "large";
+  /** Destructive action styling (error color) — e.g. logout, delete account */
+  destructive?: boolean;
   disabled?: boolean;
   loading?: boolean;
   leftIcon?: React.ReactNode;
@@ -20,6 +22,7 @@ export const Button: React.FC<ButtonProps> = ({
   onPress,
   buttonTypeVariant = "primary",
   buttonSizeVariant = "medium",
+  destructive = false,
   disabled = false,
   loading = false,
   leftIcon,
@@ -30,7 +33,7 @@ export const Button: React.FC<ButtonProps> = ({
     switch (buttonTypeVariant) {
       case "primary":
         return {
-          backgroundColor: "primary" as const,
+          backgroundColor: destructive ? ("error" as const) : ("primary" as const),
           borderWidth: 0,
         };
       case "secondary":
@@ -42,7 +45,7 @@ export const Button: React.FC<ButtonProps> = ({
         return {
           backgroundColor: "transparent" as const,
           borderWidth: 1,
-          borderColor: "primary" as const,
+          borderColor: destructive ? ("error" as const) : ("primary" as const),
         };
       case "ghost":
         return {
@@ -84,6 +87,11 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const getTextColor = () => {
+    // Filled destructive keeps inverse ink on the error fill; the flat variants
+    // (outline/ghost/secondary) render error-colored text.
+    if (destructive) {
+      return buttonTypeVariant === "primary" ? ("textInverse" as const) : ("error" as const);
+    }
     switch (buttonTypeVariant) {
       case "primary":
         return "textInverse" as const;

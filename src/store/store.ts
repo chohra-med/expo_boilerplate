@@ -17,7 +17,7 @@ import { rootReducer } from "./reducers";
 const persistConfig = {
   key: "root",
   storage: mmkvStorage,
-  whitelist: ["app", "auth", "onboarding"], // Only persist these reducers
+  whitelist: ["app", "auth", "onboarding", "paywall"], // Only persist these reducers
   blacklist: [api.reducerPath], // Don't persist API cache
 };
 

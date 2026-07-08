@@ -9,4 +9,11 @@ export const spacingVariants = {
   "4xl": 64,
   "5xl": 80,
   "6xl": 96,
+  // Semantic aliases used by the ported paywall feature (t-shirt scale, same px).
+  xxs: 2,
+  s: 8,
+  m: 16,
+  l: 24,
+  xxl: 40,
+  xxxl: 48,
 } as const;

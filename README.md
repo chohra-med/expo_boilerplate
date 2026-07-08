@@ -39,7 +39,7 @@ Three reasons to use it over `npx create-expo-app`:
 
 - **Feature-First Architecture** — organized by business features, not technical layers
 - **Authentication** — complete login system with secure token storage
-- **Onboarding** — 3-step onboarding flow with questionnaires
+- **AI Onboarding by default** — Wire AI dynamic onboarding out of the box, with the built-in static questionnaire as an automatic fallback (add a free key to switch it on)
 - **Internationalization** — English and French language support
 - **Theming** — Light/Dark/System theme support with Restyle
 - **State Management** — Redux Toolkit with RTK Query
@@ -49,7 +49,8 @@ Three reasons to use it over `npx create-expo-app`:
 - **Secure Storage** — encrypted storage for sensitive data
 - **Performance** — MMKV, FlashList, and optimized animations
 - **Error Handling** — global error boundary with recovery
-- **Analytics** — built-in logging and analytics service
+- **Analytics + Crashlytics** — real Firebase Analytics with a typed event registry, plus Crashlytics crash reporting through a unified logger
+- **Payments** — RevenueCat service + a ready-made, configurable paywall feature
 - **AI Context Files** — `CLAUDE.md` and `AGENTS.md` for AI coding tools
 
 ---
@@ -297,6 +298,86 @@ mkdir -p src/features/new-feature/{api,components,hooks,screens,services,store,t
    - Create components in `components/`
    - Add screens in `screens/`
    - Implement hooks in `hooks/`
+
+---
+
+## 🤖 AI Onboarding by default
+
+Onboarding is **AI-capable out of the box**. The `OnboardingFlow` screen renders
+[Wire AI](https://getwireai.com) dynamic onboarding when a key is configured, and
+falls back to the built-in static questionnaire otherwise — the exact same flow
+this boilerplate has always shipped.
+
+- **No key set (fresh clone):** `isOnboardingEnabled()` is `false`, so the static
+  questionnaire renders unchanged. Zero setup.
+- **Key set:** the screen renders `<WireOnboarding>` with your static flow passed
+  as `fallbackFlow`, so a backend/generation error degrades to the static flow
+  instead of breaking onboarding. Session persistence uses a small MMKV adapter.
+
+Add a free key to upgrade:
+
+```env
+EXPO_PUBLIC_WIREAI_API_KEY=your-wire-ai-tenant-key
+EXPO_PUBLIC_WIREAI_SERVER_URL=https://your-wire-ai-server.com
+EXPO_PUBLIC_WIREAI_APP_ID=your-app-id
+```
+
+Wiring lives in `src/features/onboarding/screens/wire-onboarding-screen.tsx`
+(the gate + fallback) and `src/features/onboarding/services/wire-onboarding-storage.ts`
+(the MMKV session adapter).
+
+---
+
+## 📊 Analytics & Crashlytics
+
+Real **Firebase Analytics** and **Crashlytics**, behind one typed facade — no
+Sentry, Crashlytics is the only crash channel.
+
+- Import from `#root/analytics`: `analytics.track(EVENTS.FEATURE_USED, { ... })`.
+- `EVENTS` is a frozen, validated event registry; app-specific enum values live in
+  `src/analytics/events.app.ts`. Params are sanitized (Firebase limits + a PII
+  denylist) before they reach the transport.
+- Screen views + funnel drop-off: `useScreenTracking` (wired in `app.tsx`) and
+  `useFunnel`.
+- Everything routes through the unified logger (`#root/services/logging`), which
+  fans out to console (dev), Firebase Analytics, and Crashlytics transports.
+- Collection is OFF in `__DEV__` and ON in release, automatically.
+
+Analytics is initialized at boot in `src/entrypoints/hooks/use-app-initializer.ts`.
+
+**Native config (buyer-supplied, not committed):** add your own
+`android/app/google-services.json` and `ios/GoogleService-Info.plist` from the
+Firebase console, then run a native prebuild / EAS build. The required Expo config
+plugins (`@react-native-firebase/app`, `@react-native-firebase/crashlytics`,
+`expo-build-properties` with iOS static frameworks) are already declared in
+`app.json`. In Expo Go / dev, a silent mock is used so the app runs without any
+Firebase config.
+
+---
+
+## 💳 Payments (RevenueCat)
+
+A RevenueCat service (`#root/services/revenuecat`) plus a ready-made paywall
+feature (`src/features/paywall/`) — screen, presentational view, package cards,
+config, and a skip-cooldown slice.
+
+- Add your keys and (optionally) the entitlement id:
+
+```env
+EXPO_PUBLIC_REVENUECAT_IOS_API_KEY=appl_your_ios_key
+EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY=goog_your_android_key
+EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID=premium   # defaults to "premium"
+```
+
+- The entitlement id is **parameterized** — point it at whatever entitlement you
+  configured in the RevenueCat dashboard; no code changes.
+- Without a key, init is skipped and the paywall degrades gracefully.
+- **Release-build guard:** a `test_` key in a release build is rejected on purpose
+  (it would otherwise crash the native SDK). Use production `goog_`/`appl_` keys
+  for release.
+
+RevenueCat is initialized at boot alongside analytics. `react-native-purchases`
+autolinks — no extra Expo config plugin needed.
 
 ---
 

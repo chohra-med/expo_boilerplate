@@ -21,35 +21,35 @@ export const USER_PROPERTIES = {
 export type UserPropertyName = (typeof USER_PROPERTIES)[keyof typeof USER_PROPERTIES];
 
 /** Attribution channel (e.g. AppsFlyer media_source). */
-export const setAcquisitionSource = (source: string): Promise<void> =>
+export const setAcquisitionSource = (source: string): void =>
   analytics.setUserProperty(USER_PROPERTIES.ACQUISITION_SOURCE, source);
 
 /** Attribution campaign name. */
-export const setAcquisitionCampaign = (campaign: string): Promise<void> =>
+export const setAcquisitionCampaign = (campaign: string): void =>
   analytics.setUserProperty(USER_PROPERTIES.ACQUISITION_CAMPAIGN, campaign);
 
 /** Monetization tier, e.g. 'free' | 'premium'. */
-export const setPlanTier = (tier: string): Promise<void> =>
+export const setPlanTier = (tier: string): void =>
   analytics.setUserProperty(USER_PROPERTIES.PLAN_TIER, tier);
 
 /** Whether the user finished onboarding. */
-export const setOnboardingCompleted = (completed: boolean): Promise<void> =>
+export const setOnboardingCompleted = (completed: boolean): void =>
   analytics.setUserProperty(USER_PROPERTIES.ONBOARDING_COMPLETED, completed ? "true" : "false");
 
 /** ISO-week cohort the user signed up in, e.g. '2026-W27'. */
-export const setSignupWeek = (week: string): Promise<void> =>
+export const setSignupWeek = (week: string): void =>
   analytics.setUserProperty(USER_PROPERTIES.SIGNUP_WEEK, week);
 
 /** OS notification permission state. */
-export const setNotificationsEnabled = (enabled: boolean): Promise<void> =>
+export const setNotificationsEnabled = (enabled: boolean): void =>
   analytics.setUserProperty(USER_PROPERTIES.NOTIFICATIONS_ENABLED, enabled ? "true" : "false");
 
 /** Active i18n language, e.g. 'en'. */
-export const setPreferredLang = (lang: string): Promise<void> =>
+export const setPreferredLang = (lang: string): void =>
   analytics.setUserProperty(USER_PROPERTIES.PREFERRED_LANG, lang);
 
 /** A/B experiment variant. */
-export const setAbVariant = (variant: string): Promise<void> =>
+export const setAbVariant = (variant: string): void =>
   analytics.setUserProperty(USER_PROPERTIES.AB_VARIANT, variant);
 
 /**

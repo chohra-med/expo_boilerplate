@@ -87,7 +87,7 @@ export const analytics = {
    * logger.setUserProperties seam (the firebase-analytics transport coerces to
    * string | null).
    */
-  async setUserProperty(name: string, value: string | null): Promise<void> {
+  setUserProperty(name: string, value: string | null): void {
     try {
       const clamped = value === null ? null : value.slice(0, 36);
       logger.setUserProperties({ [name]: clamped });

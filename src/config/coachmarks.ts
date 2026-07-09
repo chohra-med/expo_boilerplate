@@ -33,7 +33,7 @@ import { selectTourSteps } from "wireai-onboarding/coachmarks";
  * one boolean re-sees the whole coachmark surface. Ship it `false`; flip it to
  * `true` locally (or gate on `__DEV__`) while QA'ing the tours.
  */
-export const IS_TESTING_COACHMARK = false;
+export const IS_TESTING_COACHMARK = __DEV__ && false;
 
 /** Gate key + analytics prefix for the first-run home tour. */
 export const HOME_TOUR_ID = "boilerplate_home_tour";

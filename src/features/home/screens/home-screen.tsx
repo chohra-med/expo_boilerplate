@@ -2,7 +2,7 @@ import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -13,6 +13,9 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { useCoachmarkAnchor, useCoachmarkTour } from "wireai-onboarding/coachmarks";
+import { analytics, EVENTS, FEATURE_NAMES } from "#root/analytics";
+import { buildHomeTourSteps, HOME_TOUR_ID } from "#root/config/coachmarks";
 import type { AppTabStackParamsList } from "#root/navigation/routes";
 import { Box, Button, Card, Icon, SafeArea, Text } from "#root/ui/components";
 
@@ -47,6 +50,26 @@ const HomeScreenComponent: React.FC = () => {
   const handleNavigateToSettings = useCallback(() => {
     navigation.navigate("Settings", { screen: "MainSettings" });
   }, [navigation]);
+
+  // ── Guided tour (wireai-onboarding/coachmarks) ──────────────────────────────
+  // Register the two most prominent interactive elements as tour anchors. The ids
+  // MUST match the `anchorId`s declared in the feature map (src/config/coachmarks.ts).
+  const viewTodosAnchor = useCoachmarkAnchor("home_view_todos");
+  const settingsAnchor = useCoachmarkAnchor("home_settings");
+
+  // The first-run tour: the whole home feature map, in declared order. Steps must
+  // be a stable (memoized) array; step callbacks are held in a ref by the kit, so
+  // this rarely needs deps. `buildHomeTourSteps()` routes through `selectTourSteps`
+  // so switching to AI-chosen ordering later is a one-line change.
+  const tourSteps = useMemo(() => buildHomeTourSteps(), []);
+
+  useCoachmarkTour(tourSteps, {
+    tourId: HOME_TOUR_ID, // gate key (persisted once) + analytics prefix
+    enabled: true, // domain gate — arm the tour only when it makes sense
+    startDelayMs: 500, // let the entrance animations land before the first ring
+    onStepShown: (id) =>
+      analytics.track(EVENTS.FEATURE_USED, { feature_name: FEATURE_NAMES.HOME, step_id: id }),
+  });
 
   // Animation effects - memoized to prevent recreation
   useEffect(() => {
@@ -177,12 +200,16 @@ const HomeScreenComponent: React.FC = () => {
                 <Icon name="pulse" size={24} color="primary" />
               </Box>
 
-              <Button
-                title={t("home.viewAllTodos")}
-                onPress={handleNavigateToTodos}
-                buttonTypeVariant="primary"
-                buttonSizeVariant="small"
-              />
+              {/* Coachmark anchor: wrap the target in a plain View with
+                  collapsable={false} so the native node survives measurement. */}
+              <View ref={viewTodosAnchor} collapsable={false}>
+                <Button
+                  title={t("home.viewAllTodos")}
+                  onPress={handleNavigateToTodos}
+                  buttonTypeVariant="primary"
+                  buttonSizeVariant="small"
+                />
+              </View>
 
               {/* Shimmer effect */}
               <AnimatedBox
@@ -209,7 +236,18 @@ const HomeScreenComponent: React.FC = () => {
                 <Icon name="flash" size={24} color="warning" />
               </Box>
 
-              <Box gap="md">{actionItems.map(renderActionItem)}</Box>
+              <Box gap="md">
+                {actionItems.map((item) =>
+                  item.id === "settings" ? (
+                    // Coachmark anchor #2: the Settings row.
+                    <View key={item.id} ref={settingsAnchor} collapsable={false}>
+                      {renderActionItem(item)}
+                    </View>
+                  ) : (
+                    renderActionItem(item)
+                  )
+                )}
+              </Box>
             </AnimatedCard>
           </AnimatedBox>
         </Box>

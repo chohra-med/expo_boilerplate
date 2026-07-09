@@ -107,6 +107,21 @@ export const textVariants = {
     textTransform: "uppercase" as const,
     letterSpacing: 1,
   },
+  // Variants used by the ported paywall feature.
+  title1: {
+    fontFamily: fonts.bold,
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: "700" as const,
+    color: "text",
+  },
+  monoTag: {
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "600" as const,
+    color: "text",
+  },
 } as const;
 
 export type TextTypeVariantProps = {

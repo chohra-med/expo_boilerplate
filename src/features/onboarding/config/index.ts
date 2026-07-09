@@ -1,3 +1,4 @@
+export { APP_SHOWCASE } from "./app-showcase";
 export type {
   LanguageQuestionnaireConfig,
   QuestionnaireOptionConfig,

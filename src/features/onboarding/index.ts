@@ -12,6 +12,7 @@ export { onboardingData } from "./data/onboarding-data";
 export { useOnboarding } from "./hooks/use-onboarding";
 // Screens
 export { OnboardingScreen } from "./screens/onboarding-screen";
+export { WireOnboardingScreen } from "./screens/wire-onboarding-screen";
 export * from "./store/onboarding-selector";
 export * from "./store/onboarding-slice";
 // Store

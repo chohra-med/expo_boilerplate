@@ -1,116 +1,190 @@
-import { analytics } from "../analytics/analytics";
+import { consoleTransport } from "./transports/console.transport";
+import { crashlyticsTransport } from "./transports/crashlytics.transport";
+import { firebaseAnalyticsTransport } from "./transports/firebase-analytics.transport";
+import type { LogEntry, LoggerTransport } from "./transports/types";
+import { LogLevel } from "./transports/types";
 
-// Log levels for better categorization
-export enum LogLevel {
-  DEBUG = "DEBUG",
-  INFO = "INFO",
-  WARN = "WARN",
-  ERROR = "ERROR",
-}
+export { LogLevel };
+
+const USE_AI_DEBUGGING = false;
 
 // Logger interface
 export interface Logger {
+  logScreenView: (screenName: string, screenClass?: string) => void;
   logEvent: (eventName: string, parameters?: Record<string, unknown>) => void;
   logData: (data: Record<string, unknown>) => void;
+  setUserProperties: (properties: Record<string, unknown>) => void;
+  setUserId: (userId: string) => void;
   recordError: (error: Error, context?: Record<string, unknown>) => void;
   log: (message: string, data?: unknown, level?: LogLevel) => void;
   error: (message: string, error: Error) => void;
   warn: (message: string, data?: unknown) => void;
   info: (message: string, data?: unknown) => void;
   debug: (message: string, data?: unknown) => void;
+  appDetailsDebugging: (message: string, data?: unknown) => void;
 }
 
-// Format log message with timestamp and level
-const formatLogMessage = (message: string, level: LogLevel = LogLevel.INFO): string => {
-  return ` [${level}] ${message}`;
+// Keep logger safe: never use logger inside this helper (avoids recursion).
+const safeDevConsoleError = (message: string, error: unknown) => {
+  if (!__DEV__) return;
+  console.error(`[Logger Internal] ${message}`, error);
 };
 
-// Console logging helper
-const consoleLog = (message: string, data?: unknown, level: LogLevel = LogLevel.INFO) => {
-  if (__DEV__) {
-    const formattedMessage = formatLogMessage(message, level);
+const defaultTransports: LoggerTransport[] = [
+  consoleTransport,
+  // Production pipelines (silent transports)
+  firebaseAnalyticsTransport,
+  crashlyticsTransport,
+];
 
-    switch (level) {
-      case LogLevel.DEBUG:
-        console.debug(formattedMessage, data || "");
-        break;
-      case LogLevel.INFO:
-        console.info(formattedMessage, data || "");
-        break;
-      case LogLevel.WARN:
-        console.warn(formattedMessage, data || "");
-        break;
-      case LogLevel.ERROR:
-        console.error(formattedMessage, data || "");
-        break;
-      default:
-        console.log(formattedMessage, data || "");
+let transports: LoggerTransport[] = defaultTransports;
+
+/**
+ * Optional configuration hook if you want to swap/add transports (e.g. performance).
+ */
+export const configureLogger = (nextTransports: LoggerTransport[]) => {
+  transports = nextTransports;
+};
+
+const dispatch = (entry: LogEntry) => {
+  transports.forEach((transport) => {
+    try {
+      const result = transport.handle(entry);
+      if (result instanceof Promise) {
+        result.catch((err) => safeDevConsoleError(`${transport.name} transport failed`, err));
+      }
+    } catch (err) {
+      safeDevConsoleError(`${transport.name} transport threw`, err);
     }
-  }
+  });
 };
 
+/**
+ * Global Logger Service
+ *
+ * @description Single source of truth for logging in the application.
+ * - Handles console logging for development (only in __DEV__)
+ * - Forwards events to analytics service (Firebase) for production tracking
+ * - Forwards errors to crash reporting service (Crashlytics)
+ * - Supports multiple log levels (DEBUG, INFO, WARN, ERROR)
+ *
+ * Architecture:
+ * - Logger (this file) → emits structured LogEntry → fan-out to transports
+ * - Console transport → dev-only console output
+ * - Firebase Analytics transport → silent, only sends to Firebase Analytics
+ * - Crashlytics transport → silent, only sends to Crashlytics
+ *
+ * This prevents duplication of console logs across services.
+ */
 export const logger: Logger = {
-  // Log a custom event (for analytics)
+  /**
+   * Log screen view events with colored console output in development
+   * @param screenName - Name of the screen being viewed
+   * @param screenClass - Class/component name of the screen
+   */
+  logScreenView: (screenName: string, screenClass?: string): void => {
+    dispatch({ type: "screen_view", screenName, screenClass });
+  },
+
+  /**
+   * Log a custom event
+   * @param eventName - Name of the event
+   * @param parameters - Event parameters
+   */
   logEvent: (eventName: string, parameters?: Record<string, unknown>) => {
-    consoleLog(`Event: ${eventName}`, parameters, LogLevel.INFO);
-    analytics.logEvent(eventName, parameters).catch((error) => {
-      console.error("[Logger] Failed to log event to analytics:", error);
-    });
+    dispatch({ type: "event", eventName, parameters });
   },
 
-  // Log user data (for analytics)
+  /**
+   * Log user data/properties
+   * @param data - User data to log
+   */
   logData: (data: Record<string, unknown>) => {
-    consoleLog("User Data:", data, LogLevel.INFO);
-    analytics.logData(data).catch((error) => {
-      console.error("[Logger] Failed to log data to analytics:", error);
-    });
+    dispatch({ type: "user_properties", properties: data });
   },
 
-  // Record an error (for analytics)
+  /**
+   * Set user properties (alias for logData for clarity)
+   * @param properties - User properties to set
+   */
+  setUserProperties: (properties: Record<string, unknown>) => {
+    dispatch({ type: "user_properties", properties });
+  },
+
+  /**
+   * Set user ID for tracking across all services
+   * @param userId - User ID to set
+   */
+  setUserId: (userId: string) => {
+    dispatch({ type: "user_id", userId });
+  },
+
+  /**
+   * Record an error
+   * @param error - Error object
+   * @param context - Additional context about the error
+   */
   recordError: (error: Error, context?: Record<string, unknown>) => {
-    consoleLog(`Error: ${error.message}`, { error, context }, LogLevel.ERROR);
-    analytics.recordError(error, context).catch((analyticsError) => {
-      console.error("[Logger] Failed to record error to analytics:", analyticsError);
-    });
+    dispatch({ type: "error", error, context });
   },
 
-  // General log method
+  /**
+   * General log method
+   * @param message - Log message
+   * @param data - Additional data to log
+   * @param level - Log level
+   */
   log: (message: string, data?: unknown, level: LogLevel = LogLevel.INFO) => {
-    consoleLog(message, data, level);
-    analytics.log(message, data).catch((error) => {
-      console.error("[Logger] Failed to log to analytics:", error);
-    });
+    dispatch({ type: "message", level, message, data });
   },
 
-  // Error logging
+  /**
+   * Error logging
+   * @param message - Error message
+   * @param error - Error object
+   */
   error: (message: string, error: Error) => {
-    consoleLog(message, { error }, LogLevel.ERROR);
-    analytics.error(message, error).catch((analyticsError) => {
-      console.error("[Logger] Failed to log error to analytics:", analyticsError);
-    });
+    dispatch({ type: "message", level: LogLevel.ERROR, message, data: { error } });
+    dispatch({ type: "error", error, context: { message } });
   },
 
-  // Warning logging
+  /**
+   * Warning logging
+   * @param message - Warning message
+   * @param data - Additional data
+   */
   warn: (message: string, data?: unknown) => {
-    consoleLog(message, data, LogLevel.WARN);
-    analytics.logEvent("warning", { message, data }).catch((error) => {
-      console.error("[Logger] Failed to log warning to analytics:", error);
-    });
+    dispatch({ type: "message", level: LogLevel.WARN, message, data });
   },
 
-  // Info logging
+  /**
+   * Info logging
+   * @param message - Info message
+   * @param data - Additional data
+   */
   info: (message: string, data?: unknown) => {
-    consoleLog(message, data, LogLevel.INFO);
-    analytics.logEvent("info", { message, data }).catch((error) => {
-      console.error("[Logger] Failed to log info to analytics:", error);
-    });
+    dispatch({ type: "message", level: LogLevel.INFO, message, data });
   },
 
-  // Debug logging
+  /**
+   * Debug logging
+   * @param message - Debug message
+   * @param data - Additional data
+   */
   debug: (message: string, data?: unknown) => {
-    consoleLog(message, data, LogLevel.DEBUG);
-    analytics.logEvent("debug", { message, data }).catch((error) => {
-      console.error("[Logger] Failed to log debug to analytics:", error);
-    });
+    dispatch({ type: "message", level: LogLevel.DEBUG, message, data });
+  },
+
+  /**
+   * App details debugging (for AI debugging)
+   * @param message - Debug message
+   * @param data - Additional data
+   */
+  appDetailsDebugging: (message: string, data?: unknown) => {
+    if (USE_AI_DEBUGGING) {
+      return;
+    }
+    // Debug-only signal; transports decide what to do with it.
+    dispatch({ type: "message", level: LogLevel.APP_DETAILS_DEBUGGING, message, data });
   },
 };

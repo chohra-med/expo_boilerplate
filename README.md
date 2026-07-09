@@ -39,7 +39,7 @@ Three reasons to use it over `npx create-expo-app`:
 
 - **Feature-First Architecture** — organized by business features, not technical layers
 - **Authentication** — complete login system with secure token storage
-- **Onboarding** — 3-step onboarding flow with questionnaires
+- **AI Onboarding by default** — Wire AI dynamic onboarding out of the box, with the built-in static questionnaire as an automatic fallback (add a free key to switch it on)
 - **Internationalization** — English and French language support
 - **Theming** — Light/Dark/System theme support with Restyle
 - **State Management** — Redux Toolkit with RTK Query
@@ -49,7 +49,8 @@ Three reasons to use it over `npx create-expo-app`:
 - **Secure Storage** — encrypted storage for sensitive data
 - **Performance** — MMKV, FlashList, and optimized animations
 - **Error Handling** — global error boundary with recovery
-- **Analytics** — built-in logging and analytics service
+- **Analytics + Crashlytics** — real Firebase Analytics with a typed event registry, plus Crashlytics crash reporting through a unified logger
+- **Payments** — RevenueCat service + a ready-made, configurable paywall feature
 - **AI Context Files** — `CLAUDE.md` and `AGENTS.md` for AI coding tools
 
 ---
@@ -297,6 +298,162 @@ mkdir -p src/features/new-feature/{api,components,hooks,screens,services,store,t
    - Create components in `components/`
    - Add screens in `screens/`
    - Implement hooks in `hooks/`
+
+---
+
+## 🤖 AI Onboarding by default
+
+Onboarding is **AI-capable out of the box**. The `OnboardingFlow` screen renders
+[Wire AI](https://getwireai.com) dynamic onboarding when a key is configured, and
+falls back to the built-in static questionnaire otherwise — the exact same flow
+this boilerplate has always shipped.
+
+- **No key set (fresh clone):** `isOnboardingEnabled()` is `false`, so the static
+  questionnaire renders unchanged. Zero setup.
+- **Key set:** the screen renders `<WireOnboarding>` with your static flow passed
+  as `fallbackFlow`, so a backend/generation error degrades to the static flow
+  instead of breaking onboarding. Session persistence uses a small MMKV adapter.
+
+Add a free key to upgrade:
+
+```env
+EXPO_PUBLIC_WIREAI_API_KEY=your-wire-ai-tenant-key
+EXPO_PUBLIC_WIREAI_SERVER_URL=https://your-wire-ai-server.com
+EXPO_PUBLIC_WIREAI_APP_ID=your-app-id
+```
+
+Wiring lives in `src/features/onboarding/screens/wire-onboarding-screen.tsx`
+(the gate + fallback) and `src/features/onboarding/services/wire-onboarding-storage.ts`
+(the MMKV session adapter).
+
+---
+
+## 🧭 Guided tours & feature showcase
+
+Two more onboarding surfaces ship wired, both from the same kit
+(`wireai-onboarding`, subpath imports so the core stays dependency-free):
+
+- a **feature showcase** — a few static intro slides shown once before onboarding, and
+- **coachmarks** — a performance-first guided tour that rings real UI elements on the
+  home screen after the user lands.
+
+The kit owns the animation, blur spotlight, ring, gesture hand, measuring, and
+one-overlay queue; the app only declares **where** things anchor and **which** tour
+plays.
+
+### Provider (mounted once)
+
+`<CoachmarkProvider>` wraps the `NavigationContainer` in
+`src/entrypoints/app.tsx`, so its overlay host is a root-level sibling and a ring
+can paint **above** the bottom tab bar. It takes a **synchronous** storage adapter
+(`src/services/storage/coachmark-storage.ts`, a 2-method MMKV wrapper) so a "seen"
+gate resolves during render with no ring flash:
+
+```tsx
+<CoachmarkProvider
+  storage={coachmarkStorage}
+  accentColor={theme.colors.primary}
+  isTestingCoachmark={IS_TESTING_COACHMARK}
+>
+  <NavigationContainer>{/* … */}</NavigationContainer>
+</CoachmarkProvider>
+```
+
+### The feature map (one place to declare tours)
+
+`src/config/coachmarks.ts` is the app's **feature map** — an array of
+`{ id, anchorId, screen, message, gesture }` entries. Each `id` is the anchor
+lookup key, the analytics name, and (later) the token the AI selects on. The tour
+is built through `selectTourSteps(catalog)`, which is the drop-in seam for the
+AI-selection phase: when the Wire backend starts emitting an ordered
+`coachmarks: string[]` chosen from a user's captured intent, you pass it straight
+through — `buildHomeTourSteps(plan.coachmarks)` — and nothing else changes.
+
+### Anchors + the tour
+
+On `src/features/home/screens/home-screen.tsx`, the two most prominent interactive
+elements — the primary **"View All Todos"** button and the **Settings** row — are
+made ringable with `useCoachmarkAnchor(id)` (attach the ref to a plain `View` with
+`collapsable={false}` so the native node survives measurement). The first-run tour
+plays via `useCoachmarkTour(steps, { tourId: "boilerplate_home_tour", enabled, … })`.
+
+Gating lives **in the kit**: it reads/writes `wire_coachmark_<tourId>_seen` through
+the injected storage, so a tour never nags twice and the app keeps no bookkeeping.
+Analytics stay callback-based (`onStepShown` / `onStepEngaged` / `onStepDismissed`)
+so there's no analytics dependency inside the kit — here they route to the app's
+own `analytics.track(...)`.
+
+### App-intro showcase
+
+`src/features/onboarding/config/app-showcase.ts` declares a `ShowcaseConfig` (3
+slides reusing the bundled brand assets). `src/features/onboarding/screens/wire-onboarding-screen.tsx`
+renders `<FeatureShowcase>` **before** the Wire onboarding entry; the kit gates it
+once through the same storage (`wire_showcase_<id>_seen`) and, if already seen,
+renders nothing and calls `onDone` from an effect.
+
+### QA replay — `isTestingCoachmark`
+
+Flip `IS_TESTING_COACHMARK` to `true` in `src/config/coachmarks.ts` (or gate it on
+`__DEV__`). While it's on, every "seen" gate reads as unseen **and** every write is
+suppressed, so every tour **and** the showcase replay on each launch — one boolean
+re-sees the whole surface. Ship it `false`.
+
+> Optional peers pulled in by these subpaths: `react-native-reanimated` +
+> `expo-blur` (coachmarks) and `@blazejkustra/react-native-onboarding` (showcase).
+> All are declared in `package.json`.
+
+---
+
+## 📊 Analytics & Crashlytics
+
+Real **Firebase Analytics** and **Crashlytics**, behind one typed facade — no
+Sentry, Crashlytics is the only crash channel.
+
+- Import from `#root/analytics`: `analytics.track(EVENTS.FEATURE_USED, { ... })`.
+- `EVENTS` is a frozen, validated event registry; app-specific enum values live in
+  `src/analytics/events.app.ts`. Params are sanitized (Firebase limits + a PII
+  denylist) before they reach the transport.
+- Screen views + funnel drop-off: `useScreenTracking` (wired in `app.tsx`) and
+  `useFunnel`.
+- Everything routes through the unified logger (`#root/services/logging`), which
+  fans out to console (dev), Firebase Analytics, and Crashlytics transports.
+- Collection is OFF in `__DEV__` and ON in release, automatically.
+
+Analytics is initialized at boot in `src/entrypoints/hooks/use-app-initializer.ts`.
+
+**Native config (buyer-supplied, not committed):** add your own
+`android/app/google-services.json` and `ios/GoogleService-Info.plist` from the
+Firebase console, then run a native prebuild / EAS build. The required Expo config
+plugins (`@react-native-firebase/app`, `@react-native-firebase/crashlytics`,
+`expo-build-properties` with iOS static frameworks) are already declared in
+`app.json`. In Expo Go / dev, a silent mock is used so the app runs without any
+Firebase config.
+
+---
+
+## 💳 Payments (RevenueCat)
+
+A RevenueCat service (`#root/services/revenuecat`) plus a ready-made paywall
+feature (`src/features/paywall/`) — screen, presentational view, package cards,
+config, and a skip-cooldown slice.
+
+- Add your keys and (optionally) the entitlement id:
+
+```env
+EXPO_PUBLIC_REVENUECAT_IOS_API_KEY=appl_your_ios_key
+EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY=goog_your_android_key
+EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID=premium   # defaults to "premium"
+```
+
+- The entitlement id is **parameterized** — point it at whatever entitlement you
+  configured in the RevenueCat dashboard; no code changes.
+- Without a key, init is skipped and the paywall degrades gracefully.
+- **Release-build guard:** a `test_` key in a release build is rejected on purpose
+  (it would otherwise crash the native SDK). Use production `goog_`/`appl_` keys
+  for release.
+
+RevenueCat is initialized at boot alongside analytics. `react-native-purchases`
+autolinks — no extra Expo config plugin needed.
 
 ---
 

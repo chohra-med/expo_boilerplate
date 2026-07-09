@@ -14,6 +14,8 @@ export type { LargeListProps } from "./large-list";
 export { LargeList } from "./large-list";
 export type { PopupMenuOption, PopupMenuProps } from "./popup-menu";
 export { PopupMenu } from "./popup-menu";
+export type { PressableProps } from "./pressable";
+export { Pressable } from "./pressable";
 export type { SafeAreaViewProps } from "./safe-area";
 export { SafeArea } from "./safe-area";
 export type { TextComponentProps } from "./text";

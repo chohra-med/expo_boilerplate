@@ -48,6 +48,13 @@ export const themeColors = {
     // Additional colors
     primaryBackground: "#EFF6FF",
     overlay: "rgba(0, 0, 0, 0.5)",
+
+    // Semantic surfaces/accents used by the ported paywall feature
+    surface: "#FFFFFF",
+    surfaceSecondary: "#F3F4F6",
+    accentInk: "#FFFFFF",
+    accentSoft: "#ECFDF5",
+    borderStrong: "#D1D5DB",
   },
   dark: {
     // Background colors
@@ -98,5 +105,12 @@ export const themeColors = {
     // Additional colors
     primaryBackground: "#1E3A8A",
     overlay: "rgba(0, 0, 0, 0.7)",
+
+    // Semantic surfaces/accents used by the ported paywall feature
+    surface: "#1F2937",
+    surfaceSecondary: "#374151",
+    accentInk: "#052E1F",
+    accentSoft: "#064E3B",
+    borderStrong: "#4B5563",
   },
 } as const;

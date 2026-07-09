@@ -66,7 +66,7 @@ const HomeScreenComponent: React.FC = () => {
   useCoachmarkTour(tourSteps, {
     tourId: HOME_TOUR_ID, // gate key (persisted once) + analytics prefix
     enabled: true, // domain gate — arm the tour only when it makes sense
-    startDelayMs: 1200, // let the entrance animations land before the first ring
+    startDelayMs: 500, // let the entrance animations land before the first ring
     onStepShown: (id) =>
       analytics.track(EVENTS.FEATURE_USED, { feature_name: FEATURE_NAMES.HOME, step_id: id }),
   });

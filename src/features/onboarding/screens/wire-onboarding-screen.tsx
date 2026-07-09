@@ -67,6 +67,15 @@ export const WireOnboardingScreen: React.FC = () => {
     logger.logEvent("wire_onboarding_event", { event_type: event.type });
   }, []);
 
+  const config = isOnboardingEnabled() ? wireConfigFromEnv({ appId: _appId }) : null;
+
+  // No key configured (or explicitly disabled) → render the static flow unchanged,
+  // with NO app-intro slides. The showcase is a Wire-onboarding upgrade, so a
+  // keyless fresh clone shows the static questionnaire only (README promise).
+  if (!config) {
+    return <StaticOnboardingScreen />;
+  }
+
   // Show the app-intro slides first; the kit gates them to run at most once.
   if (!showcaseDone) {
     return (
@@ -76,13 +85,6 @@ export const WireOnboardingScreen: React.FC = () => {
         onDone={handleShowcaseDone}
       />
     );
-  }
-
-  const config = isOnboardingEnabled() ? wireConfigFromEnv({ appId: _appId }) : null;
-
-  // No key configured (or explicitly disabled) → render the static flow unchanged.
-  if (!config) {
-    return <StaticOnboardingScreen />;
   }
 
   return (

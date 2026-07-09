@@ -328,6 +328,82 @@ Wiring lives in `src/features/onboarding/screens/wire-onboarding-screen.tsx`
 
 ---
 
+## 🧭 Guided tours & feature showcase
+
+Two more onboarding surfaces ship wired, both from the same kit
+(`wireai-onboarding`, subpath imports so the core stays dependency-free):
+
+- a **feature showcase** — a few static intro slides shown once before onboarding, and
+- **coachmarks** — a performance-first guided tour that rings real UI elements on the
+  home screen after the user lands.
+
+The kit owns the animation, blur spotlight, ring, gesture hand, measuring, and
+one-overlay queue; the app only declares **where** things anchor and **which** tour
+plays.
+
+### Provider (mounted once)
+
+`<CoachmarkProvider>` wraps the `NavigationContainer` in
+`src/entrypoints/app.tsx`, so its overlay host is a root-level sibling and a ring
+can paint **above** the bottom tab bar. It takes a **synchronous** storage adapter
+(`src/services/storage/coachmark-storage.ts`, a 2-method MMKV wrapper) so a "seen"
+gate resolves during render with no ring flash:
+
+```tsx
+<CoachmarkProvider
+  storage={coachmarkStorage}
+  accentColor={theme.colors.primary}
+  isTestingCoachmark={IS_TESTING_COACHMARK}
+>
+  <NavigationContainer>{/* … */}</NavigationContainer>
+</CoachmarkProvider>
+```
+
+### The feature map (one place to declare tours)
+
+`src/config/coachmarks.ts` is the app's **feature map** — an array of
+`{ id, anchorId, screen, message, gesture }` entries. Each `id` is the anchor
+lookup key, the analytics name, and (later) the token the AI selects on. The tour
+is built through `selectTourSteps(catalog)`, which is the drop-in seam for the
+AI-selection phase: when the Wire backend starts emitting an ordered
+`coachmarks: string[]` chosen from a user's captured intent, you pass it straight
+through — `buildHomeTourSteps(plan.coachmarks)` — and nothing else changes.
+
+### Anchors + the tour
+
+On `src/features/home/screens/home-screen.tsx`, the two most prominent interactive
+elements — the primary **"View All Todos"** button and the **Settings** row — are
+made ringable with `useCoachmarkAnchor(id)` (attach the ref to a plain `View` with
+`collapsable={false}` so the native node survives measurement). The first-run tour
+plays via `useCoachmarkTour(steps, { tourId: "boilerplate_home_tour", enabled, … })`.
+
+Gating lives **in the kit**: it reads/writes `wire_coachmark_<tourId>_seen` through
+the injected storage, so a tour never nags twice and the app keeps no bookkeeping.
+Analytics stay callback-based (`onStepShown` / `onStepEngaged` / `onStepDismissed`)
+so there's no analytics dependency inside the kit — here they route to the app's
+own `analytics.track(...)`.
+
+### App-intro showcase
+
+`src/features/onboarding/config/app-showcase.ts` declares a `ShowcaseConfig` (3
+slides reusing the bundled brand assets). `src/features/onboarding/screens/wire-onboarding-screen.tsx`
+renders `<FeatureShowcase>` **before** the Wire onboarding entry; the kit gates it
+once through the same storage (`wire_showcase_<id>_seen`) and, if already seen,
+renders nothing and calls `onDone` from an effect.
+
+### QA replay — `isTestingCoachmark`
+
+Flip `IS_TESTING_COACHMARK` to `true` in `src/config/coachmarks.ts` (or gate it on
+`__DEV__`). While it's on, every "seen" gate reads as unseen **and** every write is
+suppressed, so every tour **and** the showcase replay on each launch — one boolean
+re-sees the whole surface. Ship it `false`.
+
+> Optional peers pulled in by these subpaths: `react-native-reanimated` +
+> `expo-blur` (coachmarks) and `@blazejkustra/react-native-onboarding` (showcase).
+> All are declared in `package.json`.
+
+---
+
 ## 📊 Analytics & Crashlytics
 
 Real **Firebase Analytics** and **Crashlytics**, behind one typed facade — no

@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
   isOnboardingEnabled,
   type OnboardingEvent,
@@ -7,10 +7,13 @@ import {
   WireOnboarding,
   wireConfigFromEnv,
 } from "wireai-onboarding";
+import { FeatureShowcase } from "wireai-onboarding/showcase";
 import { analytics, EVENTS } from "#root/analytics";
 import { logger } from "#root/services/logging";
 import { useAppDispatch } from "#root/store/store";
 import { Box } from "#root/ui/components";
+import { useTheme } from "#root/ui/style/theme-provider";
+import { APP_SHOWCASE } from "../config";
 import { wireOnboardingStorage } from "../services/wire-onboarding-storage";
 import { completeOnboarding } from "../store/onboarding-slice";
 import { OnboardingScreen as StaticOnboardingScreen } from "./onboarding-screen";
@@ -31,6 +34,14 @@ const _appId = process.env.EXPO_PUBLIC_WIREAI_APP_ID ?? "default";
 
 export const WireOnboardingScreen: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { theme } = useTheme();
+
+  // App-intro showcase (wireai-onboarding/showcase): 3 static slides shown ONCE
+  // before onboarding starts. The kit gates it via the shared coachmark storage
+  // (`wire_showcase_<id>_seen`) — if already seen it renders nothing and calls
+  // `onDone` from an effect, so this state simply advances to the flow below.
+  const [showcaseDone, setShowcaseDone] = useState(false);
+  const handleShowcaseDone = useCallback(() => setShowcaseDone(true), []);
 
   const handleComplete = useCallback(
     (_result: OnboardingResult) => {
@@ -55,6 +66,17 @@ export const WireOnboardingScreen: React.FC = () => {
   const handleEvent = useCallback((event: OnboardingEvent) => {
     logger.logEvent("wire_onboarding_event", { event_type: event.type });
   }, []);
+
+  // Show the app-intro slides first; the kit gates them to run at most once.
+  if (!showcaseDone) {
+    return (
+      <FeatureShowcase
+        config={APP_SHOWCASE}
+        accentColor={theme.colors.primary}
+        onDone={handleShowcaseDone}
+      />
+    );
+  }
 
   const config = isOnboardingEnabled() ? wireConfigFromEnv({ appId: _appId }) : null;
 

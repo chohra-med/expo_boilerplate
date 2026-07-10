@@ -6826,10 +6826,10 @@ which@^2.0.1:
   dependencies:
     isexe "^2.0.0"
 
-wireai-onboarding@0.1.12:
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/wireai-onboarding/-/wireai-onboarding-0.1.12.tgz#851c076fb548733ca2b296a83151ae30731ed9e2"
-  integrity sha512-9CNsyN1yEUPoX0hOPkuljVwTSsmrGkOE9Ji5hunzscO8uyMpFOh+CMZ/gxVytnuJfFUSLI4B8MDjjuXxF2UJXw==
+wireai-onboarding@0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/wireai-onboarding/-/wireai-onboarding-0.2.1.tgz#e19dcc1b327176ff295b1a333f93be5a5de11148"
+  integrity sha512-Z+tkX9ah7G1pM/V9AF3KOetNJeD+R3Y1FZ+oDQvQAAKj3upr2RcsHEqAbNL+xDezkMdZUlZjnB7sXVbk3wFyrg==
 
 wireai-rn@^0.2.4:
   version "0.2.4"

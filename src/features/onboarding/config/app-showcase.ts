@@ -1,13 +1,17 @@
 import type { ShowcaseConfig } from "wireai-onboarding/showcase";
 
 /**
- * app-showcase.ts — the pre-onboarding "app intro" slides.
+ * app-showcase.ts — the "app intro" slide catalog.
  *
- * A small, declarative `ShowcaseConfig` shown ONCE before the Wire AI onboarding
- * starts (see `wire-onboarding-screen.tsx`). The kit maps this onto the
- * `@blazejkustra/react-native-onboarding` package, bakes in the onboarding theme
- * colors, and gates it once through the shared coachmark storage
+ * A small, declarative `ShowcaseConfig` shown as a personalized value bridge AFTER
+ * the Wire AI onboarding completes (see `wire-onboarding-screen.tsx`, which selects
+ * 2-3 of these from the answers via `select-showcase-slides.ts`). The kit maps this
+ * onto the `@blazejkustra/react-native-onboarding` package, bakes in the onboarding
+ * theme colors, and gates it once through the shared coachmark storage
  * (`wire_showcase_<id>_seen`). Swap the copy + images for your own product story.
+ *
+ * No `gesture` props here — swipe/tap hints belong to the coachmark tour, delivered
+ * just-in-time when the user is on the screen, not to these intro stills.
  *
  * Images reuse the boilerplate's bundled brand assets so a fresh clone renders
  * something real with zero extra files — replace them with dedicated slide art.
@@ -26,7 +30,6 @@ export const APP_SHOWCASE: ShowcaseConfig = {
       description:
         "Personalized, backend-driven onboarding out of the box — with a static fallback.",
       image: require("../../../../assets/icon-light.png"),
-      gesture: "tap",
     },
     {
       id: "batteries_included",

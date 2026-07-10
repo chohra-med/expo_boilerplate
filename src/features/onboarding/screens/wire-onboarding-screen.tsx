@@ -7,13 +7,14 @@ import {
   WireOnboarding,
   wireConfigFromEnv,
 } from "wireai-onboarding";
+import type { ShowcaseSlide } from "wireai-onboarding/showcase";
 import { FeatureShowcase } from "wireai-onboarding/showcase";
 import { analytics, EVENTS } from "#root/analytics";
 import { logger } from "#root/services/logging";
 import { useAppDispatch } from "#root/store/store";
 import { Box } from "#root/ui/components";
 import { useTheme } from "#root/ui/style/theme-provider";
-import { APP_SHOWCASE } from "../config";
+import { APP_SHOWCASE, selectAppShowcaseSlides } from "../config";
 import { wireOnboardingStorage } from "../services/wire-onboarding-storage";
 import { completeOnboarding } from "../store/onboarding-slice";
 import { OnboardingScreen as StaticOnboardingScreen } from "./onboarding-screen";
@@ -36,23 +37,30 @@ export const WireOnboardingScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { theme } = useTheme();
 
-  // App-intro showcase (wireai-onboarding/showcase): 3 static slides shown ONCE
-  // before onboarding starts. The kit gates it via the shared coachmark storage
-  // (`wire_showcase_<id>_seen`) — if already seen it renders nothing and calls
-  // `onDone` from an effect, so this state simply advances to the flow below.
-  const [showcaseDone, setShowcaseDone] = useState(false);
-  const handleShowcaseDone = useCallback(() => setShowcaseDone(true), []);
+  // App-intro showcase (wireai-onboarding/showcase), rendered as a PERSONALIZED
+  // VALUE BRIDGE *after* onboarding completes: 2-3 slides picked from the user's
+  // answers (see `select-showcase-slides.ts`). `null` = onboarding not finished yet;
+  // a slide array = play the bridge, then enter the app. The kit still gates it once
+  // (`wire_showcase_<id>_seen`) — if already seen it calls `onDone` from an effect.
+  const [bridgeSlides, setBridgeSlides] = useState<ShowcaseSlide[] | null>(null);
 
-  const handleComplete = useCallback(
-    (_result: OnboardingResult) => {
-      analytics.track(EVENTS.ONB_COMPLETE);
-      dispatch(completeOnboarding());
-    },
-    [dispatch]
-  );
+  const handleComplete = useCallback((result: OnboardingResult) => {
+    analytics.track(EVENTS.ONB_COMPLETE);
+    // Personalize the value bridge from what the user just told us (full deck when
+    // the answers are too thin to match — see selectAppShowcaseSlides). We DON'T
+    // dispatch completeOnboarding yet: that leaves this screen, so we wait until the
+    // bridge is done (handleBridgeDone).
+    setBridgeSlides(selectAppShowcaseSlides(APP_SHOWCASE.slides, result.answers));
+  }, []);
+
+  // Value bridge finished (or was already seen) → now finish onboarding for real.
+  const handleBridgeDone = useCallback(() => {
+    dispatch(completeOnboarding());
+  }, [dispatch]);
 
   const handleSkip = useCallback(() => {
     analytics.track(EVENTS.ONB_ABANDONED);
+    // User bailed — no answers to personalize from, so skip the bridge and finish.
     dispatch(completeOnboarding());
   }, [dispatch]);
 
@@ -67,6 +75,18 @@ export const WireOnboardingScreen: React.FC = () => {
     logger.logEvent("wire_onboarding_event", { event_type: event.type });
   }, []);
 
+  // After onboarding completes we hold the personalized slides — play the value
+  // bridge, then enter the app. The kit gates it to run at most once.
+  if (bridgeSlides) {
+    return (
+      <FeatureShowcase
+        config={{ ...APP_SHOWCASE, slides: bridgeSlides }}
+        accentColor={theme.colors.primary}
+        onDone={handleBridgeDone}
+      />
+    );
+  }
+
   const config = isOnboardingEnabled() ? wireConfigFromEnv({ appId: _appId }) : null;
 
   // No key configured (or explicitly disabled) → render the static flow unchanged,
@@ -74,17 +94,6 @@ export const WireOnboardingScreen: React.FC = () => {
   // keyless fresh clone shows the static questionnaire only (README promise).
   if (!config) {
     return <StaticOnboardingScreen />;
-  }
-
-  // Show the app-intro slides first; the kit gates them to run at most once.
-  if (!showcaseDone) {
-    return (
-      <FeatureShowcase
-        config={APP_SHOWCASE}
-        accentColor={theme.colors.primary}
-        onDone={handleShowcaseDone}
-      />
-    );
   }
 
   return (

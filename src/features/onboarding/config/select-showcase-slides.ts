@@ -64,9 +64,14 @@ export const selectAppShowcaseSlideIds = (
  * with a selection → only the listed ids, in that order, unknown ids skipped and
  * duplicates ignored.
  *
- * TODO: swap this for `selectShowcaseSlides` imported from `wireai-onboarding/showcase`
- * on the next kit bump — the helper ships in the kit but the pinned 0.2.1 here doesn't
- * export it yet, so we inline the identical body to teach the pattern today.
+ * The kit DOES export an identical `selectShowcaseSlides` from `wireai-onboarding/showcase`
+ * (since 0.3.x). We keep this inline mirror on purpose: that subpath loads the native
+ * showcase stack (`@blazejkustra/react-native-onboarding` + `react-native-reanimated`) at
+ * module load, so importing the helper as a runtime value here would drag those into the
+ * node test env and break the unit tests. Inlining the tiny, pure body keeps this file
+ * import-light and test-safe while teaching the exact same contract. (If you'd rather use
+ * the kit helper, import it from `wireai-onboarding/showcase` and mock that subpath in the
+ * test, the same way `coachmarks.test.ts` mocks `wireai-onboarding/coachmarks`.)
  */
 export const selectShowcaseSlides = <T extends { id: string }>(
   catalog: T[],

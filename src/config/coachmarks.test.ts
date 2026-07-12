@@ -1,10 +1,10 @@
-// `src/config/coachmarks.ts` imports the kit's `wireai-onboarding/coachmarks`
+// `src/config/coachmarks.ts` imports the kit's `@wireai/activation/coachmarks`
 // subpath, whose entry eagerly loads the native overlay stack (reanimated +
 // expo-blur) — not loadable under the node test env. We're unit-testing the
 // APP-owned pieces (the feature-map catalog + the `buildHomeTourSteps` seam), so
 // we mock the kit boundary with a faithful `selectTourSteps` mirroring its
 // documented contract. The kit's own package tests cover the real implementation.
-jest.mock("wireai-onboarding/coachmarks", () => ({
+jest.mock("@wireai/activation/coachmarks", () => ({
   selectTourSteps: <T extends { id: string }>(catalog: T[], selection?: string[]): T[] => {
     if (!selection) return catalog;
     const byId = new Map(catalog.map((step) => [step.id, step]));

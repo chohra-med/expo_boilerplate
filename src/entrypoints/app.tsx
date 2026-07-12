@@ -1,4 +1,5 @@
 import { NavigationContainer, type NavigationContainerRef } from "@react-navigation/native";
+import { CoachmarkProvider } from "@wireai/activation/coachmarks";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -9,7 +10,6 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { CoachmarkProvider } from "wireai-onboarding/coachmarks";
 import { useScreenTracking } from "#root/analytics";
 import { IS_TESTING_COACHMARK } from "#root/config/coachmarks";
 import { useAppInitializer } from "#root/entrypoints/hooks";
@@ -68,7 +68,7 @@ const AppContent: React.FC = () => {
       <KeyboardProvider>
         <SafeAreaProvider>
           {/*
-            Guided-tour engine (wireai-onboarding/coachmarks). Mounted ONCE here,
+            Guided-tour engine (@wireai/activation/coachmarks). Mounted ONCE here,
             around the NavigationContainer, so its overlay host is a root-level
             sibling of the whole app — that placement lets a coachmark ring + blur
             paint ABOVE the bottom tab bar (which react-navigation draws over

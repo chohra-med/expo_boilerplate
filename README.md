@@ -331,7 +331,7 @@ Wiring lives in `src/features/onboarding/screens/wire-onboarding-screen.tsx`
 ## 🧭 Guided tours & feature showcase
 
 Two more onboarding surfaces ship wired, both from the same kit
-(`wireai-onboarding`, subpath imports so the core stays dependency-free):
+(`@wireai/activation`, subpath imports so the core stays dependency-free):
 
 - a **feature showcase** — a few static intro slides shown once before onboarding, and
 - **coachmarks** — a performance-first guided tour that rings real UI elements on the

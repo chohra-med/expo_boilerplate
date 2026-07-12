@@ -1,13 +1,13 @@
-import type React from "react";
-import { useCallback, useState } from "react";
 import {
   isOnboardingEnabled,
   type OnboardingEvent,
   type OnboardingResult,
   WireOnboarding,
   wireConfigFromEnv,
-} from "wireai-onboarding";
-import { FeatureShowcase } from "wireai-onboarding/showcase";
+} from "@wireai/activation";
+import { FeatureShowcase } from "@wireai/activation/showcase";
+import type React from "react";
+import { useCallback, useState } from "react";
 import { analytics, EVENTS } from "#root/analytics";
 import { logger } from "#root/services/logging";
 import { useAppDispatch } from "#root/store/store";
@@ -36,7 +36,7 @@ export const WireOnboardingScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { theme } = useTheme();
 
-  // App-intro showcase (wireai-onboarding/showcase): 3 static slides shown ONCE
+  // App-intro showcase (@wireai/activation/showcase): 3 static slides shown ONCE
   // before onboarding starts. The kit gates it via the shared coachmark storage
   // (`wire_showcase_<id>_seen`) — if already seen it renders nothing and calls
   // `onDone` from an effect, so this state simply advances to the flow below.

@@ -1,5 +1,6 @@
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
+import { useCoachmarkAnchor, useCoachmarkTour } from "@wireai/activation/coachmarks";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, View } from "react-native";
@@ -13,7 +14,6 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { useCoachmarkAnchor, useCoachmarkTour } from "wireai-onboarding/coachmarks";
 import { analytics, EVENTS, FEATURE_NAMES } from "#root/analytics";
 import { buildHomeTourSteps, HOME_TOUR_ID } from "#root/config/coachmarks";
 import type { AppTabStackParamsList } from "#root/navigation/routes";
@@ -51,7 +51,7 @@ const HomeScreenComponent: React.FC = () => {
     navigation.navigate("Settings", { screen: "MainSettings" });
   }, [navigation]);
 
-  // ── Guided tour (wireai-onboarding/coachmarks) ──────────────────────────────
+  // ── Guided tour (@wireai/activation/coachmarks) ─────────────────────────────
   // Register the two most prominent interactive elements as tour anchors. The ids
   // MUST match the `anchorId`s declared in the feature map (src/config/coachmarks.ts).
   const viewTodosAnchor = useCoachmarkAnchor("home_view_todos");

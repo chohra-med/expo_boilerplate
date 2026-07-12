@@ -1,5 +1,5 @@
+import type { WireOnboardingStorage } from "@wireai/activation";
 import { createMMKV } from "react-native-mmkv";
-import type { WireOnboardingStorage } from "wireai-onboarding";
 
 /**
  * MMKV-backed storage adapter for the Wire AI onboarding kit.

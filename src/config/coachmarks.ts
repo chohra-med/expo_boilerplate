@@ -2,7 +2,7 @@
  * coachmarks.ts — the app's guided-tour "feature map".
  *
  * This is the ONE place you declare which UI elements get a coachmark, what each
- * one says, and where it lives. The kit (`wireai-onboarding/coachmarks`) owns the
+ * one says, and where it lives. The kit (`@wireai/activation/coachmarks`) owns the
  * animation, blur spotlight, ring, gesture hand, measuring, and one-overlay queue;
  * the app only declares WHERE things anchor and WHICH tour plays.
  *
@@ -22,8 +22,8 @@
  * what makes that upgrade a one-liner.
  */
 
-import type { CoachmarkStep } from "wireai-onboarding/coachmarks";
-import { selectTourSteps } from "wireai-onboarding/coachmarks";
+import type { CoachmarkStep } from "@wireai/activation/coachmarks";
+import { selectTourSteps } from "@wireai/activation/coachmarks";
 
 /**
  * QA replay flag. Wired into `<CoachmarkProvider isTestingCoachmark={...}>`.

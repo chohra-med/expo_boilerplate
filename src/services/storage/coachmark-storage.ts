@@ -1,4 +1,4 @@
-import type { CoachmarkStorage } from "wireai-onboarding/coachmarks";
+import type { CoachmarkStorage } from "@wireai/activation/coachmarks";
 import { mmkv } from "./mmkv-storage";
 
 /**

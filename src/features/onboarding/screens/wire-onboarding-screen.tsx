@@ -6,9 +6,9 @@ import {
   type OnboardingResult,
   WireOnboarding,
   wireConfigFromEnv,
-} from "wireai-onboarding";
-import type { ShowcaseSlide } from "wireai-onboarding/showcase";
-import { FeatureShowcase } from "wireai-onboarding/showcase";
+} from "@wireai/activation";
+import type { ShowcaseSlide } from "@wireai/activation/showcase";
+import { FeatureShowcase } from "@wireai/activation/showcase";
 import { analytics, EVENTS } from "#root/analytics";
 import { logger } from "#root/services/logging";
 import { useAppDispatch } from "#root/store/store";
@@ -37,7 +37,7 @@ export const WireOnboardingScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { theme } = useTheme();
 
-  // App-intro showcase (wireai-onboarding/showcase), rendered as a PERSONALIZED
+  // App-intro showcase (@wireai/activation/showcase), rendered as a PERSONALIZED
   // VALUE BRIDGE *after* onboarding completes: 2-3 slides picked from the user's
   // answers (see `select-showcase-slides.ts`). `null` = onboarding not finished yet;
   // a slide array = play the bridge, then enter the app. The kit still gates it once

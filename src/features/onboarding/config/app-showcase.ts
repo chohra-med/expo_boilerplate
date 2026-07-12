@@ -1,4 +1,4 @@
-import type { ShowcaseConfig } from "wireai-onboarding/showcase";
+import type { ShowcaseConfig } from "@wireai/activation/showcase";
 
 /**
  * app-showcase.ts — the "app intro" slide catalog.

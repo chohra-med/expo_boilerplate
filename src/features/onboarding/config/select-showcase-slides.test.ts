@@ -1,4 +1,4 @@
-import type { ShowcaseSlide } from "wireai-onboarding/showcase";
+import type { ShowcaseSlide } from "@wireai/activation/showcase";
 import {
   selectAppShowcaseSlideIds,
   selectAppShowcaseSlides,

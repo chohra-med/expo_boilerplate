@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { setWireUserContext } from "#root/features/onboarding/services/wire-analytics";
 import { useAppDispatch, useAppSelector } from "#root/store/store";
 import { useToast } from "#root/ui/hooks";
 import { useLoginMutation } from "../api/auth.api";
@@ -59,6 +60,17 @@ export const useAuth = () => {
           })
         );
 
+        // Wire AI rich user-context EXAMPLE — bind WHO this user is so activation
+        // analytics can segment by user. `device_key` + `app_version` are auto-provided
+        // by the kit (0.8.0); the host only sets the app-specific identity here.
+        // ⚠️ `userEmail` is opt-in PII (GDPR) — pass it only with consent. See the note
+        // on `setWireUserContext`. No-op until a Wire key is configured (fresh clones).
+        setWireUserContext({
+          userId: mockUser.id, // your app's OPAQUE user id (never the email)
+          userEmail: mockUser.email, // opt-in PII — raw by default; add `hashEmail: true` to hash on-device
+          // extra: { plan: "free" }, // ← any custom cohort dimension you have
+        });
+
         showSuccess("Login Successful", "Welcome back!");
         return { success: true };
       } catch (_error: unknown) {
@@ -104,6 +116,8 @@ export const useAuth = () => {
             tokens: savedTokens,
           })
         );
+        // Re-bind the Wire AI user-context on session restore (same pattern as login).
+        setWireUserContext({ userId: savedUser.id, userEmail: savedUser.email });
       }
     } catch (error) {
       console.error("Failed to check auth status:", error);

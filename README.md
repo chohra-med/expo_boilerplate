@@ -39,7 +39,7 @@ Three reasons to use it over `npx create-expo-app`:
 
 - **Feature-First Architecture** — organized by business features, not technical layers
 - **Authentication** — complete login system with secure token storage
-- **AI Onboarding by default** — Wire AI dynamic onboarding out of the box, with the built-in static questionnaire as an automatic fallback (add a free key to switch it on)
+- **AI activation by default** — Wire AI finds what makes your users stay: a dynamic onboarding runs when a key is configured, with the built-in static questionnaire as an automatic fallback (add a free key to switch it on)
 - **Internationalization** — English and French language support
 - **Theming** — Light/Dark/System theme support with Restyle
 - **State Management** — Redux Toolkit with RTK Query
@@ -301,12 +301,12 @@ mkdir -p src/features/new-feature/{api,components,hooks,screens,services,store,t
 
 ---
 
-## 🤖 AI Onboarding by default
+## 🤖 AI activation by default
 
-Onboarding is **AI-capable out of the box**. The `OnboardingFlow` screen renders
-[Wire AI](https://getwireai.com) dynamic onboarding when a key is configured, and
-falls back to the built-in static questionnaire otherwise — the exact same flow
-this boilerplate has always shipped.
+Wire AI finds what makes your users stay, and this boilerplate ships ready for it.
+The `OnboardingFlow` screen renders [Wire AI](https://getwireai.com) dynamic
+onboarding when a key is configured, and falls back to the built-in static
+questionnaire otherwise, the exact same flow this boilerplate has always shipped.
 
 - **No key set (fresh clone):** `isOnboardingEnabled()` is `false`, so the static
   questionnaire renders unchanged. Zero setup.

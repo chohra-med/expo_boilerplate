@@ -2467,10 +2467,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.3.0.tgz#d06bbb384ebcf6c505fde1c3d0ed4ddffe0aaff8"
   integrity sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==
 
-"@wireai/activation@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@wireai/activation/-/activation-0.8.0.tgz#8207252c382733c2b3a4be9981cfbdebb6f48392"
-  integrity sha512-yo2LhTTamU/ClquZOvGi1JTBC+yqMGlKCcFpn7iIyurcYzePq5V9rmVkpNudVihRsTsTqyJxLt0BizOMrtcOqg==
+"@wireai/activation@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@wireai/activation/-/activation-0.10.0.tgz#aed7237a1e7bddf662af374e2eb7e4188917548e"
+  integrity sha512-liRnuoO/NT77l29OjlPOnkwCIz5Cjh+YVRRaJQVCh5gid3WZi2dXAYUxLHHccEV3jkMHgKP/EDyoku+XMrYctg==
 
 "@xmldom/xmldom@^0.8.8":
   version "0.8.11"

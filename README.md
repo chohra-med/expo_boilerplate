@@ -4,6 +4,8 @@
 
 **The AI-first React Native + Expo boilerplate.**
 
+_Part of [**Wire AI**](https://getwireai.com), the AI-native growth engineer for mobile apps._
+
 Feature-first architecture, TypeScript strict, auth, i18n, theming, Redux Toolkit, and Expo SDK 54 with the New Architecture. Structured so Cursor, Claude Code, and Antigravity generate consistent code without hallucinating your patterns.
 
 [![license](https://img.shields.io/github/license/chohra-med/expo_boilerplate.svg)](LICENSE)

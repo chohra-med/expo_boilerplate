@@ -9,10 +9,12 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { useLifecycleEvents } from "@wireai/activation";
 import { CoachmarkProvider } from "@wireai/activation/coachmarks";
 import { useScreenTracking } from "#root/analytics";
 import { IS_TESTING_COACHMARK } from "#root/config/coachmarks";
 import { useAppInitializer } from "#root/entrypoints/hooks";
+import { wireLifecycleConfig } from "#root/features/onboarding/services/wire-lifecycle";
 import { RootStackNavigator } from "#root/navigation/navigators/root-stack-navigator";
 import type { RootStackParamList } from "#root/navigation/routes";
 import { coachmarkStorage } from "#root/services/storage";
@@ -31,6 +33,11 @@ const AppContent: React.FC = () => {
 
   // Boot core services (Firebase Analytics + Crashlytics + RevenueCat) and emit APP_OPEN.
   useAppInitializer();
+
+  // Wire funnel denominator: fire app.first_open (once ever) + app.session_started
+  // (per open) so the tenant's activation/retention rates have something to divide by.
+  // No-op until a Wire key is configured. See services/wire-lifecycle.ts.
+  useLifecycleEvents(wireLifecycleConfig);
 
   // Screen tracking: emits SCREEN_VIEW / SCREEN_EXIT through the analytics facade.
   const { onScreenChange } = useScreenTracking();

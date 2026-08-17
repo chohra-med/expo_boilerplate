@@ -346,8 +346,8 @@ starter flow. Real onboarding, recorded in your funnel, but no model calls yet. 
 the AI-generated flow is a manual step today: ask for it by email and it gets switched on for
 your app. The analytics, the funnel and the static flow all work immediately.
 
-The env vars in one block. See the day-one note above for what runs before the AI flow is
-switched on.
+Set these in `.env` to turn it on. See the day-one note above for what runs before the AI
+flow is switched on.
 
 ```env
 EXPO_PUBLIC_WIREAI_API_KEY=wai_your_key_here

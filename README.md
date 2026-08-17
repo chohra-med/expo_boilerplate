@@ -319,7 +319,7 @@ questionnaire otherwise, the exact same flow this boilerplate has always shipped
 ### Get your Wire AI keys
 
 The AI onboarding is off until you give it a key. Without one the app runs its built-in
-static questionnaire, so a fresh clone works with zero setup, adding a key is what
+static questionnaire, so a fresh clone works with zero setup. Adding a key is what
 upgrades that same screen to AI-driven onboarding.
 
 1. **Create your account** at [getwireai.com/signup](https://getwireai.com/signup). You
@@ -328,7 +328,7 @@ upgrades that same screen to AI-driven onboarding.
 3. **Open the [console](https://getwireai.com/console).** Your app is already there, created
    from the name you gave at signup. Add another app any time you need a second key.
 4. **Copy the app's API key (`wai_…`) and its app id.** The key lives in the console, so you
-   can read it back later, you do not have to save it now.
+   can read it back later, and you do not have to save it now.
 5. **Paste them into `.env`** (copy `.env.example` first):
 
    ```bash
@@ -341,7 +341,7 @@ upgrades that same screen to AI-driven onboarding.
    inlined at build time, so a running bundler will not pick them up.
 
 **What you get on day one:** a new app starts on the free plan running a short scripted
-starter flow, real onboarding, recorded in your funnel, but no model calls yet. Turning on
+starter flow. Real onboarding, recorded in your funnel, but no model calls yet. Turning on
 the AI-generated flow is a manual step today: ask for it by email and it gets switched on for
 your app. The analytics, the funnel and the static flow all work immediately.
 

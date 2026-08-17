@@ -2467,10 +2467,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.3.0.tgz#d06bbb384ebcf6c505fde1c3d0ed4ddffe0aaff8"
   integrity sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==
 
-"@wireai/activation@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@wireai/activation/-/activation-0.11.0.tgz#52c4b90ea51482e10647244bdd5bdef79c359808"
-  integrity sha512-xlon5IwU+8Mjk5qm3dDWlMFQO2FRV2ChB7L4InD+jF8rYvgvk0EuZOf04YN3saL2jxpVz51NPiIwgy2bphWTvw==
+"@wireai/activation@0.13.6":
+  version "0.13.6"
+  resolved "https://registry.yarnpkg.com/@wireai/activation/-/activation-0.13.6.tgz#c9930efbe1ef9c94040afae7c443e8ecde11b652"
+  integrity sha512-hUVimfzua0V0R/CYy4CLVV5veNokOua04rzN1SXGw+yBbnUxxylB0kWkVHBHm6siSLdUQ9Q2EaS+cxPp6pIOsg==
 
 "@xmldom/xmldom@^0.8.8":
   version "0.8.11"
@@ -6831,10 +6831,10 @@ which@^2.0.1:
   dependencies:
     isexe "^2.0.0"
 
-wireai-rn@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/wireai-rn/-/wireai-rn-0.2.4.tgz#19a8a0dca400b19757fa73f4784a8e4630725ff7"
-  integrity sha512-0Z4F1tu1PNzgUg3kN9FekTVV8imYQx6d1p781Ih5KawmfI0BHpWHaJe1xwD3/FO9Q387Y7ojoZcbuKg4v8lgIQ==
+wireai-rn@0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/wireai-rn/-/wireai-rn-0.2.5.tgz#a95f3aa793e12cfd253624b9700e7c9c4c9e12d4"
+  integrity sha512-6i3jOW+UcyhP1rZHlAdktPA+vlg4UCAEchPySt2jfQw09A5y4NV1nZS8gghjiWF0uvfHjEwNA3BDm8x7KJX2PA==
 
 wordwrap@^1.0.0:
   version "1.0.0"

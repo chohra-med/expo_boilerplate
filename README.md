@@ -41,7 +41,7 @@ Three reasons to use it over `npx create-expo-app`:
 
 - **Feature-First Architecture** — organized by business features, not technical layers
 - **Authentication** — complete login system with secure token storage
-- **AI activation by default** — Wire AI finds what makes your users stay: a dynamic onboarding runs when a key is configured, with the built-in static questionnaire as an automatic fallback (add a free key to switch it on)
+- **AI activation by default**: Wire AI finds what makes your users stay, and once a key is configured the onboarding screen renders Wire AI's backend-driven onboarding flow, with the built-in static questionnaire as an automatic fallback (setup steps under "Get your Wire AI keys")
 - **Internationalization** — English and French language support
 - **Theming** — Light/Dark/System theme support with Restyle
 - **State Management** — Redux Toolkit with RTK Query
@@ -305,22 +305,53 @@ mkdir -p src/features/new-feature/{api,components,hooks,screens,services,store,t
 
 ## 🤖 AI activation by default
 
-Wire AI finds what makes your users stay, and this boilerplate ships ready for it.
-The `OnboardingFlow` screen renders [Wire AI](https://getwireai.com) dynamic
-onboarding when a key is configured, and falls back to the built-in static
+[Wire AI](https://getwireai.com) finds what makes your users stay, and this boilerplate
+ships ready for it. The `OnboardingFlow` screen renders Wire AI's backend-driven
+onboarding flow when a key is configured, and falls back to the built-in static
 questionnaire otherwise, the exact same flow this boilerplate has always shipped.
 
 - **No key set (fresh clone):** `isOnboardingEnabled()` is `false`, so the static
   questionnaire renders unchanged. Zero setup.
 - **Key set:** the screen renders `<WireOnboarding>` with your static flow passed
-  as `fallbackFlow`, so a backend/generation error degrades to the static flow
-  instead of breaking onboarding. Session persistence uses a small MMKV adapter.
+  as `fallbackFlow`, so if the flow cannot be fetched or the backend fails it degrades
+  to the static flow instead of breaking onboarding. Session persistence uses a small
+  MMKV adapter.
 
-Add a free key to upgrade:
+### Get your Wire AI keys
+
+Onboarding runs the app's built-in static questionnaire until you add a Wire AI key,
+so a fresh clone works with zero setup. Adding a key upgrades that same screen to
+Wire AI's backend-driven onboarding flow.
+
+1. **Create your account** at [getwireai.com/signup](https://getwireai.com/signup). You
+   give it an app name and your email.
+2. **Confirm the email** and set your password. That is your console login.
+3. **Open the [console](https://getwireai.com/console).** Your app is already there, created
+   from the name you gave at signup. Add another app any time you need a second key.
+4. **Copy the app's API key (`wai_…`) and its app id.** The key lives in the console, so you
+   can read it back later, and you do not have to save it now.
+5. **Paste them into `.env`** (copy `.env.example` first):
+
+   ```bash
+   EXPO_PUBLIC_WIREAI_API_KEY=wai_your_key_here
+   EXPO_PUBLIC_WIREAI_SERVER_URL=https://wire-rn-dynamic-onboarding.fly.dev
+   EXPO_PUBLIC_WIREAI_APP_ID=your-app-id
+   ```
+
+6. **Restart Metro with the cache cleared** (`yarn start -c`). `EXPO_PUBLIC_*` values are
+   inlined at build time, so a running bundler will not pick them up.
+
+**What you get on day one:** a new app starts on the free plan running a short scripted
+starter flow. Real onboarding, recorded in your funnel, but no model calls yet. Turning on
+the AI-generated flow is a manual step today: ask for it by email and it gets switched on for
+your app. The analytics, the funnel and the static flow all work immediately.
+
+Set these in `.env` to turn it on. See the day-one note above for what runs before the AI
+flow is switched on.
 
 ```env
-EXPO_PUBLIC_WIREAI_API_KEY=your-wire-ai-tenant-key
-EXPO_PUBLIC_WIREAI_SERVER_URL=https://your-wire-ai-server.com
+EXPO_PUBLIC_WIREAI_API_KEY=wai_your_key_here
+EXPO_PUBLIC_WIREAI_SERVER_URL=https://wire-rn-dynamic-onboarding.fly.dev
 EXPO_PUBLIC_WIREAI_APP_ID=your-app-id
 ```
 

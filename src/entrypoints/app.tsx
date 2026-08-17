@@ -1,4 +1,6 @@
 import { NavigationContainer, type NavigationContainerRef } from "@react-navigation/native";
+import { useLifecycleEvents } from "@wireai/activation";
+import { CoachmarkProvider } from "@wireai/activation/coachmarks";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -9,8 +11,6 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { useLifecycleEvents } from "@wireai/activation";
-import { CoachmarkProvider } from "@wireai/activation/coachmarks";
 import { useScreenTracking } from "#root/analytics";
 import { IS_TESTING_COACHMARK } from "#root/config/coachmarks";
 import { useAppInitializer } from "#root/entrypoints/hooks";

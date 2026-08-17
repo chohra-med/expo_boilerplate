@@ -1,5 +1,3 @@
-import type React from "react";
-import { useCallback, useState } from "react";
 import {
   isOnboardingEnabled,
   type OnboardingEvent,
@@ -9,6 +7,8 @@ import {
 } from "@wireai/activation";
 import type { ShowcaseSlide } from "@wireai/activation/showcase";
 import { FeatureShowcase } from "@wireai/activation/showcase";
+import type React from "react";
+import { useCallback, useState } from "react";
 import { analytics, EVENTS } from "#root/analytics";
 import { logger } from "#root/services/logging";
 import { useAppDispatch } from "#root/store/store";
@@ -26,6 +26,12 @@ import { OnboardingScreen as StaticOnboardingScreen } from "./onboarding-screen"
  * this renders the Wire AI dynamic onboarding. The kit's `fallbackFlow` is the
  * SAME static questionnaire this boilerplate has always shipped, so a backend /
  * generation error degrades to the static flow instead of breaking onboarding.
+ *
+ * ⚠️ That last sentence only became TRUE at kit 0.13.3. On the default
+ * `maxRetries={1}` the retry never re-armed, so a backend that hung at start left
+ * the user on the loading screen FOREVER and `fallbackFlow` was unreachable. The
+ * defaults now mean what they say (`1` → two kickoff attempts, then the fallback),
+ * which is why this screen passes no `maxRetries` / `startTimeoutMs` of its own.
  *
  * When no key is set (a fresh clone), `isOnboardingEnabled()` is false and the
  * static flow renders unchanged — zero setup required. Add a free Wire key to
@@ -100,6 +106,28 @@ export const WireOnboardingScreen: React.FC = () => {
     <Box flex={1}>
       <WireOnboarding
         config={config}
+        // `storage` does TWO jobs, and the second one is the whole funnel.
+        //
+        // 1. RESUME: persists the session-correlation id, so an app kill mid-flow
+        //    resumes the same backend session instead of counting a phantom drop.
+        // 2. THE JOIN KEY: since kit 0.12.2 a `storage` prop also lets the kit
+        //    auto-inject `user_context.device_key` — the ONLY thing that stitches
+        //    this onboarding session to every event the app reports later. Without
+        //    it the `activated` funnel reads a silent zero, which is how two of
+        //    three production integrations shipped.
+        //
+        // We deliberately pass NO `userContext` here. This app owns no device id of
+        // its own, and the key the kit mints is the SAME one `wire-analytics.ts` and
+        // `wire-lifecycle.ts` stamp (one process-wide registry, namespaced by
+        // `appId`, persisted in the MMKV instance all three share) — so the join is
+        // already correct. Hand-writing `userContext={{ deviceKey }}` would produce a
+        // bucket the server does not read; if you ever DO own a device id, pass it as
+        // `userContext={activationJoinContext(yourDeviceKey)}` and it wins verbatim.
+        //
+        // ⚠️ The auto-join only fires if the adapter really persists. Since 0.13.0
+        // the kit gates injection on a write that SUCCEEDED, not on the prop being
+        // present — which is why `wire-onboarding-storage.ts` rejects on failure
+        // instead of pretending. Read the note there before you "harden" it.
         storage={wireOnboardingStorage}
         fallbackFlow={<StaticOnboardingScreen />}
         onComplete={handleComplete}

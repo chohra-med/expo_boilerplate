@@ -16,8 +16,18 @@ import { wireOnboardingStorage } from "./wire-onboarding-storage";
  * `wireConfigFromEnv`) and the SAME MMKV storage seam as the onboarding session, so
  * events survive being offline and an app kill.
  *
- * WHAT THE KIT AUTO-PROVIDES (0.8.0) — you do NOT set these:
- *   • device (form factor + iOS model), auto-minted stable `device_key`, `app_version`.
+ * WHAT THE KIT AUTO-PROVIDES — you do NOT set these:
+ *   • device (form factor + iOS model), `app_version`, and the per-install
+ *     `device_key` the kit mints and persists for you.
+ *
+ * ⚠️ `device_key` is auto-minted, but it is only STABLE across launches if this
+ * storage adapter actually persists it (kit 0.13.0 made that distinction real —
+ * see `wire-onboarding-storage.ts`). It is the same id the onboarding screen's
+ * auto-join injects: one process-wide registry keyed by `appId`, one MMKV slot
+ * (`wireai:analytics:deviceKey:<appId>`), so onboarding and analytics land in ONE
+ * id space and the `activated` funnel can actually join them. That only holds
+ * while all three Wire surfaces share this storage instance and this `appId` —
+ * splitting either one splits the funnel, silently.
  *
  * WHAT YOU SET (the app-specific identity) — see `setWireUserContext` + `use-auth.ts`:
  *   • `userId`    your app's OPAQUE user id (NOT the email).
@@ -37,9 +47,9 @@ export const wireAnalytics: Analytics | null = config
       appId: config.appId,
       // Reuse the onboarding MMKV seam so pending events persist across an app kill.
       storage: wireOnboardingStorage,
-      // Seeded ONCE here at init. `device_key` + `app_version` auto-fill (0.8.0), so the
-      // only thing missing is the user's identity — unknown until login. Attach it then
-      // via `setWireUserContext` (see `handleLogin` in `../../auth/hooks/use-auth.ts`).
+      // Seeded ONCE here at init. `device_key` + `app_version` auto-fill, so the only
+      // thing missing is the user's identity — unknown until login. Attach it then via
+      // `setWireUserContext` (see `handleLogin` in `../../auth/hooks/use-auth.ts`).
       userContext: {
         // extra: { plan: "free" }, // ← example: a custom cohort dimension, if you have one
       },

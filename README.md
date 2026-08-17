@@ -41,7 +41,7 @@ Three reasons to use it over `npx create-expo-app`:
 
 - **Feature-First Architecture** — organized by business features, not technical layers
 - **Authentication** — complete login system with secure token storage
-- **AI activation by default** — Wire AI finds what makes your users stay: a dynamic onboarding runs when a key is configured, with the built-in static questionnaire as an automatic fallback (add a free key to switch it on)
+- **AI activation by default**: Wire AI finds what makes your users stay, and once a key is configured the onboarding screen renders Wire AI's backend-driven onboarding flow, with the built-in static questionnaire as an automatic fallback (setup steps under "Get your Wire AI keys")
 - **Internationalization** — English and French language support
 - **Theming** — Light/Dark/System theme support with Restyle
 - **State Management** — Redux Toolkit with RTK Query
@@ -305,9 +305,9 @@ mkdir -p src/features/new-feature/{api,components,hooks,screens,services,store,t
 
 ## 🤖 AI activation by default
 
-Wire AI finds what makes your users stay, and this boilerplate ships ready for it.
-The `OnboardingFlow` screen renders [Wire AI](https://getwireai.com) dynamic
-onboarding when a key is configured, and falls back to the built-in static
+[Wire AI](https://getwireai.com) finds what makes your users stay, and this boilerplate
+ships ready for it. The `OnboardingFlow` screen renders Wire AI's backend-driven
+onboarding flow when a key is configured, and falls back to the built-in static
 questionnaire otherwise, the exact same flow this boilerplate has always shipped.
 
 - **No key set (fresh clone):** `isOnboardingEnabled()` is `false`, so the static
@@ -345,7 +345,8 @@ starter flow. Real onboarding, recorded in your funnel, but no model calls yet. 
 the AI-generated flow is a manual step today: ask for it by email and it gets switched on for
 your app. The analytics, the funnel and the static flow all work immediately.
 
-Add a free key to upgrade:
+The env vars in one block. See the day-one note above for what runs before the AI flow is
+switched on.
 
 ```env
 EXPO_PUBLIC_WIREAI_API_KEY=wai_your_key_here

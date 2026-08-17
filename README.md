@@ -313,14 +313,15 @@ questionnaire otherwise, the exact same flow this boilerplate has always shipped
 - **No key set (fresh clone):** `isOnboardingEnabled()` is `false`, so the static
   questionnaire renders unchanged. Zero setup.
 - **Key set:** the screen renders `<WireOnboarding>` with your static flow passed
-  as `fallbackFlow`, so a backend/generation error degrades to the static flow
-  instead of breaking onboarding. Session persistence uses a small MMKV adapter.
+  as `fallbackFlow`, so if the flow cannot be fetched or the backend fails it degrades
+  to the static flow instead of breaking onboarding. Session persistence uses a small
+  MMKV adapter.
 
 ### Get your Wire AI keys
 
-The AI onboarding is off until you give it a key. Without one the app runs its built-in
-static questionnaire, so a fresh clone works with zero setup. Adding a key is what
-upgrades that same screen to AI-driven onboarding.
+Onboarding runs the app's built-in static questionnaire until you add a Wire AI key,
+so a fresh clone works with zero setup. Adding a key upgrades that same screen to
+Wire AI's backend-driven onboarding flow.
 
 1. **Create your account** at [getwireai.com/signup](https://getwireai.com/signup). You
    give it an app name and your email.

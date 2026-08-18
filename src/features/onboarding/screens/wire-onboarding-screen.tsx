@@ -10,6 +10,7 @@ import { FeatureShowcase } from "@wireai/activation/showcase";
 import type React from "react";
 import { useCallback, useState } from "react";
 import { analytics, EVENTS } from "#root/analytics";
+import { getWirePermissionScreens } from "#root/features/wire";
 import { logger } from "#root/services/logging";
 import { useAppDispatch } from "#root/store/store";
 import { Box } from "#root/ui/components";
@@ -129,6 +130,10 @@ export const WireOnboardingScreen: React.FC = () => {
         // present — which is why `wire-onboarding-storage.ts` rejects on failure
         // instead of pretending. Read the note there before you "harden" it.
         storage={wireOnboardingStorage}
+        // Mid-flow OS-permission priming screens. EMPTY on this Lite template (it ships no
+        // permissions module), so the flow is unchanged — inject a handler in
+        // `features/wire/config/wire-permission-screens.ts` to enable notification priming.
+        permissionScreens={getWirePermissionScreens()}
         fallbackFlow={<StaticOnboardingScreen />}
         onComplete={handleComplete}
         onSkip={handleSkip}

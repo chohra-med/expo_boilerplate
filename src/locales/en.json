@@ -154,5 +154,13 @@
       "english": "English",
       "french": "Français"
     }
+  },
+  "wire": {
+    "demoOnboardingLabel": "Run Wire onboarding (dev)",
+    "questionnaire": {
+      "opinionLabel": "How's your experience so far?",
+      "improveLabel": "What could we improve?",
+      "suggestionsLabel": "Anything else you'd like to tell us?"
+    }
   }
 }

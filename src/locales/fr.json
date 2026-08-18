@@ -129,5 +129,13 @@
       "selectAll": "Sélectionner tout ce qui s'applique",
       "pleaseSpecify": "Veuillez préciser..."
     }
+  },
+  "wire": {
+    "demoOnboardingLabel": "Lancer l'onboarding Wire (dev)",
+    "questionnaire": {
+      "opinionLabel": "Comment se passe votre expérience ?",
+      "improveLabel": "Que pourrions-nous améliorer ?",
+      "suggestionsLabel": "Souhaitez-vous nous dire autre chose ?"
+    }
   }
 }

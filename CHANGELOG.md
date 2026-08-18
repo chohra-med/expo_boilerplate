@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Wire AI integration layer, env-gated OFF by default.** Copied the app-agnostic shared layer
+  from the Standard tier (source of truth) verbatim — `src/services/wire/` (the single
+  `EXPO_PUBLIC_WIREAI_*` read + derived config, the fail-closed gate-storage factory, the
+  permission-screen builder, the report-only RevenueCat → Wire purchase funnel),
+  `src/ui/providers/wire-provider.tsx` (feature flags + icon registry), and
+  `src/ui/hooks/use-wire-questionnaire-gate.ts`. Mounted per this repo's structure:
+  `WireProvider` at the app root, `<WireQuestionnaireGate />` on the home screen,
+  `permissionScreens` on the onboarding flow, a `__DEV__`-only `<WireDemoOnboarding />` in
+  settings, and `createWirePurchaseFunnel` reporting the five purchase moments on the paywall.
+  With no Wire key set (a fresh clone) every surface is inert — no crash, no network, no console
+  noise — proven by `src/services/wire/__tests__/wire-no-env-inert.test.tsx`. No new runtime
+  dependency: all imports resolve to packages already in `package.json`. The permission-screen
+  mount ships EMPTY (this template bundles no permissions module) with a documented injection
+  point. See `src/features/wire/README.md`.
+
 ### Changed
 
 - Bumped `@wireai/activation` `^0.11.0` → **`0.13.6`** and `wireai-rn` `^0.2.4` →

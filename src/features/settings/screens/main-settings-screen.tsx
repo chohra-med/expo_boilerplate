@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
 import { SelectionButton } from "#root/features/settings/components/selection-button";
+import { WireDemoOnboarding } from "#root/features/wire";
 import type { SettingsStackParamList } from "#root/navigation/routes";
 import { Box, Button, Icon, SafeArea, Text } from "#root/ui/components";
 import { useSettings } from "../hooks/use-settings";
@@ -144,6 +145,18 @@ export const MainSettingsScreen: React.FC = () => {
                 buttonTypeVariant="outline"
               />
             </Box>
+
+            {/*
+              DEV-ONLY: re-run the real Wire AI onboarding flow on demand (no account, no
+              navigation side effects) to QA a change to the once-per-user funnel. The guard is
+              `__DEV__`, not an env var — `EXPO_PUBLIC_*` inlines at build time and would ship ON.
+              The component also self-guards, so it renders nothing in a production build.
+            */}
+            {__DEV__ ? (
+              <Box backgroundColor="backgroundSecondary" padding="lg" borderRadius="md">
+                <WireDemoOnboarding />
+              </Box>
+            ) : null}
           </Box>
         </Box>
       </ScrollView>

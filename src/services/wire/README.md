@@ -8,8 +8,8 @@ The app-agnostic half of the `@wireai/activation` integration. Everything here i
 
 That constraint is not stylistic. This folder is part of the layer `launcher-sync` pushes from
 Standard (the source of truth) into the other launcher tiers, and the tiers do not ship the same
-native modules. The public Lite tier in particular has no MMKV (it must load under Expo Go), no
-notifications module and no purchase SDK. A single native import here would break it on copy.
+native modules. The public Lite tier, for instance, has no
+`expo-notifications` module. A single native import here would break a tier on copy.
 
 **Anything native is injected by the per-app mount** (`src/features/wire/` in this repo).
 

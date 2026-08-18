@@ -15,11 +15,14 @@ import { useScreenTracking } from "#root/analytics";
 import { IS_TESTING_COACHMARK } from "#root/config/coachmarks";
 import { useAppInitializer } from "#root/entrypoints/hooks";
 import { wireLifecycleConfig } from "#root/features/onboarding/services/wire-lifecycle";
+import { wireOnboardingStorage } from "#root/features/onboarding/services/wire-onboarding-storage";
 import { RootStackNavigator } from "#root/navigation/navigators/root-stack-navigator";
 import type { RootStackParamList } from "#root/navigation/routes";
 import { coachmarkStorage } from "#root/services/storage";
+import { getWireFeaturesConfig } from "#root/services/wire";
 import { persistor, store } from "#root/store/store";
 import { ToastProvider } from "#root/ui/components/toast-provider";
+import { WireProvider } from "#root/ui/providers/wire-provider";
 import { ThemeProvider, useTheme } from "#root/ui/style/theme-provider";
 import "#root/config/i18n";
 import { AppErrorBoundary } from "#root/providers/app-error-boundary/app-error-boundary";
@@ -98,6 +101,11 @@ const AppContent: React.FC = () => {
   );
 };
 
+// Wire AI kill switches + icon registry, resolved once. With no `EXPO_PUBLIC_WIREAI_*` env
+// this is `undefined`, and `WireProvider` never fetches — every gated surface below (coachmarks,
+// showcase, questionnaire) falls back to its all-on defaults, so a keyless clone is unchanged.
+const wireFeaturesConfig = getWireFeaturesConfig(wireOnboardingStorage);
+
 const App: React.FC = () => {
   return (
     <Provider store={store}>
@@ -105,7 +113,13 @@ const App: React.FC = () => {
         <ThemeProvider>
           <ToastProvider>
             <AppErrorBoundary>
-              <AppContent />
+              {/*
+                Wire AI feature flags (outermost, so the kill switches gate every surface below)
+                + icon registry. Mounted once near the root. Inert without a Wire key.
+              */}
+              <WireProvider featuresConfig={wireFeaturesConfig}>
+                <AppContent />
+              </WireProvider>
             </AppErrorBoundary>
           </ToastProvider>
         </ThemeProvider>

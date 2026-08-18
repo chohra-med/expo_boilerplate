@@ -4,8 +4,10 @@ import { useTranslation } from "react-i18next";
 import Purchases, { type PurchasesPackage } from "react-native-purchases";
 import { analytics, EVENTS, FEATURE_NAMES, setPlanTier } from "#root/analytics";
 import { completeOnboarding } from "#root/features/onboarding/store/onboarding-slice";
+import { wireOnboardingStorage } from "#root/features/onboarding/services/wire-onboarding-storage";
 import { logger } from "#root/services/logging";
 import { ENTITLEMENT_ID, revenueCatService } from "#root/services/revenuecat";
+import { createWirePurchaseFunnel } from "#root/services/wire";
 import { useAppDispatch } from "#root/store/store";
 import { PaywallView } from "../components/paywall-view";
 import { getPaywallConfigForVariant } from "../config/paywall-config";
@@ -36,6 +38,20 @@ const _PaywallScreen: React.FC<PaywallScreenProps> = ({ onboarding = false }) =>
   const { i18n } = useTranslation();
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+
+  // Wire AI purchase funnel — reports the five purchase moments (shown → checkout →
+  // completed / failed / restored) into the SAME event stream as onboarding, joined on the
+  // install's `device_key` via the shared onboarding storage. Report-only: it never decides
+  // entitlement (that stays the RevenueCat check below). With no Wire key it is a structural
+  // no-op that constructs nothing and touches no network.
+  const wirePurchases = useMemo(
+    () =>
+      createWirePurchaseFunnel({
+        entitlementId: ENTITLEMENT_ID,
+        storage: wireOnboardingStorage,
+      }),
+    []
+  );
 
   // No Remote Config in the Lite tier — the default "control" variant is used.
   const paywallVariant = "control";
@@ -112,6 +128,9 @@ const _PaywallScreen: React.FC<PaywallScreenProps> = ({ onboarding = false }) =>
         setSelectedPackage(convertedPackages[0]);
       }
 
+      // Wire funnel: the paywall became visible with a real offering.
+      wirePurchases.paywallShown(offering);
+
       analytics.track(EVENTS.PAYWALL_VIEW, {
         source: paywallVariant,
         packages_count: convertedPackages.length,
@@ -161,7 +180,14 @@ const _PaywallScreen: React.FC<PaywallScreenProps> = ({ onboarding = false }) =>
         throw new Error("Package not found");
       }
 
+      // Wire funnel: the user tapped buy and the store sheet is opening.
+      wirePurchases.checkoutStarted(revenueCatPackage);
+
       const purchaseResult = await Purchases.purchasePackage(revenueCatPackage);
+
+      // Wire funnel: the store returned. Reports completed vs not_entitled and syncs plan tier —
+      // it does NOT decide entitlement; the check below owns that.
+      wirePurchases.purchaseCompleted(purchaseResult.customerInfo, revenueCatPackage);
 
       if (typeof purchaseResult.customerInfo.entitlements.active[ENTITLEMENT_ID] !== "undefined") {
         analytics.track(EVENTS.PURCHASE, {
@@ -180,6 +206,9 @@ const _PaywallScreen: React.FC<PaywallScreenProps> = ({ onboarding = false }) =>
       setError(errorMessage);
       logger.error("[Paywall] Purchase failed", err as Error);
 
+      // Wire funnel: the purchase rejected. The kit separates a user cancel from a store error.
+      wirePurchases.purchaseFailed(err);
+
       analytics.track(EVENTS.PURCHASE_FAILED, {
         package_id: selectedPackage.identifier,
         source: paywallVariant,
@@ -193,7 +222,10 @@ const _PaywallScreen: React.FC<PaywallScreenProps> = ({ onboarding = false }) =>
   const handleRestore = useCallback(async () => {
     try {
       setIsLoading(true);
-      await revenueCatService.restorePurchases();
+      const restoredInfo = await revenueCatService.restorePurchases();
+
+      // Wire funnel: a restore finished. Reports the resulting tier.
+      wirePurchases.purchasesRestored(restoredInfo ?? undefined);
 
       analytics.track(EVENTS.PURCHASE_RESTORED, { source: paywallVariant });
 

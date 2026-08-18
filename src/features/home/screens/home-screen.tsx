@@ -16,6 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { analytics, EVENTS, FEATURE_NAMES } from "#root/analytics";
 import { buildHomeTourSteps, HOME_TOUR_ID } from "#root/config/coachmarks";
+import { WireQuestionnaireGate } from "#root/features/wire";
 import type { AppTabStackParamsList } from "#root/navigation/routes";
 import { Box, Button, Card, Icon, SafeArea, Text } from "#root/ui/components";
 
@@ -252,6 +253,13 @@ const HomeScreenComponent: React.FC = () => {
           </AnimatedBox>
         </Box>
       </ScrollView>
+
+      {/*
+        Wire AI in-app feedback popup. Renders nothing until FOUR gates all open: a Wire key is
+        configured, the dashboard kill switch is on, the local rules (3 app-opens, once/version)
+        are met, and nothing is suppressing it. Inert on a keyless clone.
+      */}
+      <WireQuestionnaireGate />
     </SafeArea>
   );
 };

@@ -227,6 +227,90 @@ yarn web
 
 ---
 
+## ☁️ Replit and Rork
+
+### Import it into Replit
+
+[![Run on Replit](https://replit.com/badge/github/chohra-med/expo_boilerplate)](https://replit.com/github/chohra-med/expo_boilerplate)
+
+```
+https://replit.com/github/chohra-med/expo_boilerplate
+```
+
+That link opens Replit's GitHub importer, and it will ask you to log in first. It takes the default
+branch, which here is `development`, not `main`.
+
+What you get is Node 20, the editor, the Replit Agent, and a Run button already pinned to
+`yarn install --frozen-lockfile && yarn start`. Replit's language detection guesses npm; this repo
+ships `yarn.lock`, so `.replit` pins yarn explicitly rather than letting it guess. Agent context
+lives in `replit.md`, which points at the same `.cursor/rules/` files Claude and Cursor read.
+
+### Expo Go cannot run this app, and Replit's Expo path ends in Expo Go
+
+Worth knowing before you press Run. Replit's Expo story is "start the dev server, scan the QR code
+with Expo Go", and two things block that here.
+
+First, `app.json` declares seven Expo config plugins, and a config plugin only does something
+during a native prebuild, which Expo Go never runs. Second, the dependency list carries native
+modules Expo Go does not bundle: `@react-native-firebase/app`, `@react-native-firebase/analytics`,
+`@react-native-firebase/crashlytics`, `react-native-mmkv`, `react-native-nitro-modules`,
+`react-native-purchases` and `react-native-keyboard-controller`. Metro will start and print a QR
+code. The bundle then fails on the phone.
+
+So the honest value of a Replit container here is the editing loop: the Agent, `yarn type:check`,
+Biome and `yarn test:ci` (8 suites, 71 tests). Running the app needs a development build, either
+`yarn ios` / `yarn android` on a machine with Xcode or Android Studio, or an EAS build. A Linux
+container has neither.
+
+### If you want an Expo Go version anyway
+
+It is a trade, not a switch. The whole change is four steps:
+
+1. remove the `@react-native-firebase/app` and `@react-native-firebase/crashlytics` plugin entries from `app.json`, along with the `expo-build-properties` `useFrameworks: static` entry that only exists for the Firebase pods
+2. remove `@react-native-firebase/*`, `react-native-mmkv`, `react-native-nitro-modules`, `react-native-purchases` and `react-native-keyboard-controller` from `package.json`
+3. move redux-persist and the Wire onboarding session store from MMKV to `@react-native-async-storage/async-storage`, which is already a dependency
+4. stub the RevenueCat service and the analytics and Crashlytics transports, so the paywall screen and every existing analytics call still type-check
+
+What that costs you: crash reporting, product analytics, in-app purchases, and the fast synchronous
+store. Fine for a demo. Not fine for something you intend to put on the App Store.
+
+### Secrets
+
+Replit copies Secrets into a remix as names only. Values never travel, which is exactly the
+behavior you want on a public repo. Set your own in the Secrets pane:
+
+```
+EXPO_PUBLIC_WIREAI_API_KEY
+EXPO_PUBLIC_WIREAI_APP_ID
+EXPO_PUBLIC_WIREAI_SERVER_URL
+EXPO_PUBLIC_REVENUECAT_IOS_API_KEY
+EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY
+EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID
+```
+
+All six are optional. With none of them set the app boots anyway, onboarding renders the built-in
+static questionnaire, and the paywall degrades gracefully. Firebase is the odd one out, and it is
+not an env var at all: it wants `google-services.json` and `GoogleService-Info.plist`, two files
+that have no business in a public repo.
+
+### Rork
+
+Rork cannot import this repo, or any repo. It generates Expo apps from prompts, and its GitHub
+integration runs the other way around: you build in Rork, then Rork creates the repo for you.
+Checked on 2026-08-18 against Rork's own docs index, where "import", "template" and "github" turn
+up exactly once between them, on the "sync your project with Github" tutorial. `rork.com/templates`
+serves the homepage. There is no template format to publish, so this repo publishes none, and any
+`rork.json` you see in the wild is somebody's invention.
+
+The one real touchpoint is `rork-local` (Apache 2.0,
+[rorkai/rork-local](https://github.com/rorkai/rork-local)), a localhost UI that streams a live iOS
+simulator and drives App Store Connect publishing against an app directory you already have. It
+needs macOS, the Xcode command line tools and Node 20, so it is a laptop tool and not a Replit one.
+Its README says `npx rork-local`, but no `rork-local` package exists on the public npm registry as
+of 2026-08-18, the registry answers 404, so run it from a checkout of that repo instead.
+
+---
+
 ## 🏗️ Architecture Overview
 
 ### Feature-First Structure

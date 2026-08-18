@@ -1,0 +1,24 @@
+# Replit manifest for this boilerplate.
+#
+# Replit's language auto-detection is npm-biased. This repo is yarn (yarn.lock is
+# the committed lockfile), so the Run button is pinned here instead of guessed.
+# Run does two things: install from the lockfile, then start the Expo dev server
+# (Metro) on port 8081.
+#
+# Read the "Replit and Rork" section of README.md before you press Run. The short
+# version: a Replit container gives you the editor, the Agent and Metro. It cannot
+# give you a running app. This boilerplate declares Expo config plugins and native
+# modules that Expo Go cannot load, so the QR-code path does not work here. A
+# development build (yarn ios / yarn android locally, or EAS) is the real path.
+#
+# Agent context lives in replit.md. The architecture rules it must obey live in
+# .cursor/rules/ and are pointed at from CLAUDE.md and AGENTS.md.
+
+entrypoint = "index.ts"
+modules = ["nodejs-20"]
+run = "yarn install --frozen-lockfile && yarn start"
+
+# Metro's default port. Expo prints the dev-server URL there.
+[[ports]]
+localPort = 8081
+externalPort = 80

@@ -47,8 +47,9 @@ export interface WireGateStorageBackend {
 
 /**
  * The shape the kit's gates accept for their `storage` prop (the kit's `CoachmarkStorage`).
- * Declared structurally so the shared layer never imports the `coachmarks` subpath — that
- * subpath statically imports `expo-blur`, which not every tier ships.
+ * Declared structurally so this app-agnostic layer never imports the `coachmarks` subpath —
+ * a UI subpath with optional native peers (`react-native-reanimated` today; `expo-blur` too
+ * before kit 0.14.2 made it lazy) that the shared layer must not drag into every tier.
  */
 export interface WireGateStorage {
   getItem: (key: string) => string | null;

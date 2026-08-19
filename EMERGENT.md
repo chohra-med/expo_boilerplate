@@ -102,14 +102,3 @@ Report back: files changed with path:line, the type-check result, and anything y
   like a broken package. 0.14.3 made every optional peer a guarded lazy require.
 - **`.emergent/emergent.yml` and `.emergent/summary.txt`** are files Emergent generates into your repo.
   Treat them as its output, not as configuration you author.
-
-## 5. Lite-specific: one command instead of the curl
-
-This variant ships a helper that does step 2 for you and writes the values straight into `.env`:
-
-```bash
-yarn setup:wire
-```
-
-No key yet is not a blocker. The app still runs and onboarding falls back to the built-in static
-questionnaire, so the key is optional rather than required.

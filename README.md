@@ -188,6 +188,10 @@ One set of rules. Every tool, every session, every engineer.
 
 ## 🚀 Getting Started
 
+> 🤖 **Building on [Emergent](https://emergent.sh)?** Its Mobile Agent builds Expo apps, so this
+> template imports cleanly. [`EMERGENT.md`](./EMERGENT.md) has the GitHub-import path, a Wire AI key
+> in one curl, and a paste-ready prompt that wires onboarding + analytics into it.
+
 ### Prerequisites
 
 - Node.js (v16 or higher)

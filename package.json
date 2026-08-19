@@ -38,7 +38,7 @@
     "@reduxjs/toolkit": "^2.11.2",
     "@shopify/flash-list": "2.0.2",
     "@shopify/restyle": "^2.4.0",
-    "@wireai/activation": "0.14.2",
+    "@wireai/activation": "0.14.3",
     "expo": "^55.0.17",
     "expo-blur": "~55.0.15",
     "expo-build-properties": "~55.0.13",

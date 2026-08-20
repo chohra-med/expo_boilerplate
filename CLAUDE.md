@@ -4,6 +4,35 @@ Context file for Claude Code. This acts as an entrypoint routing to our decouple
 
 ---
 
+## 🌿 Branches — the trunk is `development`, there is NO `main`
+
+⛔ **This repo's trunk is `development`.** It is the GitHub default branch and the base for every PR.
+
+⛔ **`main` does not exist here.** `gh api repos/chohra-med/expo_boilerplate/branches/main` returns **404**. Do not
+create it, do not target it, and do not assume it from habit. A PR opened against `main` cannot be
+merged because there is nothing to merge into.
+
+⚠️ **The estate is split by family — this is where the confusion comes from:**
+
+| Family | Trunk |
+|---|---|
+| The AI Mobile Launcher variants (Standard · AI · openSource), Morrow Self, Mane | **`development`** |
+| The getwireai repos (`getwireai_website`, `wireai-onboarding-server`, `wireai-activation`) | **`main`** |
+
+So "merge to main" is correct advice **for the getwireai repos and wrong for this one.** Read the
+default branch rather than carrying a habit across families:
+
+```bash
+gh repo view --json defaultBranchRef -q .defaultBranchRef.name
+```
+
+⛔ **A merge to `development` here is NOT a release.** This is a React Native / Expo app: shipping to
+users requires a **new native build**, not a merge. Never report a merged PR as shipped.
+
+⛔ **A checkout is not its trunk.** Local `development` drifts behind `origin/development` routinely.
+Base branches on `origin/development` and read trunk content with
+`git show origin/development:<path>`, never from the working tree.
+
 ## Project skill
 
 This repo ships a Claude Code skill for code generation. To use it: `/mobilelauncher <command>`

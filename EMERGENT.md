@@ -85,10 +85,15 @@ STEPS, in order. Stop and ask if one of my conventions is ambiguous:
    the analytics side stamps. Do NOT hand-build it. Leaving both out makes the activation funnel read
    zero forever and reports no error.
 9. Verify: type-check, then test the backend-error path. Behind an `if (__DEV__)` guard call
-   `wireDoctor({ target: { serverUrl: WIREAI_SERVER_URL, apiKey: WIREAI_API_KEY }, storage })` from
-   `@wireai/activation/analytics` once at the app root and log the report. Every check must come back
-   `ok`, because `/v1/events` answers 200 for a batch it discards. Remove or keep it dev-gated once
-   green.
+   `wireDoctor({ target: { serverUrl: WIREAI_SERVER_URL, apiKey: WIREAI_API_KEY }, storage, join: { appId: APP_ID, userContext } })`
+   from `@wireai/activation/analytics` once at the app root and log the report. Every check must come
+   back `ok`, because `/v1/events` answers 200 for a batch it discards. ⛔ Pass `join`. Since kit
+   `0.16.0` it is optional to the type-checker but NOT in practice: omit it and the `join_key` check
+   FAILS on purpose, because a report that never looked at the join cannot honestly read green — and
+   an integration with no `user_context.device_key` passes the other four checks while the activation
+   funnel reads a permanent zero. Hand it the SAME `appId` and `userContext` you hand
+   `<WireOnboarding>` in steps 4 and 8; anything reconstructed here diagnoses a DIFFERENT integration
+   than the one that ships. Remove or keep it dev-gated once green.
 
 Report back: files changed with path:line, the type-check result, and anything you could not infer.
 ```

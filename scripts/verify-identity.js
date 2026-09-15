@@ -204,6 +204,55 @@ function plistValue(text, key) {
   return m ? m[1] : null;
 }
 
+function nativeSchemeWarnings(root, scheme) {
+  const warnings = [];
+  const iosDir = path.join(root, "ios");
+  const androidDir = path.join(root, "android");
+
+  if (!fs.existsSync(iosDir) && !fs.existsSync(androidDir)) return warnings;
+
+  if (fs.existsSync(iosDir)) {
+    const plists = walkFiles(iosDir).filter((file) => path.basename(file) === "Info.plist");
+    if (plists.length === 0) {
+      warnings.push("ios/ exists but no generated Info.plist could be inspected");
+    } else {
+      for (const plist of plists) {
+        const text = readTextOrNull(plist);
+        if (text === null) {
+          warnings.push(`${path.relative(root, plist)} could not be read`);
+          continue;
+        }
+        const declared = [...text.matchAll(/<key>CFBundleURLSchemes<\/key>\s*<array>([\s\S]*?)<\/array>/g)]
+          .flatMap((match) => [...match[1].matchAll(/<string>([^<]+)<\/string>/g)].map((entry) => entry[1]));
+        if (!declared.includes(scheme)) {
+          warnings.push(`${path.relative(root, plist)} does not register expo.scheme`);
+        }
+      }
+    }
+  }
+
+  if (fs.existsSync(androidDir)) {
+    const manifests = walkFiles(androidDir).filter((file) => path.basename(file) === "AndroidManifest.xml");
+    if (manifests.length === 0) {
+      warnings.push("android/ exists but no generated AndroidManifest.xml could be inspected");
+    } else {
+      for (const manifest of manifests) {
+        const text = readTextOrNull(manifest);
+        if (text === null) {
+          warnings.push(`${path.relative(root, manifest)} could not be read`);
+          continue;
+        }
+        const declared = [...text.matchAll(/android:scheme=["']([^"']+)["']/g)].map((match) => match[1]);
+        if (!declared.includes(scheme)) {
+          warnings.push(`${path.relative(root, manifest)} does not register expo.scheme`);
+        }
+      }
+    }
+  }
+
+  return warnings;
+}
+
 // ---------------------------------------------------------------- collectors
 
 /** Every Firebase config file in the tree: the committed root pair plus the prebuilt native copies. */
@@ -353,18 +402,16 @@ function main() {
     }
   }
 
-  // --- C3: the app's own URL scheme is registered in CFBundleURLSchemes -----
-  const urlTypes = expo?.ios?.infoPlist?.CFBundleURLTypes || [];
-  const allSchemes = urlTypes.flatMap((t) => t.CFBundleURLSchemes || []);
-  if (!scheme) {
-    // already failed in C1
-  } else if (!allSchemes.includes(scheme)) {
-    fail(
-      "url-scheme",
-      `app.json expo.ios.infoPlist.CFBundleURLTypes does not register expo.scheme — deep links will not open the app`
-    );
-  } else {
-    pass("url-scheme", `expo.scheme is registered in CFBundleURLTypes`);
+  // --- C3: app.json is the URL-scheme source of truth -----------------------
+  // Expo generates URL-type declarations from expo.scheme during prebuild. A template without
+  // ios/ or android/ must therefore not be made red merely because those generated files are
+  // absent. If a buyer has generated native output, inspect it as useful drift evidence only:
+  // their next `npx expo prebuild --clean` restores Expo's canonical output.
+  if (scheme) {
+    pass("url-scheme", `app.json declares expo.scheme (the Expo prebuild source of truth)`);
+    for (const warning of nativeSchemeWarnings(root, scheme)) {
+      note(`ADVISORY [url-scheme] ${warning}; run npx expo prebuild --clean to regenerate native output`);
+    }
   }
 
   // --- C4/C5: Firebase configs agree with each other AND with app.json -----
